@@ -66,7 +66,7 @@ def get_user_profile(access_token):
 def fetch_user_playlists(user_id):
     # Query to get the access token for the user
     query = """
-    SELECT access_token
+    SELECT access_token, refresh_token
     FROM UserLinkedApps
     WHERE user_id = ? AND app_id = ?
     """
@@ -77,7 +77,9 @@ def fetch_user_playlists(user_id):
         return None
 
     access_token = result[0][0][0]
-    print(access_token)
+    refresh_token = result[0][0][1]
+    #print(access_token)
+    #print(refresh_token)
 
     # Spotify API endpoint for user playlists
     url = "https://api.spotify.com/v1/me/playlists"
@@ -124,6 +126,9 @@ def fetch_user_playlists(user_id):
 
         logger.info("Successfully fetched and formatted playlists.")
         return formatted_playlists
+    elif response.status_code == 401:
+        refresh_access_token_and_update_db(user_id, refresh_token)
+        return fetch_user_playlists(user_id)
     else:
         logger.error(f"Failed to fetch playlists: {response.status_code} - {response.text}")
         return None
