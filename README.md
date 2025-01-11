@@ -40,5 +40,3 @@ This repository contains a Flutter frontend and Python backend project focused o
 - **Database and Performance**
   - Optimized queries to handle user-specific tokens and avoid redundancies.
   - Modular and reusable code for scalable enhancements.
-
----
