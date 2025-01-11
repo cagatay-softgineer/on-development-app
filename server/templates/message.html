@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Skranji:wght@400;700&display=swap" rel="stylesheet">
+    <title>Response</title>
+</head>
+<body>
+    <main class="bsod container">
+        <h1 class="neg title"><span class="bg">JSON Response<b id="underscore" class="console-underscore">_</b></span></h1>
+        
+        <p>The following response was received:</p>
+        <p><span style="color: #0414a7;background: #aaaaaa;padding: 0 15px 2px 13px;">Access Token</span> : {{access_token}}</p>
+        <p><span style="color: #0414a7;background: #aaaaaa;padding: 0 15px 2px 13px;">Refresh Token</span> : {{refresh_token}}</p>
+        <p><span style="color: #0414a7;background: #aaaaaa;padding: 0 15px 2px 13px;">Success Token</span> : {{success}}</p>
+
+
+        <pre id="json-display" class="json-container"></pre>
+        
+        <nav class="nav">
+          <a href="/" class="link">Return Home</a><a href="mailto:support@helloworld.dev" class="link">Contact Support</a>
+        </nav>
+    </main>
+<footer>
+    <p>© 2025 HelloWorld.dev</p>    
+</footer>
+<script>
+    // 1) Define your variables before using them
+    let visible = true;
+    const con = document.getElementById('underscore');
+
+    // 2) Use setInterval to toggle className
+    window.setInterval(function() {
+      if (visible) {
+        con.className = 'console-underscore hidden';
+        visible = false;
+      } else {
+        con.className = 'console-underscore';
+        visible = true;
+      }
+    }, 400);
+
+
+</script>
+</body>
+</html>

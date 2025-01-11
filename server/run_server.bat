@@ -1,0 +1,1 @@
+cloudflared tunnel --config C:\Users\cagat\.cloudflared\config-mssql.yml run mssql
