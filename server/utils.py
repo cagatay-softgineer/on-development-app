@@ -393,3 +393,71 @@ def get_user_profile(user_id):
     else:
         logger.error(f"Failed to fetch user's access token: {status_code}")
         return None
+    
+route_descriptions = {
+    "/.well-known/assetlinks.json": "Provides asset links for verifying app association with a domain.",
+    "/api/docs/": "Swagger UI documentation root for API endpoints.",
+    "/api/docs/<path:path>": "Serves specific Swagger UI documentation files based on the given path.",
+    "/api/docs/dist/<path:filename>": "Static assets for the Swagger UI, such as JavaScript and CSS files.",
+    "/apps/check_linked_app": "Checks if a specific app is linked to the current user or account.",
+    "/apps/healthcheck": "Health check endpoint for the apps service to verify it's running correctly.",
+    "/apps/unlink_app": "Unlinks a previously linked app from the current user or account.",
+    "/auth/healthcheck": "Health check endpoint for the authentication service to verify functionality.",
+    "/auth/login": "Handles user login requests with necessary credentials.",
+    "/auth/register": "Handles user registration by creating a new account.",
+    "/endpoints": "Lists all available endpoints in the application.",
+    "/error_stats": "Displays error statistics for the application, such as error logs or counts.",
+    "/healthcheck": "General health check endpoint for the main application.",
+    "/profile/healthcheck": "Health check endpoint for the profile service to ensure it's operational.",
+    "/profile/view": "Displays the profile of the current user.",
+    "/spotify-micro-service/healthcheck": "Health check endpoint for the Spotify microservice.",
+    "/spotify-micro-service/playlist_duration": "Calculates the total duration of a playlist using the Spotify microservice.",
+    "/spotify/callback": "Callback endpoint for Spotify's OAuth process to handle token redirection.",
+    "/spotify/healthcheck": "Health check endpoint for the Spotify service integration.",
+    "/spotify/login/<user_id>": "Logs in a specific Spotify user by their user ID.",
+    "/spotify/playlists": "Retrieves playlists associated with the logged-in Spotify user.",
+    "/spotify/token": "Handles token requests for Spotify API authentication.",
+    "/spotify/user_profile": "Retrieves profile information of the logged-in Spotify user."
+}
+
+html_template = """
+        <html>
+        <head>
+            <style>
+                body { font-family: Arial, sans-serif; margin: 20px; }
+                h1 { color: #333; }
+                table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+                th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+                th { background-color: #f4f4f4; }
+                tr:nth-child(even) { background-color: #f9f9f9; }
+                tr:hover { background-color: #f1f1f1; }
+            </style>
+        </head>
+        <body>
+            <h1>Available Endpoints</h1>
+            <p>Total Endpoints: {{ metadata.total_endpoints }}</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Rule</th>
+                        <th>Endpoint</th>
+                        <th>Methods</th>
+                        <th>Arguments</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for endpoint in endpoints %}
+                    <tr>
+                        <td>{{ endpoint.rule }}</td>
+                        <td>{{ endpoint.endpoint }}</td>
+                        <td>{{ ', '.join(endpoint.methods) }}</td>
+                        <td>{{ ', '.join(endpoint.arguments) }}</td>
+                        <td>{{ endpoint.description }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """

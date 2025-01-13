@@ -1,4 +1,5 @@
-from flask import Flask, jsonify, render_template, request
+import flask
+from flask import Flask, jsonify, render_template, request, render_template_string
 from flask_jwt_extended import JWTManager
 from flask_limiter import Limiter
 from flask_swagger_ui import get_swaggerui_blueprint
@@ -6,6 +7,7 @@ from cmd_gui_kit import CmdGUI
 from flask_cors import CORS
 import logging
 from error_handling import log_error
+from utils import route_descriptions, html_template
 from auth import auth_bp
 from apps import apps_bp
 from spotify import spotify_bp
@@ -154,6 +156,64 @@ app.register_blueprint(spotify_bp, url_prefix="/spotify")
 app.register_blueprint(profile_bp, url_prefix="/profile")
 app.register_blueprint(SpotifyMicroService_bp, url_prefix="/spotify-micro-service")
 app.register_blueprint(swaggerui_blueprint, url_prefix=app.config['SWAGGER_URL'])
+
+@app.route('/endpoints')
+def list_endpoints():
+    # Collect and organize endpoints
+    endpoints = []
+    for rule in app.url_map.iter_rules():
+        if rule.endpoint.startswith('__') or rule.endpoint == 'static':  # Skip internal/static routes
+            continue
+        endpoints.append({
+            "rule": str(rule),
+            "endpoint": rule.endpoint,
+            "methods": sorted(rule.methods),
+            "arguments": list(rule.arguments),  # Dynamic segments like <username>
+            "description": route_descriptions.get(str(rule), "No description available.")
+        })
+
+    # Apply optional filters from query parameters
+    method_filter = request.args.get("method")
+    keyword_filter = request.args.get("keyword")
+    if method_filter:
+        endpoints = [e for e in endpoints if method_filter.upper() in e["methods"]]
+    if keyword_filter:
+        endpoints = [e for e in endpoints if keyword_filter in e["rule"]]
+
+    # Sort endpoints alphabetically
+    endpoints = sorted(endpoints, key=lambda x: x["rule"])
+
+    # Pagination
+    page = int(request.args.get("page", 1))
+    per_page = int(request.args.get("per_page", 100))
+    total = len(endpoints)
+    start = (page - 1) * per_page
+    end = start + per_page
+    paginated_endpoints = endpoints[start:end]
+
+    # Include environment details
+    metadata = {
+        "total_endpoints": total,
+        "current_page": page,
+        "per_page": per_page,
+        "flask_version": flask.__version__,
+        "debug": app.debug
+    }
+
+    # Return format based on `Accept` header or query parameter
+    output_format = request.args.get("format", "json").lower()
+    if output_format == "json" or "application/json" in request.headers.get("Accept", ""):
+        return jsonify(metadata=metadata, endpoints=paginated_endpoints)
+    elif output_format == "html":
+        return render_template_string(html_template, metadata=metadata, endpoints=paginated_endpoints)
+    else:  # Plain text fallback
+        text_output = "Available Endpoints:\n"
+        for e in paginated_endpoints:
+            text_output += (
+                f"{e['rule']} (Endpoint: {e['endpoint']}, Methods: {', '.join(e['methods'])}, "
+                f"Args: {', '.join(e['arguments'])}, Description: {e['description']})\n"
+            )
+        return text_output, 200, {"Content-Type": "text/plain"}
 
 # Dictionary to track how many times each error occurs
 error_counts = {
