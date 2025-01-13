@@ -31,6 +31,8 @@ class AuthService {
     _userId = null;
     await _storage.delete(key: "jwt_token");
     await _storage.delete(key: "user_id");
+    await _storage.delete(key: 'username');
+    await _storage.delete(key: 'password');
   }
 
   // Get the current token

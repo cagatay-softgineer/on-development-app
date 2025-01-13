@@ -4,12 +4,13 @@ from flask_limiter import Limiter
 from flask_swagger_ui import get_swaggerui_blueprint
 from cmd_gui_kit import CmdGUI
 from flask_cors import CORS
-from error_handling import log_error
 import logging
+from error_handling import log_error
 from auth import auth_bp
 from apps import apps_bp
-from SpotifyMicroService.spotify import spotify_bp as SpotifyMicroService_bp
 from spotify import spotify_bp
+from profile import profile_bp
+from spotify_micro_service import SpotifyMicroService_bp
 from dotenv import load_dotenv
 import argparse
 import os
@@ -114,16 +115,43 @@ def spotify_healthcheck():
     logger.info("Spotify Service healthcheck requested")
     return jsonify({"status": "ok", "service": "Spotify Service"}), 200
 
+@profile_bp.before_request
+def log_profile_requests():
+    logger.info("Profile blueprint request received.")
+    
+@profile_bp.route("/healthcheck", methods=["GET"])
+def profile_healthcheck():
+    gui.log("Profile Service healthcheck requested")
+    logger.info("Profile Service healthcheck requested")
+    return jsonify({"status": "ok", "service": "Profile Service"}), 200
+
 @app.route("/healthcheck", methods=['POST', 'GET'])
 def app_healthcheck():
     #gui.log("App healthcheck requested")
     logger.info("App healthcheck requested")
     return jsonify({"status": "ok", "service": "App Service"}), 200
 
+@app.route("/.well-known/assetlinks.json", methods=['POST','GET'])
+def appmanifest():
+    return jsonify([
+            {
+            "relation": ["delegate_permission/common.handle_all_urls"],
+            "target": {
+              "namespace": "android_app",
+              "package_name": "com.example.ssdk_rsrc",
+              "sha256_cert_fingerprints": [
+                "69:2D:1C:12:41:FD:2F:79:54:58:5B:CE:AE:3A:6F:EE:65:31:F2:38:9A:90:FC:CE:BF:67:3D:7F:08:34:70:05"
+                ]
+            }
+            }
+        ]
+    )
+    
 
 app.register_blueprint(auth_bp, url_prefix="/auth")
 app.register_blueprint(apps_bp, url_prefix="/apps")
 app.register_blueprint(spotify_bp, url_prefix="/spotify")
+app.register_blueprint(profile_bp, url_prefix="/profile")
 app.register_blueprint(SpotifyMicroService_bp, url_prefix="/spotify-micro-service")
 app.register_blueprint(swaggerui_blueprint, url_prefix=app.config['SWAGGER_URL'])
 

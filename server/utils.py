@@ -4,6 +4,12 @@ from dotenv import load_dotenv
 import os
 from error_handling import log_error
 from cmd_gui_kit import CmdGUI
+import requests
+import base64
+import os
+from dotenv import load_dotenv
+from cmd_gui_kit import CmdGUI
+import logging
 
 # Initialize CmdGUI for visual feedback
 gui = CmdGUI()
@@ -40,6 +46,9 @@ PRIMARY_SQL_USER = os.getenv("SQL_SERVER_USER")
 PRIMARY_SQL_PASSWORD = os.getenv("SQL_SERVER_PASSWORD")
 
 SECONDARY_SQL_DATABASE = os.getenv("SSQL_SERVER_DATABASE")
+
+SPOTIFY_CLIENT_ID = os.getenv("SPOTIFY_CLIENT_ID")
+SPOTIFY_CLIENT_SECRET = os.getenv("SPOTIFY_CLIENT_SECRET")
 
 # Store connection strings in a dictionary
 DB_CONNECTION_STRINGS = {
@@ -100,3 +109,291 @@ def execute_query_with_logging(query, db_name, params=(), fetch=False):
         if conn:
             conn.close()
             gui.status(f"Connection to {db_name} database closed.", status="info")
+            
+def get_access_token_for_request():
+    """
+    Requests an access token using a single Spotify client credential
+    and caches it globally. Returns the cached token if it already exists.
+    """
+
+    client_creds_b64 = base64.b64encode(f"{SPOTIFY_CLIENT_ID}:{SPOTIFY_CLIENT_SECRET}".encode()).decode()
+
+    token_url = "https://accounts.spotify.com/api/token"
+    token_data = {"grant_type": "client_credentials"}
+    token_headers = {
+        "Authorization": f"Basic {client_creds_b64}",
+        "Content-Type": "application/x-www-form-urlencoded",
+    }
+
+    response = requests.post(token_url, data=token_data, headers=token_headers)
+
+    if response.status_code == 200:
+        response_data = response.json()
+        access_token = response_data["access_token"]
+
+        return access_token
+    else:
+    
+        gui.status(
+            f"Failed to obtain token. Status code: {response.status_code}",
+            status="error",
+        )
+        logger.error(
+            f"Failed to obtain token. Status code: {response.status_code}"
+        )
+        # Optionally raise an exception or return None
+        raise log_error(Exception("Could not obtain Spotify access token"))
+
+def get_email_username(email):
+    """
+    Extracts and returns the part of an email address before the '@' symbol.
+    
+    Parameters:
+        email (str): The email address.
+    
+    Returns:
+        str: The part of the email before the '@'. Returns None if '@' is not found.
+    """
+    if "@" in email:
+        return email.split("@")[0]
+    else:
+        return None
+
+
+def make_request(
+    url,
+    max_retries=5,
+):
+    """
+    Makes a GET request to a specified URL with retry logic for rate limiting.
+    Uses a single Spotify credential for all requests.
+    """
+    access_token = get_access_token_for_request()
+    headers = {"Authorization": f"Bearer {access_token}"}
+
+    for attempt in range(max_retries):
+        response = requests.get(url, headers=headers)
+
+        if response.status_code == 200:
+            return response
+
+        elif response.status_code == 404:
+            # Resource not found
+        
+            msg = f"Resource not found: {url}"
+            gui.log(msg, level="info")
+            logger.info(msg)
+            return None
+
+        elif response.status_code == 429:
+            # Rate limit exceeded
+            retry_after = int(response.headers.get("Retry-After", 1))
+            
+            msg = f"Rate limit exceeded. Waiting {retry_after} seconds before retrying."
+            gui.log(msg, level="info")
+            logger.info(msg)
+
+            # Optionally refresh the token (in case it helps)
+            access_token = get_access_token_for_request()
+            headers["Authorization"] = f"Bearer {access_token}"
+
+        else:
+            # For other 4xx/5xx errors, raise an exception or handle
+            response.raise_for_status()
+
+
+    gui.status("Failed to fetch data after retries.", status="error")
+    logger.error("Failed to fetch data after retries.")
+    return None
+            
+def get_access_token():
+    # Request a new access token for this client ID
+    client_creds_b64 = base64.b64encode(f"{SPOTIFY_CLIENT_ID}:{SPOTIFY_CLIENT_SECRET}".encode()).decode()
+    token_url = "https://accounts.spotify.com/api/token"
+    token_data = {"grant_type": "client_credentials"}
+    token_headers = {
+        "Authorization": f"Basic {client_creds_b64}",
+        "Content-Type": "application/x-www-form-urlencoded",
+    }
+    
+    response = requests.post(token_url, data=token_data, headers=token_headers)
+    
+    if response.status_code == 200:
+        response_data = response.json()
+        access_token = response_data["access_token"]
+
+        return access_token, 200
+    
+    elif response.status_code == 429:
+        return "", 429
+    else:
+        return "", 404
+
+def get_access_token_from_db(user_id):
+    query = """
+    SELECT access_token, refresh_token
+    FROM UserLinkedApps
+    WHERE user_id = ? AND app_id = ?
+    """
+    result = execute_query_with_logging(query, "primary", params=(user_id, 1), fetch=True)
+
+    if not result:
+        logger.error(f"Access token not found for user_id: {user_id}")
+        return None
+
+    access_token = result[0][0][0]
+    refresh_token = result[0][0][1]
+    if test_token(access_token) != 200:
+        refresh_access_token_and_update_db(user_id,refresh_token)
+        get_access_token_from_db(user_id)
+        
+    return access_token, refresh_token
+
+def test_token(access_token):
+    url = "https://api.spotify.com/v1/me"
+    headers = {"Authorization": f"Bearer {access_token}"}
+    response = requests.get(url, headers=headers)
+
+    return response.status_code
+
+
+
+# Function to fetch playlists of the user
+def fetch_user_playlists(user_id):
+    # Query to get the access token for the user
+    access_token, refresh_token = get_access_token_from_db(user_id)
+    #print(get_current_user_profile(access_token))
+    #print(access_token)
+    #print(refresh_token)
+
+    # Spotify API endpoint for user playlists
+    url = "https://api.spotify.com/v1/me/playlists"
+    headers = {"Authorization": f"Bearer {access_token}"}
+
+    response = requests.get(url, headers=headers)
+
+    if response.status_code == 200:
+        playlists_data = response.json()
+        formatted_playlists = []
+        
+        for item in playlists_data.get("items", []):
+            # Fetch track details for each playlist
+            #tracks_url = item["tracks"]["href"]
+            #tracks_response = requests.get(tracks_url, headers=headers)
+            #
+            #if tracks_response.status_code == 200:
+            #    tracks_data = tracks_response.json()
+            #    print(tracks_data)
+            #    tracks = [
+            #        {
+            #            "track_name": track["track"]["name"],
+            #            "artist_name": ", ".join(
+            #                [artist["name"] for artist in track["track"]["artists"]]
+            #            ),
+            #            "track_id": track["track"]["id"],
+            #            "track_images": track["track"]["album"]["images"][0]["url"]
+            #            if track["track"]["album"]["images"]
+            #            else "",
+            #        }
+            #        for track in tracks_data.get("items", [])
+            #    ]
+            #else:
+            #    logger.error(f"Failed to fetch tracks for playlist {item['id']}.")
+            #    tracks = []
+
+            formatted_playlist = {
+                "playlist_name": item["name"],
+                "playlist_id": item["id"],
+                "playlist_image": item["images"][0]["url"] if item["images"] else "",
+                "playlist_owner": item["owner"]["display_name"],
+                "playlist_owner_id": item["owner"]["id"],
+                "playlist_track_count": item["tracks"]["total"],
+                "tracks": [],
+            }
+            formatted_playlists.append(formatted_playlist)
+
+        logger.info("Successfully fetched and formatted playlists.")
+        return formatted_playlists
+    elif response.status_code == 401:
+        refresh_access_token_and_update_db(user_id, refresh_token)
+        return fetch_user_playlists(user_id)
+    else:
+        logger.error(f"Failed to fetch playlists: {response.status_code} - {response.text}")
+        return None
+
+
+# Function to refresh access token
+def refresh_access_token_and_update_db(user_id, refresh_token):
+    url = "https://accounts.spotify.com/api/token"
+    auth_header = base64.b64encode(f"{SPOTIFY_CLIENT_ID}:{SPOTIFY_CLIENT_SECRET}".encode()).decode()
+
+    headers = {
+        "Authorization": f"Basic {auth_header}",
+        "Content-Type": "application/x-www-form-urlencoded"
+    }
+    data = {
+        "grant_type": "refresh_token",
+        "refresh_token": refresh_token
+    }
+
+    response = requests.post(url, headers=headers, data=data)
+
+    if response.status_code == 200:
+        token_info = response.json()
+        new_access_token = token_info.get("access_token")
+        new_refresh_token = token_info.get("refresh_token", refresh_token)  # Use the new refresh token if provided, otherwise keep the old one
+        expires_in = token_info.get("expires_in", 3600)  # Default to 1 hour if not provided
+
+        logger.info("Successfully refreshed access token.")
+
+        # Update tokens in the database
+        query = """
+        UPDATE UserLinkedApps
+        SET access_token = ?,
+            refresh_token = ?,
+            token_expires_at = DATEADD(SECOND, ?, GETDATE())
+        WHERE user_id = ? AND app_id = ?
+        """
+
+        execute_query_with_logging(query, "primary", (new_access_token, new_refresh_token, expires_in, user_id, 1))
+
+        return new_access_token
+    else:
+        logger.error(f"Failed to refresh access token: {response.status_code} - {response.text}")
+        return None
+
+def get_current_user_profile(access_token, user_id):
+    url = "https://api.spotify.com/v1/me"
+    headers = {"Authorization": f"Bearer {access_token}"}
+    response = requests.get(url, headers=headers)
+
+    if response.status_code == 200:
+        #user = response.json()
+        #print(user["id"])
+        return response.json()
+    elif response.status_code == 401:
+        access_token, refresh_token = get_access_token_from_db(user_id)
+        refresh_access_token_and_update_db(user_id, refresh_token)
+        return get_current_user_profile(access_token, user_id)
+    else:
+        logger.error(f"Failed to fetch user profile: {response.status_code} - {response.text}")
+        return None
+    
+    
+def get_user_profile(user_id):
+    access_token, status_code = get_access_token()
+    if status_code == 200:
+        url = f"https://api.spotify.com/v1/users/{user_id}"
+        headers = {"Authorization": f"Bearer {access_token}"}
+        response = requests.get(url, headers=headers)
+
+        if response.status_code == 200:
+            #user = response.json()
+            #print(user["id"])
+            return response.json()
+        else:
+            logger.error(f"Failed to fetch user profile: {response.status_code} - {response.text}")
+            return None
+    else:
+        logger.error(f"Failed to fetch user's access token: {status_code}")
+        return None

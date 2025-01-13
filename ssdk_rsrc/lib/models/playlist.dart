@@ -2,12 +2,18 @@ class Playlist {
   final String playlistName;
   final String playlistId;
   final String playlistImage;
+  final String playlistOwner;
+  final String playlistOwnerID;
+  final int playlistTrackCount;
   final List<Track> tracks;
 
   Playlist({
     required this.playlistName,
     required this.playlistId,
     required this.playlistImage,
+    required this.playlistOwner,
+    required this.playlistOwnerID,
+    required this.playlistTrackCount,
     required this.tracks,
   });
 
@@ -16,6 +22,9 @@ class Playlist {
       playlistName: json['playlist_name'] ?? '',
       playlistId: json['playlist_id'] ?? '',
       playlistImage: json['playlist_image'] ?? '',
+      playlistOwner: json['playlist_owner'] ?? '',
+      playlistOwnerID: json['playlist_owner_id'] ?? '',
+      playlistTrackCount: json['playlist_track_count'] ?? '',
       tracks: (json['tracks'] as List<dynamic>)
           .map((trackJson) => Track.fromJson(trackJson))
           .toList(),

@@ -7,6 +7,7 @@ import 'register_page.dart';
 import 'home_page.dart';
 import 'app_links.dart';
 import 'playlist_page.dart';
+import 'player_control_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -29,13 +30,14 @@ class MyApp extends StatelessWidget {
 
       // Define named routes in a map
       routes: {
-        '/': (context) => const StartPage(),                // Home (default route)
+        '/': (context) => const StartPage(),
         '/button_customizer': (context) => ButtonCustomizerApp(), 
         '/login_page': (context) => LoginPage(), 
         '/main': (context) => HomePage(), 
         '/applinks': (context) => AppLinks(), 
         '/register_page': (context) => RegisterPage(), 
         '/playlists': (context) => PlaylistPage(), 
+        '/player': (context) => PlayerControlPage(), 
       },
     );
   }

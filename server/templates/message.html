@@ -8,40 +8,67 @@
     <title>Response</title>
 </head>
 <body>
-    <main class="bsod container">
-        <h1 class="neg title"><span class="bg">JSON Response<b id="underscore" class="console-underscore">_</b></span></h1>
-        
-        <p>The following response was received:</p>
-        <p><span style="color: #0414a7;background: #aaaaaa;padding: 0 15px 2px 13px;">Access Token</span> : {{access_token}}</p>
-        <p><span style="color: #0414a7;background: #aaaaaa;padding: 0 15px 2px 13px;">Refresh Token</span> : {{refresh_token}}</p>
-        <p><span style="color: #0414a7;background: #aaaaaa;padding: 0 15px 2px 13px;">Success Token</span> : {{success}}</p>
-
-
-        <pre id="json-display" class="json-container"></pre>
-        
-        <nav class="nav">
-          <a href="/" class="link">Return Home</a><a href="mailto:support@helloworld.dev" class="link">Contact Support</a>
-        </nav>
-    </main>
+  <main class="bsod container">
+      <p>
+        Microsoft Windows [Version 5.1.2600]<br>
+        (C) Copyright 1985-2001 Microsoft Corp.<br>
+        <br>
+        C:\Users\{{user_id}}> pomodoro_spotify_link.bat<br>
+        ===============================================================<br>
+        Pomodoro Productivity Timer           <br>       
+        Stay Focused, Stay Awesome           <br>
+        ===============================================================<br>
+        <br>
+        >> Welcome to Pomodro Console Service! <<<br>
+        <br>
+        Checking system status...<br>
+        <br>
+        [INFO] Initializing backend services...<br>
+        [OK] Connected to Spotify API. Authentication token verified.<br>
+        [OK] Database sync complete. User preferences loaded.<br>
+        [INFO] Fetching playlist: "Focus Mode Playlist".<br>
+        [OK] Playlist loaded. Total tracks: 15.<br>
+        <br>
+        [SUCCESS] Pomodro App successfully linked with Spotify.<br>
+        <br>
+        ===============================================================<br>
+        Pomodro App + Spotify Integration Ready to Use!        <br>    
+        ===============================================================<br>
+        <br>
+        Access your personal dashboard here:<br>
+          https://www.pomodro.app/dashboard<br>
+          <br>
+          For help or feedback, visit:<br>
+          https://www.pomodro.app/help<br>
+          <br>
+          Pomodro Mobile App is available for download:<br>
+          - Android: https://play.google.com/store/apps/details?id=pomodro<br>
+          - iOS: https://apps.apple.com/app/id1234567890<br>
+        ===============================================================<br>
+        <br>
+        Press any key to exit...<br>
+        <br>
+        C:\Users\{{user_id}}> return_back_to_app.bat<b id="underscore" class="console-underscore">_</b><br>
+      </p>
+  </main>
 <footer>
-    <p>© 2025 HelloWorld.dev</p>    
+  <p>© 2025 HelloWorld.dev</p>    
 </footer>
 <script>
-    // 1) Define your variables before using them
-    let visible = true;
-    const con = document.getElementById('underscore');
+  // 1) Define your variables before using them
+  let visible = true;
+  const con = document.getElementById('underscore');
 
-    // 2) Use setInterval to toggle className
-    window.setInterval(function() {
-      if (visible) {
-        con.className = 'console-underscore hidden';
-        visible = false;
-      } else {
-        con.className = 'console-underscore';
-        visible = true;
-      }
-    }, 400);
-
+  // 2) Use setInterval to toggle className
+  window.setInterval(function() {
+    if (visible) {
+      con.className = 'console-underscore hidden';
+      visible = false;
+    } else {
+      con.className = 'console-underscore';
+      visible = true;
+    }
+  }, 400);
 
 </script>
 </body>

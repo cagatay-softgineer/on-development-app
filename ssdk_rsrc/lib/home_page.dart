@@ -1,9 +1,50 @@
 import 'package:flutter/material.dart';
+import 'package:ssdk_rsrc/authlib.dart';
 import 'widgets/custom_button.dart'; // Ensure the correct path
 import 'styles/button_styles.dart';
 
-class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+class HomePage extends StatefulWidget {
+  const HomePage({Key? key}) : super(key: key);
+
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  Future<void> _showLogoutConfirmation(BuildContext context) async {
+    final shouldLogout = await showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Log Out'),
+          content: const Text('Are you sure you want to log out?'),
+          actions: [
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop(false); // Çıkış yapma
+              },
+            ),
+            TextButton(
+              child: const Text('Log Out'),
+              onPressed: () {
+                Navigator.of(context).pop(true); // Çıkış yapmayı onayla
+              },
+            ),
+          ],
+        );
+      },
+    );
+
+    if (shouldLogout == true) {
+      // Kullanıcının giriş bilgilerini temizle
+      AuthService.clearToken();
+
+      // Kullanıcıyı LoginPage'e yönlendir
+      Navigator.pushNamedAndRemoveUntil(
+                    context, '/', (Route<dynamic> route) => false);
+              };
+  }
 
 
   @override
@@ -29,7 +70,7 @@ class HomePage extends StatelessWidget {
               ),
               textAlign: TextAlign.center,
             ),
-            SizedBox(height: 20), // Adds vertical spacing
+            SizedBox(height: 20), 
             // CustomButton to Navigate to Button Customizer
             CustomButton(
               text: "Navigate To\nButton Customizer",
@@ -43,10 +84,7 @@ class HomePage extends StatelessWidget {
             CustomButton(
               text: "Logout",
               onPressed: () {
-                // Implement your logout logic here
-                // For example, navigate back to the login page
-                Navigator.pushNamedAndRemoveUntil(
-                    context, '/', (Route<dynamic> route) => false);
+                _showLogoutConfirmation(context);
               },
               buttonParams: logoutButtonParams,
             ),
@@ -73,6 +111,18 @@ class HomePage extends StatelessWidget {
                     context, '/playlists');
               },
               buttonParams: mainButtonParams,
+            ),
+            SizedBox(height: 20), // Adds vertical spacing
+            // CustomButton for Logout
+            CustomButton(
+              text: "Player",
+              onPressed: () {
+                // Implement your logout logic here
+                // For example, navigate back to the login page
+                Navigator.pushNamed(
+                    context, '/player');
+              },
+              buttonParams: playerButtonParams,
             ),
             // Add more widgets or buttons as needed
           ],

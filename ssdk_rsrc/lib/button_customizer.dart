@@ -206,14 +206,14 @@ class _ButtonCustomizerState extends State<ButtonCustomizer> {
             Text('Border Width:'),
             SizedBox(width: 10),
             Slider(
-              value: _currentParams.borderWidth,
+              value: _currentParams.letterSpacing,
               min: 0,
               max: 5,
               divisions: 5,
-              label: '${_currentParams.borderWidth.toStringAsFixed(1)}',
+              label: '${_currentParams.letterSpacing.toStringAsFixed(1)}',
               onChanged: (value) {
                 setState(() {
-                  _currentParams.borderWidth = value;
+                  _currentParams.letterSpacing = value;
                   _updateParams();
                 });
               },

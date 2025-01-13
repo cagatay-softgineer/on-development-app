@@ -131,7 +131,7 @@ class _ButtonCustomizerAppState extends State<ButtonCustomizerApp> {
       "buttonWidth": params.buttonWidth,
       "buttonHeight": params.buttonHeight,
       "borderColor": params.borderColor.toString(),
-      "borderWidth": params.borderWidth,
+      "letterSpacing": params.letterSpacing,
       "blurAmount": params.blurAmount,
       "useGradient": params.useGradient,
       "gradientStartColor": params.gradientStartColor.toString(),
@@ -192,7 +192,7 @@ class _ButtonCustomizerAppState extends State<ButtonCustomizerApp> {
                 ),
           side: BorderSide(
             color: _buttonParams.borderColor,
-            width: _buttonParams.borderWidth,
+            width: _buttonParams.letterSpacing,
           ),
           backgroundColor: Colors.transparent, // Make background transparent
         ),

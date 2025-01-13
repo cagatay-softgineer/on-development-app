@@ -57,7 +57,7 @@ class CustomButton extends StatelessWidget {
                 ),
           side: BorderSide(
             color: buttonParams.borderColor,
-            width: buttonParams.borderWidth,
+            width: buttonParams.letterSpacing,
           ),
           backgroundColor: Colors.transparent, // Make background transparent
         ),
@@ -78,8 +78,9 @@ class CustomButton extends StatelessWidget {
                     Icon(
                       buttonParams.leadingIcon,
                       color: buttonParams.textColor,
+                      size: buttonParams.iconSize,
                     ),
-                  if (buttonParams.leadingIcon != null) const SizedBox(width: 8),
+                  if (buttonParams.leadingIcon != null) SizedBox(width: buttonParams.letterSpacing),
                   Text(
                     text,
                     textAlign: buttonParams.textAlign,
@@ -88,11 +89,12 @@ class CustomButton extends StatelessWidget {
                       fontFamily: buttonParams.fontFamily,
                     ),
                   ),
-                  if (buttonParams.trailingIcon != null) const SizedBox(width: 8),
+                  if (buttonParams.trailingIcon != null) SizedBox(width: buttonParams.letterSpacing),
                   if (buttonParams.trailingIcon != null)
                     Icon(
                       buttonParams.trailingIcon,
                       color: buttonParams.textColor,
+                      size: buttonParams.iconSize,
                     ),
                 ],
               ),

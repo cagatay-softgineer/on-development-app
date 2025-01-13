@@ -5,8 +5,7 @@ from flask_limiter.util import get_remote_address
 from dotenv import load_dotenv
 import requests
 import os
-from utils import execute_query_with_logging
-import base64
+from utils import execute_query_with_logging, get_user_profile, fetch_user_playlists, get_access_token_from_db, get_email_username
 import secrets
 import logging
 
@@ -50,91 +49,14 @@ def login(user_id):
     logger.info("Redirecting to Spotify authorization URL.")
     return redirect(auth_url)
 
-# Helper function to get Spotify user profile
-def get_user_profile(access_token):
-    url = "https://api.spotify.com/v1/me"
-    headers = {"Authorization": f"Bearer {access_token}"}
-    response = requests.get(url, headers=headers)
-
-    if response.status_code == 200:
-        return response.json()
-    else:
-        logger.error(f"Failed to fetch user profile: {response.status_code} - {response.text}")
-        return None
-
-# Function to fetch playlists of the user
-def fetch_user_playlists(user_id):
-    # Query to get the access token for the user
-    query = """
-    SELECT access_token, refresh_token
-    FROM UserLinkedApps
-    WHERE user_id = ? AND app_id = ?
-    """
-    result = execute_query_with_logging(query, "primary", params=(user_id, 1), fetch=True)
-
-    if not result:
-        logger.error(f"Access token not found for user_id: {user_id}")
-        return None
-
-    access_token = result[0][0][0]
-    refresh_token = result[0][0][1]
-    #print(access_token)
-    #print(refresh_token)
-
-    # Spotify API endpoint for user playlists
-    url = "https://api.spotify.com/v1/me/playlists"
-    headers = {"Authorization": f"Bearer {access_token}"}
-
-    response = requests.get(url, headers=headers)
-
-    if response.status_code == 200:
-        playlists_data = response.json()
-        formatted_playlists = []
-        
-        for item in playlists_data.get("items", []):
-            # Fetch track details for each playlist
-            #tracks_url = item["tracks"]["href"]
-            #tracks_response = requests.get(tracks_url, headers=headers)
-            #
-            #if tracks_response.status_code == 200:
-            #    tracks_data = tracks_response.json()
-            #    print(tracks_data)
-            #    tracks = [
-            #        {
-            #            "track_name": track["track"]["name"],
-            #            "artist_name": ", ".join(
-            #                [artist["name"] for artist in track["track"]["artists"]]
-            #            ),
-            #            "track_id": track["track"]["id"],
-            #            "track_images": track["track"]["album"]["images"][0]["url"]
-            #            if track["track"]["album"]["images"]
-            #            else "",
-            #        }
-            #        for track in tracks_data.get("items", [])
-            #    ]
-            #else:
-            #    logger.error(f"Failed to fetch tracks for playlist {item['id']}.")
-            #    tracks = []
-
-            formatted_playlist = {
-                "playlist_name": item["name"],
-                "playlist_id": item["id"],
-                "playlist_image": item["images"][0]["url"] if item["images"] else "",
-                "tracks": [],
-            }
-            formatted_playlists.append(formatted_playlist)
-
-        logger.info("Successfully fetched and formatted playlists.")
-        return formatted_playlists
-    elif response.status_code == 401:
-        refresh_access_token_and_update_db(user_id, refresh_token)
-        return fetch_user_playlists(user_id)
-    else:
-        logger.error(f"Failed to fetch playlists: {response.status_code} - {response.text}")
-        return None
-
-
 # Example endpoint to fetch playlists
+@spotify_bp.route('/user_profile', methods=['POST','GET'])
+def get_user():
+    data = request.json
+    user_id = data.get('user_id')
+    return get_user_profile(user_id)
+    
+
 @spotify_bp.route('/playlists', methods=['POST','GET'])
 def get_playlists():
     data = request.json
@@ -150,45 +72,18 @@ def get_playlists():
     return jsonify(playlists_json), 200
 
 
-# Function to refresh access token
-def refresh_access_token_and_update_db(user_id, refresh_token):
-    url = "https://accounts.spotify.com/api/token"
-    auth_header = base64.b64encode(f"{CLIENT_ID}:{CLIENT_SECRET}".encode()).decode()
+@spotify_bp.route('/token', methods=['POST','GET'])
+def get_token():
+    data = request.json
+    user_email = data.get('user_email')
+    query = "SELECT user_id FROM users WHERE email = ?"
+    rows = execute_query_with_logging(query, "primary", params=(user_email), fetch=True)
+    
+    if rows:
+        user_id = rows[0][0][0]
 
-    headers = {
-        "Authorization": f"Basic {auth_header}",
-        "Content-Type": "application/x-www-form-urlencoded"
-    }
-    data = {
-        "grant_type": "refresh_token",
-        "refresh_token": refresh_token
-    }
-
-    response = requests.post(url, headers=headers, data=data)
-
-    if response.status_code == 200:
-        token_info = response.json()
-        new_access_token = token_info.get("access_token")
-        new_refresh_token = token_info.get("refresh_token", refresh_token)  # Use the new refresh token if provided, otherwise keep the old one
-        expires_in = token_info.get("expires_in", 3600)  # Default to 1 hour if not provided
-
-        logger.info("Successfully refreshed access token.")
-
-        # Update tokens in the database
-        query = """
-        UPDATE UserLinkedApps
-        SET access_token = ?,
-            refresh_token = ?,
-            token_expires_at = DATEADD(SECOND, ?, GETDATE())
-        WHERE user_id = ? AND app_id = ?
-        """
-
-        execute_query_with_logging(query, "primary", (new_access_token, new_refresh_token, expires_in, user_id, 1))
-
-        return new_access_token
-    else:
-        logger.error(f"Failed to refresh access token: {response.status_code} - {response.text}")
-        return None
+    token, _ = get_access_token_from_db(user_id)
+    return jsonify({"token":token}), 200
 
 @spotify_bp.route('/callback', methods=['GET'])
 def callback():
@@ -240,7 +135,7 @@ def callback():
         
         return render_template(
         "message.html",
-        success = True, access_token = access_token, refresh_token = refresh_token
+        success = True, user_id = get_email_username(USER_EMAIL)
     ), 200
     else:
         logger.error(f"Failed to obtain access token: {response.status_code} - {response.text}")

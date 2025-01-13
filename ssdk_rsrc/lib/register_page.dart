@@ -39,7 +39,7 @@ class _RegisterPageState extends State<RegisterPage> {
     setState(() => _isLoading = true);
 
     try {
-      final response = await apiService.register(email, password);
+      final response = await mainAPI.register(email, password);
 
       if (response['error'] == true) {
         if (context.mounted) {
@@ -136,7 +136,10 @@ class _RegisterPageState extends State<RegisterPage> {
                   final isLoggedIn = await register(context);
                   mainButtonParams.isLoading = false;
                       if (isLoggedIn && mounted) {
-                  Navigator.pushNamed(context, '/main');
+                  Navigator.pushNamed(context, '/');
+                  ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Registration Successful!')),
+        );
                       }
                 },
                 buttonParams: mainButtonParams,

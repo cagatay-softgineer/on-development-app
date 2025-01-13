@@ -25,8 +25,8 @@ body { background: #0414a7; }
 }
 
 .bsod {
-  padding-top: 10%;
-  
+  padding-top: 5%;
+  padding-bottom: 5%;
   .neg {
     text-align: center;
     color: #0414a7;

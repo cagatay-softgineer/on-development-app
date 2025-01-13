@@ -13,7 +13,7 @@ class ButtonParams {
   double _buttonWidth;
   double _buttonHeight;
   Color _borderColor;
-  double _borderWidth;
+  double _letterSpacing;
   double _blurAmount;
   bool _useGradient;
   Color _gradientStartColor;
@@ -30,6 +30,7 @@ class ButtonParams {
   bool _isLoading;
   String _fontFamily;
   double _backgroundAlpha;
+  double _iconSize;
 
   // Constructor with default values
   ButtonParams({
@@ -44,7 +45,7 @@ class ButtonParams {
     double buttonWidth = 200.0,
     double buttonHeight = 50.0,
     Color borderColor = Colors.transparent,
-    double borderWidth = 0.0,
+    double letterSpacing = 0.0,
     double blurAmount = 0.0,
     bool useGradient = false,
     Color gradientStartColor = Colors.blue,
@@ -61,6 +62,7 @@ class ButtonParams {
     bool isLoading = false,
     String fontFamily = 'Roboto',
     double backgroundAlpha = 1.0, // Default opacity
+    double iconSize = 12,
   })  : _backgroundColor = backgroundColor,
         _textColor = textColor,
         _borderRadius = borderRadius,
@@ -70,7 +72,7 @@ class ButtonParams {
         _buttonWidth = buttonWidth,
         _buttonHeight = buttonHeight,
         _borderColor = borderColor,
-        _borderWidth = borderWidth,
+        _letterSpacing = letterSpacing,
         _blurAmount = blurAmount,
         _useGradient = useGradient,
         _gradientStartColor = gradientStartColor,
@@ -86,7 +88,8 @@ class ButtonParams {
         _shadowOffset = shadowOffset,
         _isLoading = isLoading,
         _fontFamily = fontFamily,
-        _backgroundAlpha = backgroundAlpha;
+        _backgroundAlpha = backgroundAlpha,
+        _iconSize = iconSize;
 
   // ==================== Getters ====================
 
@@ -99,7 +102,7 @@ class ButtonParams {
   double get buttonWidth => _buttonWidth;
   double get buttonHeight => _buttonHeight;
   Color get borderColor => _borderColor;
-  double get borderWidth => _borderWidth;
+  double get letterSpacing => _letterSpacing;
   double get blurAmount => _blurAmount;
   bool get useGradient => _useGradient;
   Color get gradientStartColor => _gradientStartColor;
@@ -116,6 +119,7 @@ class ButtonParams {
   bool get isLoading => _isLoading;
   String get fontFamily => _fontFamily;
   double get backgroundAlpha => _backgroundAlpha;
+  double get iconSize => _iconSize;
 
   // ==================== Setters ====================
 
@@ -155,8 +159,8 @@ class ButtonParams {
     _borderColor = value;
   }
 
-  set borderWidth(double value) {
-    _borderWidth = value;
+  set letterSpacing(double value) {
+    _letterSpacing = value;
   }
 
   set blurAmount(double value) {
@@ -230,6 +234,10 @@ class ButtonParams {
     }
   }
 
+  set iconSize(double value) {
+    _iconSize = value;
+  }
+
   // ==================== JSON Serialization ====================
 
   /// Converts the current instance to a JSON string
@@ -244,7 +252,7 @@ class ButtonParams {
       "buttonWidth": _buttonWidth,
       "buttonHeight": _buttonHeight,
       "borderColor": _borderColor.value.toString(),
-      "borderWidth": _borderWidth,
+      "letterSpacing": _letterSpacing,
       "blurAmount": _blurAmount,
       "useGradient": _useGradient,
       "gradientStartColor": _gradientStartColor.value.toString(),
@@ -279,7 +287,7 @@ class ButtonParams {
       buttonWidth: (jsonData['buttonWidth'] as num).toDouble(),
       buttonHeight: (jsonData['buttonHeight'] as num).toDouble(),
       borderColor: _parseColor(jsonData['borderColor']),
-      borderWidth: (jsonData['borderWidth'] as num).toDouble(),
+      letterSpacing: (jsonData['letterSpacing'] as num).toDouble(),
       blurAmount: (jsonData['blurAmount'] as num).toDouble(),
       useGradient: jsonData['useGradient'] as bool,
       gradientStartColor: _parseColor(jsonData['gradientStartColor']),
@@ -295,7 +303,8 @@ class ButtonParams {
       shadowOffset: _parseOffset(jsonData['shadowOffset']),
       isLoading: jsonData['isLoading'] as bool,
       fontFamily: jsonData['fontFamily'] as String,
-      backgroundAlpha: (jsonData['backgroundAlpha'] as num).toDouble(),
+      backgroundAlpha : (jsonData['backgroundAlpha'] as num).toDouble(),
+      iconSize : (jsonData['iconSize'] as num).toDouble(),
     );
   }
 
@@ -312,7 +321,7 @@ class ButtonParams {
         _buttonWidth = (jsonData['buttonWidth'] as num).toDouble(),
         _buttonHeight = (jsonData['buttonHeight'] as num).toDouble(),
         _borderColor = _parseColor(jsonData['borderColor']),
-        _borderWidth = (jsonData['borderWidth'] as num).toDouble(),
+        _letterSpacing = (jsonData['letterSpacing'] as num).toDouble(),
         _blurAmount = (jsonData['blurAmount'] as num).toDouble(),
         _useGradient = jsonData['useGradient'] as bool,
         _gradientStartColor = _parseColor(jsonData['gradientStartColor']),
@@ -328,7 +337,8 @@ class ButtonParams {
         _shadowOffset = _parseOffset(jsonData['shadowOffset']),
         _isLoading = jsonData['isLoading'] as bool,
         _fontFamily = jsonData['fontFamily'] as String,
-        _backgroundAlpha = (jsonData['backgroundAlpha'] as num).toDouble();
+        _backgroundAlpha = (jsonData['backgroundAlpha'] as num).toDouble(),
+        _iconSize = (jsonData['iconSize'] as num).toDouble();
 
   // ==================== Helper Methods ====================
 

@@ -30,11 +30,21 @@ android {
         versionName = flutter.versionName
     }
 
+    signingConfigs {
+        release {
+            storeFile file('C:/Users/cagat/Documents/GitHub/SpotifySDK-Research/ssdk_rsrc/android/app/release-key.jks')
+            storePassword 'cagatay233'
+            keyAlias 'my-release-key'
+            keyPassword 'cagatay233'
+        }
+    }
+
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.debug
+            signingConfig signingConfigs.release
+            // Optional: Enable code shrinking and optimization
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
 }
