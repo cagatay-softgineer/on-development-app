@@ -56,5 +56,5 @@ def login():
                 return jsonify({"access_token": access_token, "user_id": user_id}), 200
 
         return jsonify({"error": "Invalid email or password"}), 401
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+    except Exception:
+        return jsonify({"error": "An internal error has occurred!"}), 500

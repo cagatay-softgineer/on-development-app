@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify, redirect, render_template
+from flask import Blueprint, request, jsonify, redirect, render_template, escape
 from flask_limiter import Limiter
 from flask_cors import CORS
 from flask_limiter.util import get_remote_address
@@ -54,7 +54,7 @@ def login(user_id):
 def get_user():
     data = request.json
     user_id = data.get('user_id')
-    return get_user_profile(user_id)
+    return get_user_profile(escape(user_id))
     
 
 @spotify_bp.route('/playlists', methods=['POST','GET'])

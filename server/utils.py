@@ -6,10 +6,6 @@ from error_handling import log_error
 from cmd_gui_kit import CmdGUI
 import requests
 import base64
-import os
-from dotenv import load_dotenv
-from cmd_gui_kit import CmdGUI
-import logging
 
 # Initialize CmdGUI for visual feedback
 gui = CmdGUI()
