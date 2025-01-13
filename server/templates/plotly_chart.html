@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log Type Trend Chart</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+    <h1>Log Type Trend Over Time</h1>
+    <div id="chart"></div>
+    <script>
+        var graph = {{ graph_json|safe }};
+        Plotly.newPlot('chart', graph.data, graph.layout);
+    </script>
+</body>
+</html>

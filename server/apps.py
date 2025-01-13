@@ -4,12 +4,35 @@ from flask_limiter import Limiter
 from flask_cors import CORS
 from flask_limiter.util import get_remote_address
 from utils import execute_query_with_logging, get_current_user_profile
+import logging
 
 apps_bp = Blueprint('apps', __name__)
 limiter = Limiter(key_func=get_remote_address)
 
 # Enable CORS for all routes in this blueprint
 CORS(apps_bp, resources={r"/*": {"origins": "*"}})
+
+LOG_DIR = "logs/app_link.log"
+logger = logging.getLogger("Apps")
+logger.setLevel(logging.DEBUG)
+
+# Create file handler
+file_handler = logging.FileHandler(LOG_DIR, encoding="utf-8")
+file_handler.setLevel(logging.DEBUG)
+
+# Create console handler
+console_handler = logging.StreamHandler()
+console_handler.setLevel(logging.INFO)
+
+# Create formatter and add it to the handlers
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+file_handler.setFormatter(formatter)
+
+# Add handlers to the logger
+logger.addHandler(file_handler)
+logger.addHandler(console_handler)
+
+logger.propagate = False
 
 @apps_bp.route('/check_linked_app', methods=['POST', 'GET'])
 def check_linked_app():

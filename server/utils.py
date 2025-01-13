@@ -6,6 +6,8 @@ from error_handling import log_error
 from cmd_gui_kit import CmdGUI
 import requests
 import base64
+from datetime import datetime
+import pandas as pd
 
 # Initialize CmdGUI for visual feedback
 gui = CmdGUI()
@@ -420,44 +422,52 @@ route_descriptions = {
     "/spotify/user_profile": "Retrieves profile information of the logged-in Spotify user."
 }
 
-html_template = """
-        <html>
-        <head>
-            <style>
-                body { font-family: Arial, sans-serif; margin: 20px; }
-                h1 { color: #333; }
-                table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-                th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-                th { background-color: #f4f4f4; }
-                tr:nth-child(even) { background-color: #f9f9f9; }
-                tr:hover { background-color: #f1f1f1; }
-            </style>
-        </head>
-        <body>
-            <h1>Available Endpoints</h1>
-            <p>Total Endpoints: {{ metadata.total_endpoints }}</p>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Rule</th>
-                        <th>Endpoint</th>
-                        <th>Methods</th>
-                        <th>Arguments</th>
-                        <th>Description</th>
-                    </tr>
-                </thead>
-                <tbody>
-                {% for endpoint in endpoints %}
-                    <tr>
-                        <td>{{ endpoint.rule }}</td>
-                        <td>{{ endpoint.endpoint }}</td>
-                        <td>{{ ', '.join(endpoint.methods) }}</td>
-                        <td>{{ ', '.join(endpoint.arguments) }}</td>
-                        <td>{{ endpoint.description }}</td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-        </body>
-        </html>
-        """
+def parse_logs_from_folder(folder_path):
+    logs = []
+    for filename in os.listdir(folder_path):
+        file_path = os.path.join(folder_path, filename)
+        if os.path.isfile(file_path) and filename.endswith('.log'):  # Assuming log files are .txt
+            with open(file_path, 'r') as file:
+                for line in file:
+                    try:
+                        parts = line.split(" - ")
+                        timestamp = parts[0].strip()
+                        log_type = parts[2].strip()
+                        message = " - ".join(parts[3:]).strip()
+                        
+                        # Append parsed log data
+                        logs.append({
+                            "filename": filename,
+                            "timestamp": datetime.strptime(timestamp, '%Y-%m-%d %H:%M:%S,%f'),  # Parse timestamp
+                            "log_type": log_type,
+                            "message": message
+                        })
+                    except (IndexError, ValueError):
+                        continue
+    
+    # Sort logs by timestamp (descending order)
+    logs.sort(key=lambda log: log['timestamp'], reverse=True)
+    return logs
+
+ACCEPTED_LOG_TYPES = {"INFO", "DEBUG", "WARN", "ERROR"}
+
+# Helper function to parse logs and return a DataFrame
+def parse_logs_to_dataframe(folder_path):
+    data = []
+    for filename in os.listdir(folder_path):
+        file_path = os.path.join(folder_path, filename)
+        if os.path.isfile(file_path) and filename.endswith('.log'):
+            with open(file_path, 'r') as file:
+                for line in file:
+                    try:
+                        parts = line.split(" - ")
+                        timestamp = datetime.strptime(parts[0].strip(), '%Y-%m-%d %H:%M:%S,%f')
+                        log_type = parts[2].strip().upper()  # Convert to uppercase for consistency
+                        # Validate log type
+                        if log_type in ACCEPTED_LOG_TYPES:
+                            data.append({'timestamp': timestamp, 'log_type': log_type})
+                    except (IndexError, ValueError):
+                        continue
+    # Create a DataFrame from the parsed data
+    df = pd.DataFrame(data)
+    return df

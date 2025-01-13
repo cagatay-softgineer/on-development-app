@@ -12,7 +12,7 @@ gui = CmdGUI()
 
 load_dotenv()
 
-LOG_FILE = "logs/spotifymicroservice.log"
+LOG_FILE = "logs/spotify_micro_service.log"
 logger = logging.getLogger("SpotifyMicroService")
 logger.setLevel(logging.DEBUG)
 

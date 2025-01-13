@@ -15,6 +15,29 @@ limiter = Limiter(key_func=get_remote_address)
 # Enable CORS for all routes in this blueprint
 CORS(spotify_bp, resources={r"/*": {"origins": "*"}})
 
+# Logging setup
+LOG_DIR = "logs/spotify_api.log"
+logger = logging.getLogger("SpotifyAPI")
+logger.setLevel(logging.DEBUG)
+
+# Create file handler
+file_handler = logging.FileHandler(LOG_DIR, encoding="utf-8")
+file_handler.setLevel(logging.DEBUG)
+
+# Create console handler
+console_handler = logging.StreamHandler()
+console_handler.setLevel(logging.INFO)
+
+# Create formatter and add it to the handlers
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+file_handler.setFormatter(formatter)
+
+# Add handlers to the logger
+logger.addHandler(file_handler)
+logger.addHandler(console_handler)
+
+logger.propagate = False
+
 # Load environment variables
 load_dotenv()
 CLIENT_ID = os.getenv("AUTH_CLIENT_ID")

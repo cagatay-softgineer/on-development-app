@@ -4,6 +4,7 @@ from flask_limiter import Limiter
 from flask_cors import CORS
 from flask_limiter.util import get_remote_address
 import bcrypt
+import logging
 from utils import execute_query_with_logging
 
 auth_bp = Blueprint('auth', __name__)
@@ -11,6 +12,28 @@ limiter = Limiter(key_func=get_remote_address)
 
 # Enable CORS for all routes in this blueprint
 CORS(auth_bp, resources={r"/*": {"origins": "*"}})
+
+LOG_DIR = "logs/auth.log"
+logger = logging.getLogger("Auth")
+logger.setLevel(logging.DEBUG)
+
+# Create file handler
+file_handler = logging.FileHandler(LOG_DIR, encoding="utf-8")
+file_handler.setLevel(logging.DEBUG)
+
+# Create console handler
+console_handler = logging.StreamHandler()
+console_handler.setLevel(logging.INFO)
+
+# Create formatter and add it to the handlers
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+file_handler.setFormatter(formatter)
+
+# Add handlers to the logger
+logger.addHandler(file_handler)
+logger.addHandler(console_handler)
+
+logger.propagate = False
 
 @auth_bp.route('/register', methods=['POST', 'GET'])
 def register():

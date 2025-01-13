@@ -1,0 +1,39 @@
+<html>
+    <head>
+        <style>
+            body { font-family: Arial, sans-serif; margin: 20px; }
+            h1 { color: #333; }
+            table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+            th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+            th { background-color: #f4f4f4; }
+            tr:nth-child(even) { background-color: #f9f9f9; }
+            tr:hover { background-color: #f1f1f1; }
+        </style>
+    </head>
+    <body>
+        <h1>Available Endpoints</h1>
+        <p>Total Endpoints: {{ metadata.total_endpoints }}</p>
+        <table>
+            <thead>
+                <tr>
+                    <th>Rule</th>
+                    <th>Endpoint</th>
+                    <th>Methods</th>
+                    <th>Arguments</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for endpoint in endpoints %}
+                <tr>
+                    <td>{{ endpoint.rule }}</td>
+                    <td>{{ endpoint.endpoint }}</td>
+                    <td>{{ ', '.join(endpoint.methods) }}</td>
+                    <td>{{ ', '.join(endpoint.arguments) }}</td>
+                    <td>{{ endpoint.description }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </body>
+    </html>

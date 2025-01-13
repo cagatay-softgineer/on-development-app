@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log File Visualizer</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        table { border-collapse: collapse; width: 100%; margin-bottom: 20px; }
+        th, td { border: 1px solid #ddd; padding: 8px; }
+        th { background-color: #f4f4f4; }
+        tr:nth-child(even) { background-color: #f9f9f9; }
+        tr:hover { background-color: #f1f1f1; }
+        .log-type-error { color: red; font-weight: bold; }
+        .log-type-warning { color: orange; font-weight: bold; }
+        .log-type-info { color: green; font-weight: bold; }
+        .log-type-debug { color: blue; font-weight: bold; }
+        .pagination { margin-top: 20px; }
+        .pagination a { margin: 0 5px; text-decoration: none; color: blue; }
+        .pagination a.active { font-weight: bold; color: black; }
+    </style>
+</head>
+<body>
+    <h1>Log File Visualization</h1>
+    
+    <form method="get">
+        <label for="log_type">Filter by Log Type:</label>
+        <input type="text" name="log_type" id="log_type" value="{{ log_type_filter or '' }}">
+        <label for="filename">Filter by Filename:</label>
+        <input type="text" name="filename" id="filename" value="{{ filename_filter or '' }}">
+        <button type="submit">Filter</button>
+    </form>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>Filename</th>
+                <th>Timestamp</th>
+                <th>Log Type</th>
+                <th>Message</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for log in logs %}
+            <tr>
+                <td>{{ log.filename }}</td>
+                <td>{{ log.timestamp }}</td>
+                <td class="log-type-{{ log.log_type|lower }}">{{ log.log_type }}</td>
+                <td>{{ log.message }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    
+    <div class="pagination">
+        {% if page > 1 %}
+        <a href="?page={{ page - 1 }}&per_page={{ per_page }}{% if log_type_filter %}&log_type={{ log_type_filter }}{% endif %}{% if filename_filter %}&filename={{ filename_filter }}{% endif %}">&laquo; Previous</a>
+        {% endif %}
+        
+        <span>Page {{ page }}</span>
+        
+        {% if total_logs > page * per_page %}
+        <a href="?page={{ page + 1 }}&per_page={{ per_page }}{% if log_type_filter %}&log_type={{ log_type_filter }}{% endif %}{% if filename_filter %}&filename={{ filename_filter }}{% endif %}">Next &raquo;</a>
+        {% endif %}
+    </div>
+</body>
+</html>

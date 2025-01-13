@@ -1,22 +1,30 @@
-import flask
-from flask import Flask, jsonify, render_template, request, render_template_string
-from flask_jwt_extended import JWTManager
-from flask_limiter import Limiter
-from flask_swagger_ui import get_swaggerui_blueprint
-from cmd_gui_kit import CmdGUI
-from flask_cors import CORS
-import logging
-from error_handling import log_error
-from utils import route_descriptions, html_template
-from auth import auth_bp
-from apps import apps_bp
-from spotify import spotify_bp
-from profile import profile_bp
-from spotify_micro_service import SpotifyMicroService_bp
-from dotenv import load_dotenv
-import argparse
-import os
-
+try:
+    # Code that may trigger the error
+    from error_handling import log_error
+    import flask
+    from flask import Flask, jsonify, render_template, request
+    from flask_jwt_extended import JWTManager
+    from flask_limiter import Limiter
+    from flask_swagger_ui import get_swaggerui_blueprint
+    from cmd_gui_kit import CmdGUI
+    from flask_cors import CORS
+    import logging
+    from utils import route_descriptions, parse_logs_from_folder, parse_logs_to_dataframe
+    from auth import auth_bp
+    from apps import apps_bp
+    from spotify import spotify_bp
+    from profile import profile_bp
+    from spotify_micro_service import SpotifyMicroService_bp
+    from dotenv import load_dotenv
+    import pandas as pd
+    import argparse
+    import os
+    import json
+    import plotly.graph_objects as go
+    from plotly.utils import PlotlyJSONEncoder
+    from IPython.core.display import display  # This import may fail  # noqa: F401
+except Exception as e:
+    log_error(e)  # Log the error
 
 gui = CmdGUI()
 
@@ -157,6 +165,86 @@ app.register_blueprint(profile_bp, url_prefix="/profile")
 app.register_blueprint(SpotifyMicroService_bp, url_prefix="/spotify-micro-service")
 app.register_blueprint(swaggerui_blueprint, url_prefix=app.config['SWAGGER_URL'])
 
+
+# Route for visualizing logs with filtering and pagination
+@app.route('/logs', methods=['GET'])
+def visualize_logs():
+    logs_folder_path = 'logs'
+    logs = parse_logs_from_folder(logs_folder_path)
+    
+    # Get query parameters
+    log_type_filter = request.args.get('log_type', None)
+    filename_filter = request.args.get('filename', None)
+    page = int(request.args.get('page', 1))
+    per_page = int(request.args.get('per_page', 10))
+    
+    # Apply filtering
+    if log_type_filter:
+        logs = [log for log in logs if log_type_filter.lower() in log['log_type'].lower()]
+    if filename_filter:
+        logs = [log for log in logs if filename_filter.lower() in log['filename'].lower()]
+    
+    # Apply pagination
+    total_logs = len(logs)
+    start = (page - 1) * per_page
+    end = start + per_page
+    paginated_logs = logs[start:end]
+    
+    # Return the rendered template with logs
+    return render_template(
+        "log.html",
+        logs=paginated_logs,
+        page=page,
+        per_page=per_page,
+        total_logs=total_logs,
+        log_type_filter=log_type_filter,
+        filename_filter=filename_filter
+    )
+    
+# Endpoint to display the trend chart
+@app.route('/logs/trend', methods=['GET'])
+def logs_trend_chart():
+    try:
+        logs_folder_path = 'logs'  # Replace with your actual folder path
+        df = parse_logs_to_dataframe(logs_folder_path)
+
+        if df.empty:
+            return "No valid logs available to display.", 404
+
+        # Group by time intervals and log type, then count occurrences
+        df['timestamp'] = pd.to_datetime(df['timestamp'])  # Ensure timestamp is in datetime format
+        df.set_index('timestamp', inplace=True)
+        grouped = df.groupby([pd.Grouper(freq='1H'), 'log_type']).size().unstack(fill_value=0)
+
+        # Create a Plotly figure
+        fig = go.Figure()
+
+        for log_type in grouped.columns:
+            fig.add_trace(go.Scatter(
+                x=grouped.index,
+                y=grouped[log_type],
+                mode='lines+markers',
+                name=log_type
+            ))
+
+        # Add chart details
+        fig.update_layout(
+            title="Log Type Trend Over Time",
+            xaxis_title="Time (Hourly)",
+            yaxis_title="Count",
+            legend_title="Log Type",
+            template="plotly_white",
+            hovermode="x unified"
+        )
+        # Convert the Plotly figure to JSON
+        graph_json = json.dumps(fig, cls=PlotlyJSONEncoder)
+    
+        return render_template("plotly_chart.html", graph_json=graph_json)
+    except Exception as e:
+        log_error(e)
+        return render_template("plotly_chart.html", graph_json=graph_json)
+
+
 @app.route('/endpoints')
 def list_endpoints():
     # Collect and organize endpoints
@@ -205,7 +293,7 @@ def list_endpoints():
     if output_format == "json" or "application/json" in request.headers.get("Accept", ""):
         return jsonify(metadata=metadata, endpoints=paginated_endpoints)
     elif output_format == "html":
-        return render_template_string(html_template, metadata=metadata, endpoints=paginated_endpoints)
+        return render_template("endpoint.html", metadata=metadata, endpoints=paginated_endpoints)
     else:  # Plain text fallback
         text_output = "Available Endpoints:\n"
         for e in paginated_endpoints:
