@@ -150,7 +150,6 @@ Map<String, dynamic> SpotifyPlay = {
   "iconSize" : 36,
 };
 
-
 Map<String, dynamic> AppleMusic = {
   "backgroundColor": "Color(0xFFD71E1E)", // Spotify Green
   "textColor": "Color(0xFFFFFFFF)",       // White
