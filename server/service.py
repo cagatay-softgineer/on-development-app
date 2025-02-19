@@ -15,10 +15,9 @@ try:
     from spotify import spotify_bp
     from profile import profile_bp
     from spotify_micro_service import SpotifyMicroService_bp
-    from dotenv import load_dotenv
     import pandas as pd
     import argparse
-    import os
+    from config import settings
     import json
     import plotly.graph_objects as go
     from plotly.utils import PlotlyJSONEncoder
@@ -28,10 +27,9 @@ except Exception as e:
 
 gui = CmdGUI()
 
-load_dotenv()
 app = Flask(__name__)
 
-app.config['JWT_SECRET_KEY'] = os.getenv("JWT_SECRET_KEY")
+app.config['JWT_SECRET_KEY'] = settings.jwt_secret_key
 app.config['SWAGGER_URL'] = '/api/docs'
 app.config['API_URL'] = '/static/swagger.json'
 

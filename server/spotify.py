@@ -2,12 +2,13 @@ from flask import Blueprint, request, jsonify, redirect, render_template, escape
 from flask_limiter import Limiter
 from flask_cors import CORS
 from flask_limiter.util import get_remote_address
-from dotenv import load_dotenv
 import requests
-import os
 from utils import execute_query_with_logging, get_user_profile, fetch_user_playlists, get_access_token_from_db, get_email_username
+from models import UserIdRequest  # Example model for endpoints needing a user_id
+from pydantic import ValidationError
 import secrets
 import logging
+from config import settings
 
 spotify_bp = Blueprint('spotify', __name__)
 limiter = Limiter(key_func=get_remote_address)
@@ -39,10 +40,9 @@ logger.addHandler(console_handler)
 logger.propagate = False
 
 # Load environment variables
-load_dotenv()
-CLIENT_ID = os.getenv("AUTH_CLIENT_ID")
-CLIENT_SECRET = os.getenv("AUTH_CLIENT_SECRET")
-REDIRECT_URI = os.getenv("AUTH_REDIRECT_URI")
+CLIENT_ID = settings.spotify_client_id
+CLIENT_SECRET = settings.spotify_client_secret
+REDIRECT_URI = settings.auth_redirect_uri
 
 USER_EMAIL = ""
 
@@ -72,41 +72,49 @@ def login(user_id):
     logger.info("Redirecting to Spotify authorization URL.")
     return redirect(auth_url)
 
-# Example endpoint to fetch playlists
-@spotify_bp.route('/user_profile', methods=['POST','GET'])
+@spotify_bp.route('/user_profile', methods=['POST'])
 def get_user():
-    data = request.json
-    user_id = data.get('user_id')
-    return get_user_profile(escape(user_id))
-    
+    try:
+        payload = UserIdRequest.parse_obj(request.get_json())
+    except ValidationError as ve:
+        return jsonify({"error": ve.errors()}), 400
 
-@spotify_bp.route('/playlists', methods=['POST','GET'])
+    return get_user_profile(escape(payload.user_id))
+
+@spotify_bp.route('/playlists', methods=['POST'])
 def get_playlists():
-    data = request.json
-    user_email = data.get('user_email')
-    query = "SELECT user_id FROM users WHERE email = ?"
-    rows = execute_query_with_logging(query, "primary", params=(user_email), fetch=True)
+    try:
+        data = request.get_json()
+        # For this endpoint we expect a user_email
+        user_email = data.get('user_email')
+        if not user_email:
+            raise ValueError("user_email is required")
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
 
-    if rows:
-        user_id = rows[0][0][0]
-        
+    query = "SELECT user_id FROM users WHERE email = ?"
+    rows = execute_query_with_logging(query, "primary", params=(user_email,), fetch=True)
+    user_id = rows[0][0][0] if rows else None
     
     playlists_json = fetch_user_playlists(user_id)
     return jsonify(playlists_json), 200
 
-
-@spotify_bp.route('/token', methods=['POST','GET'])
+@spotify_bp.route('/token', methods=['POST'])
 def get_token():
-    data = request.json
-    user_email = data.get('user_email')
+    try:
+        data = request.get_json()
+        user_email = data.get('user_email')
+        if not user_email:
+            raise ValueError("user_email is required")
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+
     query = "SELECT user_id FROM users WHERE email = ?"
-    rows = execute_query_with_logging(query, "primary", params=(user_email), fetch=True)
-    
-    if rows:
-        user_id = rows[0][0][0]
+    rows = execute_query_with_logging(query, "primary", params=(user_email,), fetch=True)
+    user_id = rows[0][0][0] if rows else None
 
     token, _ = get_access_token_from_db(user_id)
-    return jsonify({"token":token}), 200
+    return jsonify({"token": token}), 200
 
 @spotify_bp.route('/callback', methods=['GET'])
 def callback():

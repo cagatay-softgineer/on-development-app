@@ -54,7 +54,7 @@ class _RegisterPageState extends State<RegisterPage> {
     } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('An error occurred during login')),
+          const SnackBar(content: Text('An error occurred during register')),
         );
       }
       return false;

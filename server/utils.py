@@ -1,13 +1,14 @@
 import pyodbc
 import logging
-from dotenv import load_dotenv
 import os
 from error_handling import log_error
 from cmd_gui_kit import CmdGUI
 import requests
 import base64
 from datetime import datetime
+import hashlib
 import pandas as pd
+from config import settings
 
 # Initialize CmdGUI for visual feedback
 gui = CmdGUI()
@@ -35,18 +36,17 @@ logger.addHandler(console_handler)
 
 logger.propagate = False
 
-load_dotenv()
+PRIMARY_SQL_SERVER = settings.sql_server_host
+PRIMARY_SQL_SERVER_PORT = settings.sql_server_port
+PRIMARY_SQL_DATABASE = settings.sql_server_database
+PRIMARY_SQL_USER = settings.sql_server_user
+PRIMARY_SQL_PASSWORD = settings.sql_server_password
 
-PRIMARY_SQL_SERVER = os.getenv("SQL_SERVER_HOST")
-PRIMARY_SQL_SERVER_PORT = os.getenv("SQL_SERVER_PORT")
-PRIMARY_SQL_DATABASE = os.getenv("SQL_SERVER_DATABASE")
-PRIMARY_SQL_USER = os.getenv("SQL_SERVER_USER")
-PRIMARY_SQL_PASSWORD = os.getenv("SQL_SERVER_PASSWORD")
+SECONDARY_SQL_DATABASE = settings.secondary_sql_database
 
-SECONDARY_SQL_DATABASE = os.getenv("SSQL_SERVER_DATABASE")
+SPOTIFY_CLIENT_ID = settings.spotify_client_id
+SPOTIFY_CLIENT_SECRET = settings.spotify_client_secret
 
-SPOTIFY_CLIENT_ID = os.getenv("SPOTIFY_CLIENT_ID")
-SPOTIFY_CLIENT_SECRET = os.getenv("SPOTIFY_CLIENT_SECRET")
 
 # Store connection strings in a dictionary
 DB_CONNECTION_STRINGS = {
@@ -68,6 +68,11 @@ def get_db_connection(db_name):
         logger.error(f"Database connection failed: {e}")
         raise log_error(pyodbc.Error("Database connection failed !"))
 
+def obfuscate(column_name: str) -> str:
+    salt = settings.salt  # Replace with your own secret salt value.
+    hash_value = hashlib.sha256((salt + column_name).encode('utf-8')).hexdigest()
+    return f"{hash_value[:12].upper()}"
+
 def execute_query_with_logging(query, db_name, params=(), fetch=False):
     """
     Executes a query on the specified database with logging and visual feedback.
@@ -78,9 +83,17 @@ def execute_query_with_logging(query, db_name, params=(), fetch=False):
         conn = get_db_connection(db_name)
         cursor = conn.cursor()
 
-        # Log and display query execution
-        gui.log(f"Executing query: {query}", level="info")
-        logger.info(f"Executing query: {query}")
+        # Extract the query type from the query string.
+        # If the query is a valid non-empty string, the first word is assumed to be the command.
+        query_type = "UNKNOWN"
+        if query and isinstance(query, str):
+            query_type = query.split()[0].upper()
+
+        obfuscated_query_type = obfuscate(query_type)
+
+        # Log and display query execution using the obfuscated query type.
+        gui.log(f"Executing query of type: OP_{obfuscated_query_type}", level="info")
+        logger.info(f"Executing query of type: OP_{obfuscated_query_type}")
 
         # Ensure params are in the correct format if using TVP
         if isinstance(params, tuple) and len(params) == 1 and isinstance(params[0], (tuple, list)):
@@ -91,7 +104,8 @@ def execute_query_with_logging(query, db_name, params=(), fetch=False):
         if fetch:
             rows = cursor.fetchall()
             gui.status("Query executed successfully, fetching results...", status="success")
-            logger.info(f"Query succeeded. Columns: {[column[0] for column in cursor.description]}")
+            obfuscated_columns = [f"COL_{obfuscate(column[0])}" for column in cursor.description]
+            logger.info(f"Query succeeded. Columns: {obfuscated_columns}")
             return rows, cursor.description
 
         conn.commit()

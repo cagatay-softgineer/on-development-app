@@ -5,6 +5,8 @@ from flask_cors import CORS
 from flask_limiter.util import get_remote_address
 from utils import execute_query_with_logging, get_current_user_profile
 import logging
+from models import LinkedAppRequest  # Import the model
+from pydantic import ValidationError
 
 apps_bp = Blueprint('apps', __name__)
 limiter = Limiter(key_func=get_remote_address)
@@ -34,27 +36,24 @@ logger.addHandler(console_handler)
 
 logger.propagate = False
 
-@apps_bp.route('/check_linked_app', methods=['POST', 'GET'])
+@apps_bp.route('/check_linked_app', methods=['POST'])
 def check_linked_app():
-    data = request.json
-    app_name = data.get('app_name')
-    user_email = data.get('user_email')
+    try:
+        payload = LinkedAppRequest.parse_obj(request.get_json())
+    except ValidationError as ve:
+        return jsonify({"error": ve.errors()}), 400
+
+    # Use validated data
+    app_name = payload.app_name
+    user_email = payload.user_email
 
     query = "SELECT user_id FROM users WHERE email = ?"
-    rows = execute_query_with_logging(query, "primary", params=(user_email), fetch=True)
+    rows = execute_query_with_logging(query, "primary", params=(user_email,), fetch=True)
+    user_id = rows[0][0][0] if rows and rows[0] != [] else False
 
-    if rows[0] != []:
-        user_id = rows[0][0][0]
-    else:
-        user_id = False
-    
     query = "SELECT app_id FROM Apps WHERE app_name = ?"
-    rows = execute_query_with_logging(query, "primary", params=(app_name), fetch=True)
-
-    if rows[0] != []:
-        app_id = rows[0][0][0]
-    else:
-        app_id = False
+    rows = execute_query_with_logging(query, "primary", params=(app_name,), fetch=True)
+    app_id = rows[0][0][0] if rows and rows[0] != [] else False
         
     if not app_id:
         return jsonify({"error": "All fields are required",
@@ -69,57 +68,52 @@ def check_linked_app():
             access_token 
         FROM UserLinkedApps 
         WHERE app_id = ? AND user_id = ?
-
     """
     
     rows = execute_query_with_logging(query, "primary", (app_id, user_id, app_id, user_id), fetch=True)
-    if rows[0] != []:
-        user_linked = rows[0][0][0]  # First column is the count (user_linked)
-        access_token = rows[0][0][1]  # Second column is the access_token
+    if rows and rows[0] != []:
+        user_linked = rows[0][0][0]
+        access_token = rows[0][0][1]
 
-        if user_linked > 0:  # If count is greater than 0, user is linked
+        if user_linked > 0:
             user_profile = get_current_user_profile(access_token, user_id)
             return jsonify({
                 "user_linked": True,
                 "user_profile": user_profile
             }), 200
 
-        # User is not linked, return only the user_linked status
         return jsonify({
             "user_linked": False,
             "user_profile": None
         }), 200
 
-    # No rows found, return an appropriate error response
     return jsonify({
         "error": "User not linked or not found",
         "user_linked": False,
         "user_profile": None
     }), 404
 
-@apps_bp.route('/unlink_app', methods=['POST', 'GET'])
+@apps_bp.route('/unlink_app', methods=['POST'])
 def unlink_app():
-    data = request.json
-    app_name = data.get('app_name')
-    user_email = data.get('user_email')
+    try:
+        payload = LinkedAppRequest.parse_obj(request.get_json())
+    except ValidationError as ve:
+        return jsonify({"error": ve.errors()}), 400
+
+    app_name = payload.app_name
+    user_email = payload.user_email
 
     query = "SELECT user_id FROM users WHERE email = ?"
-    rows = execute_query_with_logging(query, "primary", params=(user_email), fetch=True)
-
-    if rows:
-        user_id = rows[0][0][0]
+    rows = execute_query_with_logging(query, "primary", params=(user_email,), fetch=True)
+    user_id = rows[0][0][0] if rows else None
     
     query = "SELECT app_id FROM Apps WHERE app_name = ?"
-    rows = execute_query_with_logging(query, "primary", params=(app_name), fetch=True)
-
-    if rows:
-        app_id = rows[0][0][0]
+    rows = execute_query_with_logging(query, "primary", params=(app_name,), fetch=True)
+    app_id = rows[0][0][0] if rows else None
         
     if not app_id:
         return jsonify({"error": "All fields are required"}), 400
 
-    query = "Delete FROM UserLinkedApps WHERE app_id = ? and user_id = ?"
-    
+    query = "DELETE FROM UserLinkedApps WHERE app_id = ? and user_id = ?"
     execute_query_with_logging(query, "primary", (app_id, user_id))
-
     return jsonify({"message": "App Unlinked!"}), 201

@@ -1,16 +1,15 @@
 from flask import Blueprint, request, jsonify
 from utils import make_request
 from error_handling import log_error
-from dotenv import load_dotenv
-import os
+from config import settings
 import logging
 from cmd_gui_kit import CmdGUI
 import sys
+from models import PlaylistDurationRequest  # Import the model
+from pydantic import ValidationError
 
 # Initialize CmdGUI for visual feedback
 gui = CmdGUI()
-
-load_dotenv()
 
 LOG_FILE = "logs/spotify_micro_service.log"
 logger = logging.getLogger("SpotifyMicroService")
@@ -42,58 +41,46 @@ DEBUG_MODE = '--debug' in sys.argv
 WARNING_MODE = '--warning' in sys.argv
 ERROR_MODE = '--error' in sys.argv
 
-load_dotenv()
-
-DEBUG_MODE = os.getenv("DEBUG_MODE")
+DEBUG_MODE = settings.debug_mode
 if DEBUG_MODE == "True":
     DEBUG_MODE = True
     
 
-@SpotifyMicroService_bp.route("/playlist_duration", methods=["POST","GET"])
+@SpotifyMicroService_bp.route("/playlist_duration", methods=["POST"])
 def get_playlist_duration():
-    """
-    Returns the total duration of the specified playlist directly from the Spotify API.
-    Example usage: GET /playlist_duration?playlist_id=123
-    """
-    # Extract playlist ID from request
-    data = request.json
-    playlist_id = data.get('playlist_id')
-    if not playlist_id:
-        return jsonify({"error": "Missing playlist_id"}), 400
+    try:
+        payload = PlaylistDurationRequest.parse_obj(request.get_json())
+    except ValidationError as ve:
+        return jsonify({"error": ve.errors()}), 400
 
-    # Fetch playlist tracks from Spotify API
+    playlist_id = payload.playlist_id
+    # (The remainder of the logic remains similar.)
     url_template = "https://api.spotify.com/v1/playlists/{playlist_id}/tracks?limit=50&offset={offset}"
     offset = 0
     total_duration_ms = 0
 
     try:
         while True:
-            # Request tracks in batches
             url = url_template.format(playlist_id=playlist_id, offset=offset)
             response = make_request(url)
-
             if not response or response.status_code != 200:
-                logger.error(f"Failed to fetch playlist tracks. Response: {response.text if response else 'None'}")
+                logging.error(f"Failed to fetch playlist tracks. Response: {response.text if response else 'None'}")
                 return jsonify({"error": "Failed to fetch playlist tracks"}), 500
 
-            # Parse response
             data = response.json()
             items = data.get('items', [])
             if not items:
-                break  # No more tracks to process
+                break
 
-            # Sum the duration of all tracks in the current batch
             for item in items:
                 track = item.get('track')
                 if track and 'duration_ms' in track:
                     total_duration_ms += track['duration_ms']
 
-            # Check if there are more tracks
             if len(items) < 50:
-                break  # No more tracks to fetch
+                break
             offset += 50
 
-        # Convert total duration to hours, minutes, and seconds
         total_seconds = total_duration_ms // 1000
         hours = total_seconds // 3600
         minutes = (total_seconds % 3600) // 60
@@ -108,5 +95,5 @@ def get_playlist_duration():
 
     except Exception as e:
         log_error(e)
-        logger.error(f"Error occurred while fetching playlist duration: {str(e)}")
+        logging.error(f"Error occurred while fetching playlist duration: {str(e)}")
         return jsonify({"error": "An internal error occurred"}), 500

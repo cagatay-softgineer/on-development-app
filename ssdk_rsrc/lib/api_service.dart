@@ -342,9 +342,7 @@ class MainAPI {
           },
         ),
       );
-
-      //print('Response Data: ${response.data}');
-
+  
       if (response.data is Map<String, dynamic>) {
         return response.data;
       } else {
@@ -352,6 +350,7 @@ class MainAPI {
             'Unexpected response type: ${response.data.runtimeType}');
       }
     } on DioException catch (e) {
+      // Handle timeouts separately.
       if (e.type == DioExceptionType.connectionTimeout) {
         return {
           'error': true,
@@ -363,11 +362,9 @@ class MainAPI {
           'error': true,
           'message': 'Server took too long to respond. Please try again later.',
         };
-      } else if (e.response != null) {
-        return {
-          'error': true,
-          'message': e.response?.data['message'] ?? 'Login failed',
-        };
+      } else if (e.response != null && e.response?.data is Map<String, dynamic>) {
+        // Return the full error response from the server.
+        return e.response!.data;
       } else {
         return {
           'error': true,
