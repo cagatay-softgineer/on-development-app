@@ -5,7 +5,7 @@ import 'package:ssdk_rsrc/widgets/custom_button.dart';
 import 'authlib.dart';
 import 'models/playlist.dart';
 import 'styles/button_styles.dart';
-import 'player_control_page.dart';
+// import 'player_control_page.dart';
 
 class PlaylistPage extends StatefulWidget {
   const PlaylistPage({super.key});
@@ -314,7 +314,7 @@ Widget build(BuildContext context) {
                                     // ignore: unnecessary_null_comparison
                                     if (response != null) {
                                       setState(() {
-                                        playlistDur = response['formatted_duration'];
+                                        //playlistDur = response['formatted_duration'];
                                       });
                                       print("Formatted Duration: ${response['formatted_duration']}");
                                       print("Playlist ID: ${response['playlist_id']}");
@@ -331,6 +331,9 @@ Widget build(BuildContext context) {
                                   print(response);
                                   final deviceId = extractFirstDeviceId(response);
                                   print(deviceId);
+                                  print(playlist.playlistId);
+                                  print(userID);
+                                  print(deviceId);
                                   if (response["status_code"] == 200 && !response["error"]) {
                                     await spotifyAPI.playPlaylist(
                                         playlist.playlistId, userID, deviceId);
@@ -339,8 +342,8 @@ Widget build(BuildContext context) {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(content: Text("Playback started!")),
                                     );
-                                    Navigator.pushNamedAndRemoveUntil(
-                                          context, '/main', (Route<dynamic> route) => false);
+                                    Navigator.pushNamed(
+                                          context, '/player', );
                                   } else {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(content: Text("No suitable devices found.")),

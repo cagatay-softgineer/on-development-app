@@ -1,0 +1,503 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+      "title": "Pomodro Backend API",
+      "version": "1.0.0",
+      "description": "API documentation for the Pomodro Backend Server."
+    },
+    "servers": [
+      {
+        "url": "http://localhost:8080",
+        "description": "Local server"
+      }
+    ],
+    "paths": {
+      "/.well-known/assetlinks.json": {
+        "get": {
+          "summary": "Provides asset links for verifying app association with a domain.",
+          "responses": {
+            "200": {
+              "description": "Asset links returned successfully.",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": { "type": "object" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/apps/check_linked_app": {
+        "post": {
+          "summary": "Checks if a specific app is linked to the current user.",
+          "description": "Checks if a specific app is linked to the current user/account using provided app_name and user_email.",
+          "requestBody": {
+            "description": "JSON payload with app_name and user_email",
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "app_name": { "type": "string" },
+                    "user_email": { "type": "string", "format": "email" }
+                  },
+                  "required": [ "app_name", "user_email" ]
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": { "description": "User linked status returned." },
+            "400": { "description": "Bad request." }
+          }
+        },
+        "get": {
+          "summary": "Checks if a specific app is linked (GET version).",
+          "responses": {
+            "200": { "description": "User linked status returned." },
+            "400": { "description": "Bad request." }
+          }
+        }
+      },
+      "/apps/healthcheck": {
+        "get": {
+          "summary": "Health check endpoint for the apps service.",
+          "responses": {
+            "200": { "description": "Apps service is running." }
+          }
+        }
+      },
+      "/apps/unlink_app": {
+        "post": {
+          "summary": "Unlinks a previously linked app from the current user.",
+          "description": "Unlinks a linked app using provided app_name and user_email.",
+          "requestBody": {
+            "description": "JSON payload with app_name and user_email",
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "app_name": { "type": "string" },
+                    "user_email": { "type": "string", "format": "email" }
+                  },
+                  "required": [ "app_name", "user_email" ]
+                }
+              }
+            }
+          },
+          "responses": {
+            "201": { "description": "App unlinked successfully." },
+            "400": { "description": "Bad request." }
+          }
+        },
+        "get": {
+          "summary": "Unlinks a previously linked app (GET version).",
+          "responses": {
+            "201": { "description": "App unlinked successfully." },
+            "400": { "description": "Bad request." }
+          }
+        }
+      },
+      "/auth/healthcheck": {
+        "get": {
+          "summary": "Health check endpoint for the authentication service.",
+          "responses": {
+            "200": { "description": "Auth service is running." }
+          }
+        }
+      },
+      "/auth/login": {
+        "post": {
+          "summary": "Handles user login requests with necessary credentials.",
+          "description": "Accepts email and password, and returns an access token along with the user ID if credentials are valid.",
+          "requestBody": {
+            "description": "User credentials",
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "email": { "type": "string", "format": "email" },
+                    "password": { "type": "string", "format": "password" }
+                  },
+                  "required": [ "email", "password" ]
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": { "description": "Login successful, returns access token and user ID." },
+            "401": { "description": "Invalid email or password." }
+          }
+        },
+        "get": {
+          "summary": "Login endpoint (GET version).",
+          "responses": {
+            "200": { "description": "Login endpoint accessed." }
+          }
+        }
+      },
+      "/auth/register": {
+        "post": {
+          "summary": "Handles user registration by creating a new account.",
+          "description": "Registers a new user with email and password.",
+          "requestBody": {
+            "description": "User registration data",
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "email": { "type": "string", "format": "email" },
+                    "password": { "type": "string", "format": "password" }
+                  },
+                  "required": [ "email", "password" ]
+                }
+              }
+            }
+          },
+          "responses": {
+            "201": { "description": "User registered successfully." },
+            "400": { "description": "Bad request." }
+          }
+        },
+        "get": {
+          "summary": "Register endpoint (GET version).",
+          "responses": {
+            "200": { "description": "Register endpoint accessed." }
+          }
+        }
+      },
+      "/endpoints": {
+        "get": {
+          "summary": "Lists all available endpoints in the application.",
+          "responses": {
+            "200": { "description": "List of endpoints returned." }
+          }
+        }
+      },
+      "/error_stats": {
+        "get": {
+          "summary": "Displays error statistics for the application.",
+          "responses": {
+            "200": { "description": "Error statistics returned." }
+          }
+        }
+      },
+      "/healthcheck": {
+        "get": {
+          "summary": "General health check endpoint for the main application.",
+          "responses": {
+            "200": { "description": "Application is healthy." }
+          }
+        },
+        "post": {
+          "summary": "General health check endpoint (POST version).",
+          "responses": {
+            "200": { "description": "Application is healthy." }
+          }
+        }
+      },
+      "/profile/healthcheck": {
+        "get": {
+          "summary": "Health check endpoint for the profile service.",
+          "responses": {
+            "200": { "description": "Profile service is running." }
+          }
+        }
+      },
+      "/profile/view": {
+        "get": {
+          "summary": "Displays the profile of the current user.",
+          "description": "Returns user profile details. This endpoint requires a valid JWT token.",
+          "security": [
+            {
+              "JWT": []
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "User profile returned successfully.",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "first_name": { "type": "string" },
+                      "last_name": { "type": "string" },
+                      "avatar_url": { "type": "string", "format": "uri" },
+                      "bio": { "type": "string" }
+                    }
+                  }
+                }
+              }
+            },
+            "404": { "description": "User not found." }
+          }
+        }
+      },
+      "/spotify-micro-service/healthcheck": {
+        "get": {
+          "summary": "Health check endpoint for the Spotify microservice.",
+          "responses": {
+            "200": { "description": "Spotify microservice is running." }
+          }
+        }
+      },
+      "/spotify-micro-service/playlist_duration": {
+        "post": {
+          "summary": "Calculates the total duration of a playlist using the Spotify microservice.",
+          "description": "Accepts a playlist_id and returns the total duration in milliseconds and a formatted string (HH:MM:SS).",
+          "requestBody": {
+            "description": "JSON payload with the playlist_id",
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "playlist_id": { "type": "string" }
+                  },
+                  "required": [ "playlist_id" ]
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Playlist duration calculated successfully.",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "playlist_id": { "type": "string" },
+                      "total_duration_ms": { "type": "integer" },
+                      "formatted_duration": { "type": "string" }
+                    }
+                  }
+                }
+              }
+            },
+            "400": { "description": "Missing playlist_id or bad request." },
+            "500": { "description": "Internal server error." }
+          }
+        },
+        "get": {
+          "summary": "Calculates the playlist duration (GET version).",
+          "responses": {
+            "200": { "description": "Playlist duration calculated." },
+            "400": { "description": "Bad request." }
+          }
+        }
+      },
+      "/spotify/callback": {
+        "get": {
+          "summary": "Callback endpoint for Spotify's OAuth process.",
+          "description": "Handles token redirection from Spotify. Accepts an optional 'code' query parameter.",
+          "parameters": [
+            {
+              "name": "code",
+              "in": "query",
+              "description": "Authorization code returned by Spotify",
+              "required": false,
+              "schema": { "type": "string" }
+            }
+          ],
+          "responses": {
+            "200": { "description": "Access token obtained and processed." },
+            "400": { "description": "Authorization code missing or error occurred." }
+          }
+        }
+      },
+      "/spotify/healthcheck": {
+        "get": {
+          "summary": "Health check endpoint for the Spotify service integration.",
+          "responses": {
+            "200": { "description": "Spotify service is running." }
+          }
+        }
+      },
+      "/spotify/login/{user_id}": {
+        "get": {
+          "summary": "Logs in a specific Spotify user by their user ID.",
+          "description": "Redirects to Spotify's authorization URL for the given user_id.",
+          "parameters": [
+            {
+              "name": "user_id",
+              "in": "path",
+              "required": true,
+              "description": "The Spotify user ID",
+              "schema": { "type": "string" }
+            }
+          ],
+          "responses": {
+            "200": { "description": "Redirects to Spotify authorization." }
+          }
+        }
+      },
+      "/spotify/playlists": {
+        "post": {
+          "summary": "Retrieves playlists associated with the logged-in Spotify user.",
+          "description": "Accepts a JSON payload with user_email to retrieve the user's playlists.",
+          "requestBody": {
+            "description": "JSON payload with user_email",
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "user_email": { "type": "string", "format": "email" }
+                  },
+                  "required": [ "user_email" ]
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": { "description": "Playlists retrieved successfully." },
+            "400": { "description": "Bad request." }
+          }
+        },
+        "get": {
+          "summary": "Retrieves playlists (GET version).",
+          "responses": {
+            "200": { "description": "Playlists retrieved successfully." },
+            "400": { "description": "Bad request." }
+          }
+        }
+      },
+      "/spotify/token": {
+        "post": {
+          "summary": "Handles token requests for Spotify API authentication.",
+          "description": "Accepts a JSON payload with user_email and returns an access token.",
+          "requestBody": {
+            "description": "JSON payload with user_email",
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "user_email": { "type": "string", "format": "email" }
+                  },
+                  "required": [ "user_email" ]
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": { "description": "Token returned successfully." },
+            "400": { "description": "Bad request." }
+          }
+        },
+        "get": {
+          "summary": "Handles token requests (GET version).",
+          "responses": {
+            "200": { "description": "Token returned successfully." },
+            "400": { "description": "Bad request." }
+          }
+        }
+      },
+      "/spotify/user_profile": {
+        "post": {
+          "summary": "Retrieves profile information of the logged-in Spotify user.",
+          "description": "Accepts a JSON payload with user_id and returns the user's Spotify profile.",
+          "requestBody": {
+            "description": "JSON payload with user_id",
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "user_id": { "type": "string" }
+                  },
+                  "required": [ "user_id" ]
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": { "description": "User profile retrieved successfully." },
+            "400": { "description": "Bad request." }
+          }
+        },
+        "get": {
+          "summary": "Retrieves user profile (GET version).",
+          "responses": {
+            "200": { "description": "User profile retrieved successfully." },
+            "400": { "description": "Bad request." }
+          }
+        }
+      },
+      "/logs": {
+        "get": {
+          "summary": "Visualizes logs with filtering and pagination.",
+          "description": "Optional query parameters: log_type, filename, page, per_page.",
+          "parameters": [
+            {
+              "name": "log_type",
+              "in": "query",
+              "schema": { "type": "string" },
+              "description": "Filter logs by type"
+            },
+            {
+              "name": "filename",
+              "in": "query",
+              "schema": { "type": "string" },
+              "description": "Filter logs by filename"
+            },
+            {
+              "name": "page",
+              "in": "query",
+              "schema": { "type": "integer" },
+              "description": "Page number for pagination"
+            },
+            {
+              "name": "per_page",
+              "in": "query",
+              "schema": { "type": "integer" },
+              "description": "Number of logs per page"
+            }
+          ],
+          "responses": {
+            "200": { "description": "Logs returned successfully." }
+          }
+        }
+      },
+      "/logs/trend": {
+        "get": {
+          "summary": "Displays the trend chart of logs.",
+          "responses": {
+            "200": { "description": "Trend chart displayed successfully." },
+            "404": { "description": "No valid logs available." }
+          }
+        }
+      }
+    },
+    "components": {
+      "securitySchemes": {
+        "JWT": {
+          "type": "http",
+          "scheme": "bearer",
+          "bearerFormat": "JWT"
+        }
+      }
+    },
+    "security": [
+      {
+        "JWT": []
+      }
+    ]
+  }
+  

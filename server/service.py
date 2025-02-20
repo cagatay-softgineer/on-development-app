@@ -148,7 +148,7 @@ def appmanifest():
               "namespace": "android_app",
               "package_name": "com.example.ssdk_rsrc",
               "sha256_cert_fingerprints": [
-                "69:2D:1C:12:41:FD:2F:79:54:58:5B:CE:AE:3A:6F:EE:65:31:F2:38:9A:90:FC:CE:BF:67:3D:7F:08:34:70:05"
+                "49:B0:67:2F:35:2D:6C:16:87:D9:5F:E2:4F:6A:BF:45:CA:67:41:09:11:74:54:F8:0F:56:FF:CB:C4:3F:2F:A4"
                 ]
             }
             }

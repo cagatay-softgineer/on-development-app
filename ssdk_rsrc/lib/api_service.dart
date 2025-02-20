@@ -166,11 +166,11 @@ class SpotifyAPI {
         // Successfully started playback
         return true;
       } else {
-        print('Failed to set Repeat Mode: ${response.statusCode}');
+        print('Failed to set Shuffle Mode: ${response.statusCode}');
         return false;
       }
     } catch (e) {
-      print('Error setting Repeat Mode: $e');
+      print('Error setting Shuffle Mode: $e');
       return false;
     }
   }
@@ -254,6 +254,161 @@ class SpotifyAPI {
     } catch (e) {
       print('Error playing playlist: $e');
       return false;
+    }
+  }
+
+  Future<bool> skipToNext(String? userId, String? deviceId) async {
+    final token = await mainAPI.getToken(userId);
+    try {
+      final response = await _dio.post(
+        'v1/me/player/next?device_id=$deviceId',
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token', // JWT token ekle
+          },
+        ),
+        );
+
+      if (response.statusCode == 204) {
+        // Successfully started playback
+        return true;
+      } else {
+        print('Failed to play playlist: ${response.statusCode}');
+        return false;
+      }
+    } catch (e) {
+      print('Error playing playlist: $e');
+      return false;
+    }
+  }
+
+  Future<bool> skipToPrevious(String? userId, String? deviceId) async {
+      final token = await mainAPI.getToken(userId);
+      try {
+        final response = await _dio.post(
+          'v1/me/player/previous?device_id=$deviceId',
+          options: Options(
+            headers: {
+              'Authorization': 'Bearer $token', // JWT token ekle
+            },
+          ),
+          );
+
+        if (response.statusCode == 204) {
+          // Successfully started playback
+          return true;
+        } else {
+          print('Failed to play playlist: ${response.statusCode}');
+          return false;
+        }
+      } catch (e) {
+        print('Error playing playlist: $e');
+        return false;
+      }
+    }
+
+  Future<bool> seekToPosition(String? userId, String? deviceId, String? positionMs) async {
+      final token = await mainAPI.getToken(userId);
+      try {
+        final response = await _dio.put(
+          'v1/me/player/seek?position_ms=$positionMs&device_id=$deviceId',
+          options: Options(
+            headers: {
+              'Authorization': 'Bearer $token', // JWT token ekle
+            },
+          ),
+          );
+
+        if (response.statusCode == 204) {
+          // Successfully started playback
+          return true;
+        } else {
+          print('Failed to play playlist: ${response.statusCode}');
+          return false;
+        }
+      } catch (e) {
+        print('Error playing playlist: $e');
+        return false;
+      }
+    }
+
+  Future<Map<String, dynamic>> getPlayer(String? userId) async {
+    final token = await mainAPI.getToken(userId);
+    try {
+      final response = await _dio.get(
+        'v1/me/player',
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token', // JWT token added
+          },
+        ),
+      );
+
+      if (response.statusCode == 200 && response.data is Map<String, dynamic>) {
+        // Parse the response data
+        final Map<String, dynamic> result = Map<String, dynamic>.from(response.data);
+
+        // Include the status code in the response
+        result['status_code'] = response.statusCode;
+        result['error'] = false;
+        return result;
+      } else {
+        return {
+          'error': true,
+          'message': 'Unexpected response format.',
+          'status_code': 400,
+        };
+      }
+    } on DioException catch (e) {
+      // Enhanced error logging
+      if (e.response != null) {
+        print('Dio Error Response: ${e.response?.data}');
+        print('Dio Error Status Code: ${e.response?.statusCode}');
+      } else {
+        print('Dio Error Message: ${e.message}');
+      }
+
+      if (e.type == DioExceptionType.connectionTimeout) {
+        return {
+          'error': true,
+          'message': 'Connection timed out. Please check your internet connection.',
+          'status_code': e.response?.statusCode,
+        };
+      } else if (e.type == DioExceptionType.receiveTimeout) {
+        return {
+          'error': true,
+          'message': 'Server took too long to respond. Please try again later.',
+          'status_code': e.response?.statusCode,
+        };
+      } else if (e.type == DioExceptionType.badResponse) {
+        // Handle bad responses (non-2xx status codes)
+        String errorMessage = 'Failed to retrieve player information.';
+        if (e.response?.data != null && e.response?.data is Map<String, dynamic>) {
+          if (e.response!.data.containsKey('error')) {
+            errorMessage = e.response!.data['error']['message'] ?? errorMessage;
+          }
+        }
+
+        return {
+          'error': true,
+          'message':
+              'Failed to retrieve player information. Status Code: ${e.response?.statusCode}, Message: $errorMessage',
+          'status_code': e.response?.statusCode,
+        };
+      } else {
+        return {
+          'error': true,
+          'message': 'An unexpected error occurred. Please try again.',
+          'status_code': e.response?.statusCode,
+        };
+      }
+    } catch (e) {
+      print('General Error: $e');
+      return {
+        'error': true,
+        'message': 'An unexpected error occurred. Please try again.',
+        'status_code': null,
+      };
     }
   }
 

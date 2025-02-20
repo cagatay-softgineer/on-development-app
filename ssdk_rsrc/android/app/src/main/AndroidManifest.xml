@@ -1,10 +1,10 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.ssdk_rsrc">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.example.ssdk_rsrc">
     <uses-permission android:name="android.permission.INTERNET" />
     <application
         android:label="ssdk_rsrc"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/ic_launcher"
+        android:enableOnBackInvokedCallback="true">
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -29,7 +29,7 @@
                     <data
                         android:scheme="https"
                         android:host="api-sync-branch.yggbranch.dev"
-                        android:pathPrefix="/open" />
+                        android:pathPrefix="/open"/>
                 </intent-filter>
             <intent-filter>
                     <action android:name="android.intent.action.MAIN" />
