@@ -13,7 +13,7 @@ try:
     from auth import auth_bp
     from apps import apps_bp
     from spotify import spotify_bp
-    from profile import profile_bp
+    from user_profile import profile_bp
     from spotify_micro_service import SpotifyMicroService_bp
     from lyrics import lyrics_bp
     import pandas as pd
