@@ -22,7 +22,7 @@ try:
     import json
     import plotly.graph_objects as go
     from plotly.utils import PlotlyJSONEncoder
-    from IPython.core.display import display  # This import may fail  # noqa: F401
+    #from IPython.core.display import display  # This import may fail  # noqa: F401
 except Exception as e:
     log_error(e)  # Log the error
 
