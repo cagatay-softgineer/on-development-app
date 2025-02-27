@@ -139,6 +139,7 @@ class _PlayerControlPageState extends State<PlayerControlPage> {
           isPlaying: isPlaying,
           repeatMode: _currentRepeatMode,
           shuffleMode: _currentShuffleMode,
+          isDynamic: true,
           onPlayPausePressed: () async {
             final response = await spotifyAPI.getDevices(userID);
             final String deviceId = extractFirstDeviceId(response);
@@ -211,6 +212,7 @@ class _PlayerControlPageState extends State<PlayerControlPage> {
           isPlaying: isPlaying,
           repeatMode: _currentRepeatMode,
           shuffleMode: _currentShuffleMode,
+          isDynamic: true,
           onPlayPausePressed: () async {
             final response = await spotifyAPI.getDevices(userID);
             final String deviceId = extractFirstDeviceId(response);

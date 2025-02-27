@@ -72,7 +72,7 @@ class AppCard extends StatelessWidget {
                         userDisplayName.isNotEmpty ? userDisplayName : "No Display Name",
                         textAlign: TextAlign.center, // Center-align text
                         style: const TextStyle(
-                          fontSize: 14,
+                          fontSize: 18,
                           fontFamily: "Montserrat",
                           fontWeight: FontWeight.bold,
                         ),

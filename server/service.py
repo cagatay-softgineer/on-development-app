@@ -15,6 +15,7 @@ try:
     from spotify import spotify_bp
     from profile import profile_bp
     from spotify_micro_service import SpotifyMicroService_bp
+    from lyrics import lyrics_bp
     import pandas as pd
     import argparse
     from config import settings
@@ -100,6 +101,18 @@ def apps_healthcheck():
     return jsonify({"status": "ok", "service": "Apps Service"}), 200
 
 # Add /healthcheck to each blueprint
+@lyrics_bp.before_request
+def log_lyrics_requests():
+    logger.info("Lyrics blueprint request received.")
+    
+# Add /healthcheck to each blueprint
+@lyrics_bp.route("/healthcheck", methods=["GET"])
+def lyrics_healthcheck():
+    gui.log("Lyrics Service healthcheck requested")
+    logger.info("Lyrics Service healthcheck requested")
+    return jsonify({"status": "ok", "service": "Lyrics Service"}), 200
+
+# Add /healthcheck to each blueprint
 @SpotifyMicroService_bp.before_request
 def log_spotify_micro_service_requests():  # noqa: F811
     logger.info("Spotify Micro Service blueprint request received.")
@@ -161,6 +174,7 @@ app.register_blueprint(apps_bp, url_prefix="/apps")
 app.register_blueprint(spotify_bp, url_prefix="/spotify")
 app.register_blueprint(profile_bp, url_prefix="/profile")
 app.register_blueprint(SpotifyMicroService_bp, url_prefix="/spotify-micro-service")
+app.register_blueprint(lyrics_bp, url_prefix="/lyrics")
 app.register_blueprint(swaggerui_blueprint, url_prefix=app.config['SWAGGER_URL'])
 
 

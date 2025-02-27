@@ -98,7 +98,7 @@ class _HomePageState extends State<HomePage> {
                 Navigator.pushNamed(
                     context, '/applinks');
               },
-              buttonParams: mainButtonParams,
+              buttonParams: linkedAppsButtonParams,
             ),
             SizedBox(height: 20), // Adds vertical spacing
             // CustomButton for Logout
@@ -110,7 +110,7 @@ class _HomePageState extends State<HomePage> {
                 Navigator.pushNamed(
                     context, '/playlists');
               },
-              buttonParams: mainButtonParams,
+              buttonParams: playlistButtonParams,
             ),
             SizedBox(height: 20), // Adds vertical spacing
             // CustomButton for Logout
@@ -123,6 +123,18 @@ class _HomePageState extends State<HomePage> {
                     context, '/player');
               },
               buttonParams: playerButtonParams,
+            ),
+            SizedBox(height: 20), // Adds vertical spacing
+            // CustomButton for Logout
+            CustomButton(
+              text: "Timer",
+              onPressed: () {
+                // Implement your logout logic here
+                // For example, navigate back to the login page
+                Navigator.pushNamed(
+                    context, '/timer');
+              },
+              buttonParams: timerButtonParams,
             ),
             // Add more widgets or buttons as needed
           ],

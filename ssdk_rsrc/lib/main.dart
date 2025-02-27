@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:app_links/app_links.dart' as deepLink;
+import 'package:ssdk_rsrc/timer_page.dart';
 import 'button_customizer_app.dart';
 import 'widgets/custom_button.dart'; // Import the CustomButton widget
 import 'styles/button_styles.dart';
@@ -86,6 +87,7 @@ class _MyAppState extends State<MyApp> {
         '/register_page': (context) => RegisterPage(),
         '/playlists': (context) => PlaylistPage(),
         '/player': (context) => PlayerControlPage(),
+        '/timer': (context) => TimerPage(),
       },
     );
   }

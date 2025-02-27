@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 enum PlayerLayoutType {
   compact,
   expanded,
+  focus,
 }
 
 class MusicPlayerWidget extends StatefulWidget {
@@ -14,6 +15,7 @@ class MusicPlayerWidget extends StatefulWidget {
   final Duration currentPosition;
   final Duration totalDuration;
   final bool isPlaying;
+  final bool isDynamic;
   final Future<void> Function() onPlayPausePressed;
   final Future<void> Function() onNextPressed;
   final Future<void> Function() onPreviousPressed;
@@ -37,6 +39,7 @@ class MusicPlayerWidget extends StatefulWidget {
     required this.onPlayPausePressed,
     required this.onNextPressed,
     required this.onPreviousPressed,
+    required this.isDynamic,
     this.onSeek,
     required this.repeatMode,
     required this.shuffleMode,
@@ -45,15 +48,21 @@ class MusicPlayerWidget extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _MusicPlayerWidgetState createState() => _MusicPlayerWidgetState();
+  MusicPlayerWidgetState createState() => MusicPlayerWidgetState();
+
+  static void switchLayout(PlayerLayoutType compact) {}
 }
 
-class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
+class MusicPlayerWidgetState extends State<MusicPlayerWidget> {
   late Duration _currentPosition;
   Timer? _progressTimer;
   // Local copies of repeat and shuffle mode.
   late String _repeatMode;
   late bool _shuffleMode;
+  late bool _isDynamic;
+
+  // Use a state variable to control the current layout.
+  late PlayerLayoutType _currentLayout;
 
   @override
   void initState() {
@@ -61,6 +70,8 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
     _currentPosition = widget.currentPosition;
     _repeatMode = widget.repeatMode;
     _shuffleMode = widget.shuffleMode;
+    _isDynamic = widget.isDynamic;
+    _currentLayout = widget.layoutType;
     if (widget.isPlaying) {
       _startProgressTimer();
     }
@@ -96,10 +107,7 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
     _progressTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() {
         _currentPosition += const Duration(seconds: 1);
-        // If the current position reaches or exceeds the total duration...
         if (_currentPosition >= widget.totalDuration) {
-          // If the player is still playing (i.e. next track started),
-          // reset _currentPosition to zero; otherwise, stop the timer.
           if (widget.isPlaying) {
             _currentPosition = Duration.zero;
           } else {
@@ -139,7 +147,6 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
         if (widget.onShufflePressed != null) {
           await widget.onShufflePressed!();
         }
-        // Parent is responsible for updating the shuffleMode.
       },
     );
   }
@@ -159,7 +166,6 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
         if (widget.onRepeatPressed != null) {
           await widget.onRepeatPressed!();
         }
-        // Parent is responsible for updating the repeatMode.
       },
     );
   }
@@ -198,17 +204,37 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    if (widget.layoutType == PlayerLayoutType.compact) {
+  /// Public method to switch layout from outside.
+  void switchLayout(PlayerLayoutType newLayout) {
+    setState(() {
+      _currentLayout = newLayout;
+    });
+  }
+
+  /// Internal helper to toggle/cycle through the layouts.
+  void _toggleLayout() {
+    setState(() {
+      if (_currentLayout == PlayerLayoutType.compact) {
+        _currentLayout = PlayerLayoutType.expanded;
+      } else if (_currentLayout == PlayerLayoutType.expanded) {
+        _currentLayout = PlayerLayoutType.focus;
+      } else {
+        _currentLayout = PlayerLayoutType.compact;
+      }
+    });
+  }
+
+  /// Build the UI based on the current layout type.
+  Widget _buildPlayerContent() {
+    if (_currentLayout == PlayerLayoutType.compact) {
       return Card(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
         child: Padding(
           padding: const EdgeInsets.all(12.0),
           child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start, // Top-left alignment.
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Album Art placed on top left.
+              // Album Art
               Container(
                 width: 50,
                 height: 50,
@@ -221,7 +247,7 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
                 ),
               ),
               const SizedBox(width: 12),
-              // Song info and controls.
+              // Song Info and Controls
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -264,7 +290,7 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
                     ),
                     Row(
                       children: [
-                        _buildShuffledButton(), // Left-aligned.
+                        _buildShuffledButton(),
                         Expanded(
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -275,7 +301,7 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
                             ],
                           ),
                         ),
-                        _buildRepeatButton(), // Right-aligned.
+                        _buildRepeatButton(),
                       ],
                     ),
                   ],
@@ -285,8 +311,7 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
           ),
         ),
       );
-    } else {
-      // Expanded layout.
+    } else if (_currentLayout == PlayerLayoutType.expanded) {
       return Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -337,7 +362,7 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
           ),
           Row(
             children: [
-              _buildShuffledButton(), // Left-aligned.
+              _buildShuffledButton(),
               Expanded(
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -348,11 +373,86 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
                   ],
                 ),
               ),
-              _buildRepeatButton(), // Right-aligned.
+              _buildRepeatButton(),
             ],
           ),
         ],
       );
+    } else {
+      // For the 'focus' layout (or any other layout), adjust as needed.
+      return Card(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+        child: Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Album Art
+              Container(
+                width: 150,
+                height: 150,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(4),
+                  image: DecorationImage(
+                    image: NetworkImage(widget.albumArtUrl),
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              // Song Info (simplified)
+              Expanded(
+                child: Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        widget.songTitle,
+                        style: const TextStyle(fontSize: 18,fontWeight: FontWeight.bold),
+                        textAlign: TextAlign.center, // Center-align the text
+                      ),
+                      Text(
+                        widget.artistName,
+                        style: const TextStyle(fontSize: 14,color: Colors.grey),
+                        textAlign: TextAlign.center, // Center-align the text
+                      ),
+                    ],
+                  ),
+                ),
+              )
+            ],
+          ),
+        ),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // Wrap the player content in a Stack so we can overlay a toggle button.
+    if (_isDynamic){
+      return Stack(
+        children: [
+          _buildPlayerContent(),
+          Positioned(
+            top: 0,
+            right: 0,
+            child: IconButton(
+              icon: const Icon(Icons.swap_horiz),
+              onPressed: _toggleLayout,
+              tooltip: 'Change Layout',
+            ),
+          ),
+        ],
+      );
+    }
+    else{
+      
+      return Stack(
+        children: [
+          _buildPlayerContent(),
+          ],
+        );
     }
   }
 }

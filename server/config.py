@@ -14,6 +14,7 @@ class Settings(BaseSettings):
     auth_redirect_uri: str = Field(..., env="AUTH_REDIRECT_URI")
     debug_mode: str = Field(default=False, env="DEBUG_MODE")
     salt: str = Field(..., env="SALT")
+    musixmatch_API_KEY: str = Field(..., env="MUSIXMATCH_API_KEY")
 
     class Config:
         env_file = ".env"
