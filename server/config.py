@@ -1,5 +1,6 @@
 # config.py
 from pydantic import BaseSettings, Field
+import secrets
 
 class Settings(BaseSettings):
     jwt_secret_key: str = Field(..., env="JWT_SECRET_KEY")
@@ -15,7 +16,9 @@ class Settings(BaseSettings):
     debug_mode: str = Field(default=False, env="DEBUG_MODE")
     salt: str = Field(..., env="SALT")
     musixmatch_API_KEY: str = Field(..., env="MUSIXMATCH_API_KEY")
-
+    GOOGLE_CLIENT_SECRET: str = Field(..., env="GOOGLE_CLIENT_SECRET")
+    SECRET_KEY: str = Field(default_factory=lambda: secrets.token_hex(16))
+    
     class Config:
         env_file = ".env"
         env_file_encoding = "utf-8"

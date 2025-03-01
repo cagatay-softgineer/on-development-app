@@ -195,3 +195,6 @@ cython_debug/
 *.pyc
 __pycache__
 .vscode
+*.apps.googleusercontent.com.json
+client_secret.json
+*.pem

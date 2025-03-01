@@ -3,7 +3,7 @@ from pydantic import BaseModel, EmailStr, constr
 
 class RegisterRequest(BaseModel):
     email: EmailStr
-    password: constr(min_length=6) # type: ignore
+    password: constr(min_length=6)  # type: ignore
 
 class LoginRequest(BaseModel):
     email: EmailStr
@@ -18,5 +18,3 @@ class UserIdRequest(BaseModel):
 
 class PlaylistDurationRequest(BaseModel):
     playlist_id: str
-
-# Add additional models as needed for other endpoints

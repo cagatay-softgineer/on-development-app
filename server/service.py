@@ -14,6 +14,7 @@ try:
     from apps import apps_bp
     from spotify import spotify_bp
     from user_profile import profile_bp
+    from google_api import google_bp
     from spotify_micro_service import SpotifyMicroService_bp
     from lyrics import lyrics_bp
     import pandas as pd
@@ -33,6 +34,8 @@ app = Flask(__name__)
 app.config['JWT_SECRET_KEY'] = settings.jwt_secret_key
 app.config['SWAGGER_URL'] = '/api/docs'
 app.config['API_URL'] = '/static/swagger.json'
+app.config['SECRET_KEY'] = settings.SECRET_KEY
+app.config['PREFERRED_URL_SCHEME'] = 'https'
 
 jwt = JWTManager(app)
 limiter = Limiter(app)
@@ -146,6 +149,16 @@ def profile_healthcheck():
     logger.info("Profile Service healthcheck requested")
     return jsonify({"status": "ok", "service": "Profile Service"}), 200
 
+@google_bp.before_request
+def log_google_requests():
+    logger.info("Google blueprint request received.")
+    
+@google_bp.route("/healthcheck", methods=["GET"])
+def google_healthcheck():
+    gui.log("Google Service healthcheck requested")
+    logger.info("Google Service healthcheck requested")
+    return jsonify({"status": "ok", "service": "Google Service"}), 200
+
 @app.route("/healthcheck", methods=['POST', 'GET'])
 def app_healthcheck():
     #gui.log("App healthcheck requested")
@@ -175,6 +188,7 @@ app.register_blueprint(spotify_bp, url_prefix="/spotify")
 app.register_blueprint(profile_bp, url_prefix="/profile")
 app.register_blueprint(SpotifyMicroService_bp, url_prefix="/spotify-micro-service")
 app.register_blueprint(lyrics_bp, url_prefix="/lyrics")
+app.register_blueprint(google_bp, url_prefix="/google")
 app.register_blueprint(swaggerui_blueprint, url_prefix=app.config['SWAGGER_URL'])
 
 
@@ -303,9 +317,9 @@ def list_endpoints():
     # Return format based on `Accept` header or query parameter
     output_format = request.args.get("format", "json").lower()
     if output_format == "json" or "application/json" in request.headers.get("Accept", ""):
-        return jsonify(metadata=metadata, endpoints=paginated_endpoints)
+        return jsonify(metadata=metadata, endpoints=paginated_endpoints), 200
     elif output_format == "html":
-        return render_template("endpoint.html", metadata=metadata, endpoints=paginated_endpoints)
+        return render_template("endpoint.html", metadata=metadata, endpoints=paginated_endpoints), 200
     else:  # Plain text fallback
         text_output = "Available Endpoints:\n"
         for e in paginated_endpoints:
@@ -454,4 +468,4 @@ if __name__ == "__main__":
     parser.add_argument("--port", type=int, default=8080, help="Port to run the Flask app.")
     args = parser.parse_args()
 
-    app.run(host="0.0.0.0", port=args.port)
+    app.run(host="0.0.0.0", port=args.port, ssl_context=('server\cert.pem', 'server\key.pem'))

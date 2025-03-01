@@ -274,6 +274,7 @@ class _TimerPageState extends State<TimerPage> {
 
     _pomodoroTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
       _tickPomodoro();
+      _initializeData();
     });
   }
 

@@ -165,7 +165,7 @@ def callback():
         execute_query_with_logging(query, "primary", (user_id, 1, user_id, 1, access_token, refresh_token, scope))
         
         return render_template(
-        "message.html",
+        "spotify.html",
         success = True, user_id = get_email_username(USER_EMAIL)
     ), 200
     else:
