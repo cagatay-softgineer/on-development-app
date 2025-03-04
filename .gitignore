@@ -198,3 +198,4 @@ __pycache__
 *.apps.googleusercontent.com.json
 client_secret.json
 *.pem
+/docs
