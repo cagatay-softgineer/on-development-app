@@ -1,9 +1,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.example.ssdk_rsrc">
     <uses-permission android:name="android.permission.INTERNET" />
     <application
-        android:label="ssdk_rsrc"
+        android:label="Pomodoro"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/ygg"
         android:enableOnBackInvokedCallback="true">
         <activity
             android:name=".MainActivity"

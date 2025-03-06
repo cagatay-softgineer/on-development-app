@@ -61,7 +61,7 @@ def login(user_id):
     
     
     state = generate_random_state()
-    scope = "user-read-recently-played user-read-private user-read-email playlist-read-private playlist-read-collaborative user-library-read user-top-read user-read-playback-state user-modify-playback-state user-read-currently-playing"
+    scope = "app-remote-control streaming user-read-recently-played user-read-private user-read-email playlist-read-private playlist-read-collaborative user-library-read user-top-read user-read-playback-state user-modify-playback-state user-read-currently-playing"
 
     auth_url = (
         f"https://accounts.spotify.com/authorize?"
@@ -95,7 +95,7 @@ def get_playlists():
     query = "SELECT user_id FROM users WHERE email = ?"
     rows = execute_query_with_logging(query, "primary", params=(user_email,), fetch=True)
     user_id = rows[0][0][0] if rows else None
-    
+
     playlists_json = fetch_user_playlists(user_id)
     return jsonify(playlists_json), 200
 

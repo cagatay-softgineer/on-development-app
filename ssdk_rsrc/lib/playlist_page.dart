@@ -308,9 +308,11 @@ Widget build(BuildContext context) {
                                 child: CustomButton(
                                 text: "",
                                 onPressed: () async {
+                                  //playPlaylist(playlist.playlistId);
+                                  
                                   try {
                                     final response =
-                                        await mainAPI.getPlaylistDuration(playlist.playlistId);
+                                        await mainAPI.getPlaylistDuration(playlist.playlistId, userID);
                                     // ignore: unnecessary_null_comparison
                                     if (response != null) {
                                       setState(() {

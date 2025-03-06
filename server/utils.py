@@ -175,12 +175,15 @@ def get_email_username(email):
 def make_request(
     url,
     max_retries=5,
+    access_token=None
 ):
     """
     Makes a GET request to a specified URL with retry logic for rate limiting.
     Uses a single Spotify credential for all requests.
     """
-    access_token = get_access_token_for_request()
+    if access_token is None:
+        access_token = get_access_token_for_request()
+        
     headers = {"Authorization": f"Bearer {access_token}"}
 
     for attempt in range(max_retries):
@@ -218,7 +221,7 @@ def make_request(
     logger.error("Failed to fetch data after retries.")
     return None
             
-def get_access_token():
+def get_access_token():  # noqa: F811
     # Request a new access token for this client ID
     client_creds_b64 = base64.b64encode(f"{SPOTIFY_CLIENT_ID}:{SPOTIFY_CLIENT_SECRET}".encode()).decode()
     token_url = "https://accounts.spotify.com/api/token"
@@ -283,6 +286,7 @@ def fetch_user_playlists(user_id):
     headers = {"Authorization": f"Bearer {access_token}"}
 
     response = requests.get(url, headers=headers)
+    
 
     if response.status_code == 200:
         playlists_data = response.json()

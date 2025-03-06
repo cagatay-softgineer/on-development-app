@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from utils import make_request
+from utils import make_request, get_access_token_from_db, execute_query_with_logging
 from error_handling import log_error
 from config import settings
 import logging
@@ -52,17 +52,24 @@ def get_playlist_duration():
         payload = PlaylistDurationRequest.parse_obj(request.get_json())
     except ValidationError as ve:
         return jsonify({"error": ve.errors()}), 400
-
+    
+    user_email = payload.user_id
     playlist_id = payload.playlist_id
     # (The remainder of the logic remains similar.)
     url_template = "https://api.spotify.com/v1/playlists/{playlist_id}/tracks?limit=50&offset={offset}"
     offset = 0
     total_duration_ms = 0
+    total_track_count = 0
 
     try:
         while True:
             url = url_template.format(playlist_id=playlist_id, offset=offset)
-            response = make_request(url)
+            query = "SELECT user_id FROM users WHERE email = ?"
+            rows = execute_query_with_logging(query, "primary", params=(user_email,), fetch=True)
+            user_id = rows[0][0][0] if rows else None
+            
+            access_token, _ = get_access_token_from_db(user_id)
+            response = make_request(url,access_token=access_token)
             if not response or response.status_code != 200:
                 logging.error(f"Failed to fetch playlist tracks. Response: {response.text if response else 'None'}")
                 return jsonify({"error": "Failed to fetch playlist tracks"}), 500
@@ -76,6 +83,7 @@ def get_playlist_duration():
                 track = item.get('track')
                 if track and 'duration_ms' in track:
                     total_duration_ms += track['duration_ms']
+                    total_track_count += 1
 
             if len(items) < 50:
                 break
@@ -90,7 +98,8 @@ def get_playlist_duration():
         return jsonify({
             "playlist_id": playlist_id,
             "total_duration_ms": total_duration_ms,
-            "formatted_duration": formatted_duration
+            "formatted_duration": formatted_duration,
+            "total_track_count": total_track_count
         }), 200
 
     except Exception as e:

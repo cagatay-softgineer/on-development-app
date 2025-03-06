@@ -199,3 +199,10 @@ __pycache__
 client_secret.json
 *.pem
 /docs
+fb-cc.json
+test.py
+ssdk_rsrc/android/app/src/main/res/mipmap-hdpi/ygg.png
+ssdk_rsrc/android/app/src/main/res/mipmap-mdpi/ygg.png
+ssdk_rsrc/android/app/src/main/res/mipmap-xhdpi/ygg.png
+ssdk_rsrc/android/app/src/main/res/mipmap-xxhdpi/ygg.png
+ssdk_rsrc/android/app/src/main/res/mipmap-xxxhdpi/ygg.png

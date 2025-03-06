@@ -576,13 +576,14 @@ class MainAPI {
     }
   }
 
-  Future<Map<String, dynamic>> getPlaylistDuration(String? playlistId) async {
+  Future<Map<String, dynamic>> getPlaylistDuration(String? playlistId, String? userId) async {
     try {
     print("$playlistId");
     final response = await _dio.post(
           'https://api-sync-branch.yggbranch.dev/spotify-micro-service/playlist_duration',
           data: {
-            "playlist_id": "$playlistId"
+            "playlist_id": "$playlistId",
+            "user_id": "$userId"
           }
     );
   
