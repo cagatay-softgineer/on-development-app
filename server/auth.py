@@ -1,3 +1,4 @@
+import firebase_operations
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import create_access_token
 from flask_limiter import Limiter
@@ -5,7 +6,6 @@ from flask_cors import CORS
 from flask_limiter.util import get_remote_address
 import bcrypt
 import logging
-from utils import execute_query_with_logging
 from models import RegisterRequest, LoginRequest  # Import models
 from pydantic import ValidationError
 
@@ -45,8 +45,8 @@ def register():
         return jsonify({"error": ve.errors()}), 400
 
     hashed_password = bcrypt.hashpw(payload.password.encode('utf-8'), bcrypt.gensalt())
-    query = "INSERT INTO users (email, password) VALUES (?, ?)"
-    execute_query_with_logging(query, "primary", (payload.email, hashed_password.decode('utf-8')))
+
+    firebase_operations.insert_user(payload.email,hashed_password)
     return jsonify({"message": "User registered successfully"}), 201
 
 @auth_bp.route('/login', methods=['POST'])
@@ -56,11 +56,10 @@ def login():
     except ValidationError as ve:
         return jsonify({"error": ve.errors()}), 400
 
-    query = "SELECT password,email FROM users WHERE email = ?"
-    rows = execute_query_with_logging(query, "primary", params=(payload.email,), fetch=True)
-    if rows:
-        stored_hashed_password = rows[0][0][0]
-        user_id = rows[0][0][1]
+    result = firebase_operations.get_user_password_and_email(payload.email)[0]
+
+    if result:
+        user_id, stored_hashed_password = result["email"], result["password"]
         if bcrypt.checkpw(payload.password.encode('utf-8'), stored_hashed_password.encode('utf-8')):
             access_token = create_access_token(identity=payload.email)
             return jsonify({"access_token": access_token, "user_id": user_id}), 200

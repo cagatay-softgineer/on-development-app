@@ -3,12 +3,13 @@ from flask_limiter import Limiter
 from flask_cors import CORS
 from flask_limiter.util import get_remote_address
 import requests
-from utils import execute_query_with_logging, get_user_profile, fetch_user_playlists, get_access_token_from_db, get_email_username
+from utils import get_user_profile, fetch_user_playlists, get_access_token_from_db, get_email_username
 from models import UserIdRequest  # Example model for endpoints needing a user_id
 from pydantic import ValidationError
 import secrets
 import logging
 from config import settings
+import firebase_operations
 
 spotify_bp = Blueprint('spotify', __name__)
 limiter = Limiter(key_func=get_remote_address)
@@ -92,11 +93,9 @@ def get_playlists():
     except Exception as e:
         return jsonify({"error": str(e)}), 400
 
-    query = "SELECT user_id FROM users WHERE email = ?"
-    rows = execute_query_with_logging(query, "primary", params=(user_email,), fetch=True)
-    user_id = rows[0][0][0] if rows else None
+    user_id = firebase_operations.get_user_id_by_email(user_email)[0]
 
-    playlists_json = fetch_user_playlists(user_id)
+    playlists_json = fetch_user_playlists(user_id, app_id=1)
     return jsonify(playlists_json), 200
 
 @spotify_bp.route('/token', methods=['POST'])
@@ -109,11 +108,9 @@ def get_token():
     except Exception as e:
         return jsonify({"error": str(e)}), 400
 
-    query = "SELECT user_id FROM users WHERE email = ?"
-    rows = execute_query_with_logging(query, "primary", params=(user_email,), fetch=True)
-    user_id = rows[0][0][0] if rows else None
+    user_id = firebase_operations.get_user_id_by_email(user_email)[0]
 
-    token, _ = get_access_token_from_db(user_id)
+    token, _ = get_access_token_from_db(user_id, 1)
     return jsonify({"token": token}), 200
 
 @spotify_bp.route('/callback', methods=['GET'])
@@ -139,31 +136,16 @@ def callback():
         token_info = response.json()
         access_token = token_info["access_token"]
         refresh_token = token_info.get("refresh_token")
-        scope = token_info.get("scope")
+        scopes = token_info.get("scope")
         #expires_in = token_info.get("expires_in")
         #token_type = token_info.get("token_type")
         
         logger.info("Successfully obtained access token.")
         
-        query = "SELECT user_id FROM users WHERE email = ?"
-        rows = execute_query_with_logging(query, "primary", params=(USER_EMAIL), fetch=True)
+        user_id = firebase_operations.get_user_id_by_email(USER_EMAIL)[0]
 
-        if rows:
-            user_id = rows[0][0][0]
-        
-        query = """
-        IF NOT EXISTS (
-            SELECT 1
-            FROM UserLinkedApps
-            WHERE user_id = ? AND app_id = ?
-        )
-        BEGIN
-            INSERT INTO UserLinkedApps (user_id, app_id, access_token, refresh_token, token_expires_at, scopes)
-            VALUES (?, ?, ?, ?, DATEADD(HOUR, 1, GETDATE()), ?)
-        END
-        """
-        execute_query_with_logging(query, "primary", (user_id, 1, user_id, 1, access_token, refresh_token, scope))
-        
+        firebase_operations.if_not_exists_insert_userlinkedapps(user_id, 1, access_token, refresh_token, scopes)
+
         return render_template(
         "spotify.html",
         success = True, user_id = get_email_username(USER_EMAIL)

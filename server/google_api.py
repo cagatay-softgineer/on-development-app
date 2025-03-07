@@ -3,7 +3,8 @@ from flask_jwt_extended import create_access_token, jwt_required  # noqa: F401
 from flask_limiter import Limiter
 from flask_cors import CORS
 from flask_limiter.util import get_remote_address
-from utils import execute_query_with_logging, get_email_username # noqa: F401
+import firebase_operations
+from utils import get_email_username # noqa: F401
 import logging
 from config import settings
 from google_auth_oauthlib.flow import Flow
@@ -100,25 +101,19 @@ def google_api_callback():
             return jsonify({"error": "Missing user_email parameter."}), 400
 
         # Fetch the user_id from the users table
-        query = "SELECT user_id FROM users WHERE email = ?"
-        rows = execute_query_with_logging(query, "primary", params=(user_email,), fetch=True)
-        if not rows or not rows[0]:
+        user_id = firebase_operations.get_user_id_by_email(user_email)[0]
+        if not user_id:
             logger.error("User not found for email: %s", user_email)
             return jsonify({"error": "User not found."}), 404
-        user_id = rows[0][0][0]
 
         # Fetch the app_id for the Google app from the Apps table.
         # Assumes your app is registered with the name "Google".
-        query = "SELECT app_id FROM Apps WHERE app_name = ?"
-        rows = execute_query_with_logging(query, "primary", params=("Google",), fetch=True)
-        if not rows or not rows[0]:
+        app_id = firebase_operations.get_app_id_by_name("Google")[0]
+        if not app_id:
             logger.error("Google app not configured in Apps table.")
             return jsonify({"error": "Google app not configured."}), 400
-        app_id = rows[0][0][0]
 
-        # Check if the connection already exists in the database.
-        query = "SELECT access_token, refresh_token, token_expires_at, scopes FROM UserLinkedApps WHERE user_id = ? AND app_id = ?"
-        existing_rows = execute_query_with_logging(query, "primary", params=(user_id, app_id), fetch=True)
+        existing_rows = firebase_operations.get_userlinkedapps_tokens(user_id, app_id)[0]
         if existing_rows and existing_rows[0]:
             logger.info("User already connected for user_id: %s, app_id: %s", user_id, app_id)
             # Optionally, you might update the existing token details here.
@@ -134,14 +129,7 @@ def google_api_callback():
             #}), 200
 
         # Save the token details into the database.
-        query = """
-            INSERT INTO UserLinkedApps 
-                (user_id, app_id, connected_at, access_token, refresh_token, token_expires_at, scopes)
-            VALUES 
-                (?, ?, CURRENT_TIMESTAMP, ?, ?, ?, ?)
-        """
-        params = (user_id, app_id, access_token, refresh_token, token_expires_at, scopes)
-        execute_query_with_logging(query, "primary", params)
+        firebase_operations.insert_userlinkedapps(user_id, app_id, access_token, refresh_token, token_expires_at, scopes)
         logger.info("Google API token saved for user_id: %s, app_id: %s", user_id, app_id)
         
         return render_template(

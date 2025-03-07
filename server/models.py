@@ -19,12 +19,3 @@ class UserIdRequest(BaseModel):
 class PlaylistDurationRequest(BaseModel):
     playlist_id: str
     user_id: str
-
-class FirebaseConfig(BaseModel):
-    api_key: str
-    auth_domain: str
-    project_id: str
-    storage_bucket: str
-    messaging_sender_id: str
-    app_id: str
-    measurement_id: str

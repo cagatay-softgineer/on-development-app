@@ -1,4 +1,3 @@
-import pyodbc
 import logging
 import os
 from error_handling import log_error
@@ -9,6 +8,7 @@ from datetime import datetime
 import hashlib
 import pandas as pd
 from config import settings
+import firebase_operations
 
 # Initialize CmdGUI for visual feedback
 gui = CmdGUI()
@@ -36,92 +36,14 @@ logger.addHandler(console_handler)
 
 logger.propagate = False
 
-PRIMARY_SQL_SERVER = settings.sql_server_host
-PRIMARY_SQL_SERVER_PORT = settings.sql_server_port
-PRIMARY_SQL_DATABASE = settings.sql_server_database
-PRIMARY_SQL_USER = settings.sql_server_user
-PRIMARY_SQL_PASSWORD = settings.sql_server_password
-
-SECONDARY_SQL_DATABASE = settings.secondary_sql_database
-
 SPOTIFY_CLIENT_ID = settings.spotify_client_id
 SPOTIFY_CLIENT_SECRET = settings.spotify_client_secret
-
-
-# Store connection strings in a dictionary
-DB_CONNECTION_STRINGS = {
-    "primary": f"DRIVER={{ODBC Driver 17 for SQL Server}};SERVER={PRIMARY_SQL_SERVER},{PRIMARY_SQL_SERVER_PORT};DATABASE={PRIMARY_SQL_DATABASE};UID={PRIMARY_SQL_USER};PWD={PRIMARY_SQL_PASSWORD}",
-    "secondary": f"DRIVER={{ODBC Driver 17 for SQL Server}};SERVER={PRIMARY_SQL_SERVER},{PRIMARY_SQL_SERVER_PORT};DATABASE={SECONDARY_SQL_DATABASE};UID={PRIMARY_SQL_USER};PWD={PRIMARY_SQL_PASSWORD}",
-}
-
-def get_db_connection(db_name):
-    """Get a connection to the specified database."""
-    if db_name not in DB_CONNECTION_STRINGS:
-        raise log_error(ValueError(f"Unknown database name: {db_name}"))
-
-    try:
-        conn = pyodbc.connect(DB_CONNECTION_STRINGS[db_name])
-        logger.info(f"Connected to {db_name} database successfully.")
-        return conn
-    except pyodbc.Error as e:
-        gui.log(f"Database connection failed: {e}", level="error")
-        logger.error(f"Database connection failed: {e}")
-        raise log_error(pyodbc.Error("Database connection failed !"))
 
 def obfuscate(column_name: str) -> str:
     salt = settings.salt  # Replace with your own secret salt value.
     hash_value = hashlib.sha256((salt + column_name).encode('utf-8')).hexdigest()
     return f"{hash_value[:12].upper()}"
 
-def execute_query_with_logging(query, db_name, params=(), fetch=False):
-    """
-    Executes a query on the specified database with logging and visual feedback.
-    """
-    conn = None
-    try:
-        gui.status(f"Connecting to {db_name} database...", status="info")
-        conn = get_db_connection(db_name)
-        cursor = conn.cursor()
-
-        # Extract the query type from the query string.
-        # If the query is a valid non-empty string, the first word is assumed to be the command.
-        query_type = "UNKNOWN"
-        if query and isinstance(query, str):
-            query_type = query.split()[0].upper()
-
-        obfuscated_query_type = obfuscate(query_type)
-
-        # Log and display query execution using the obfuscated query type.
-        gui.log(f"Executing query of type: OP_{obfuscated_query_type}", level="info")
-        logger.info(f"Executing query of type: OP_{obfuscated_query_type}")
-
-        # Ensure params are in the correct format if using TVP
-        if isinstance(params, tuple) and len(params) == 1 and isinstance(params[0], (tuple, list)):
-            params = params[0]  # Unwrap the sequence if necessary
-
-        cursor.execute(query, params)
-
-        if fetch:
-            rows = cursor.fetchall()
-            gui.status("Query executed successfully, fetching results...", status="success")
-            obfuscated_columns = [f"COL_{obfuscate(column[0])}" for column in cursor.description]
-            logger.info(f"Query succeeded. Columns: {obfuscated_columns}")
-            return rows, cursor.description
-
-        conn.commit()
-        gui.status("Query executed successfully and committed.", status="success")
-        logger.info("Query executed successfully and committed.")
-        return None
-    except pyodbc.Error as e:
-        gui.status(f"Query execution failed: {e}", status="error")
-        logger.error(f"Query execution error: {e}")
-        log_error(e)
-        raise
-    finally:
-        if conn:
-            conn.close()
-            gui.status(f"Connection to {db_name} database closed.", status="info")
-            
 def get_access_token_for_request():
     """
     Requests an access token using a single Spotify client credential
@@ -244,23 +166,17 @@ def get_access_token():  # noqa: F811
     else:
         return "", 404
 
-def get_access_token_from_db(user_id):
-    query = """
-    SELECT access_token, refresh_token
-    FROM UserLinkedApps
-    WHERE user_id = ? AND app_id = ?
-    """
-    result = execute_query_with_logging(query, "primary", params=(user_id, 1), fetch=True)
-
+def get_access_token_from_db(user_id, app_id):
+    
+    result = firebase_operations.get_userlinkedapps_access_refresh(user_id, app_id)[0]
     if not result:
         logger.error(f"Access token not found for user_id: {user_id}")
         return None
 
-    access_token = result[0][0][0]
-    refresh_token = result[0][0][1]
+    access_token, refresh_token = result["access_token"], result["refresh_token"]
     if test_token(access_token) != 200:
-        refresh_access_token_and_update_db(user_id,refresh_token)
-        get_access_token_from_db(user_id)
+        refresh_access_token_and_update_db(user_id, refresh_token, app_id)
+        get_access_token_from_db(user_id, app_id)
         
     return access_token, refresh_token
 
@@ -271,12 +187,10 @@ def test_token(access_token):
 
     return response.status_code
 
-
-
 # Function to fetch playlists of the user
-def fetch_user_playlists(user_id):
+def fetch_user_playlists(user_id, app_id):
     # Query to get the access token for the user
-    access_token, refresh_token = get_access_token_from_db(user_id)
+    access_token, refresh_token = get_access_token_from_db(user_id, app_id)
     #print(get_current_user_profile(access_token))
     #print(access_token)
     #print(refresh_token)
@@ -287,7 +201,6 @@ def fetch_user_playlists(user_id):
 
     response = requests.get(url, headers=headers)
     
-
     if response.status_code == 200:
         playlists_data = response.json()
         formatted_playlists = []
@@ -331,15 +244,15 @@ def fetch_user_playlists(user_id):
         logger.info("Successfully fetched and formatted playlists.")
         return formatted_playlists
     elif response.status_code == 401:
-        refresh_access_token_and_update_db(user_id, refresh_token)
-        return fetch_user_playlists(user_id)
+        refresh_access_token_and_update_db(user_id, refresh_token, app_id)
+        return fetch_user_playlists(user_id, app_id)
     else:
         logger.error(f"Failed to fetch playlists: {response.status_code} - {response.text}")
         return None
 
 
 # Function to refresh access token
-def refresh_access_token_and_update_db(user_id, refresh_token):
+def refresh_access_token_and_update_db(user_id, refresh_token, app_id):
     url = "https://accounts.spotify.com/api/token"
     auth_header = base64.b64encode(f"{SPOTIFY_CLIENT_ID}:{SPOTIFY_CLIENT_SECRET}".encode()).decode()
 
@@ -361,24 +274,13 @@ def refresh_access_token_and_update_db(user_id, refresh_token):
         expires_in = token_info.get("expires_in", 3600)  # Default to 1 hour if not provided
 
         logger.info("Successfully refreshed access token.")
-
-        # Update tokens in the database
-        query = """
-        UPDATE UserLinkedApps
-        SET access_token = ?,
-            refresh_token = ?,
-            token_expires_at = DATEADD(SECOND, ?, GETDATE())
-        WHERE user_id = ? AND app_id = ?
-        """
-
-        execute_query_with_logging(query, "primary", (new_access_token, new_refresh_token, expires_in, user_id, 1))
-
+        firebase_operations.update_userlinkedapps_tokens(new_access_token, new_refresh_token, expires_in, user_id, app_id)
         return new_access_token
     else:
         logger.error(f"Failed to refresh access token: {response.status_code} - {response.text}")
         return None
 
-def get_current_user_profile(access_token, user_id):
+def get_current_user_profile(access_token, user_id, app_id):
     url = "https://api.spotify.com/v1/me"
     headers = {"Authorization": f"Bearer {access_token}"}
     response = requests.get(url, headers=headers)
@@ -388,9 +290,10 @@ def get_current_user_profile(access_token, user_id):
         #print(user["id"])
         return response.json()
     elif response.status_code == 401:
-        access_token, refresh_token = get_access_token_from_db(user_id)
-        refresh_access_token_and_update_db(user_id, refresh_token)
-        return get_current_user_profile(access_token, user_id)
+        result = firebase_operations.get_userlinkedapps_access_refresh(user_id, app_id)[0]
+        access_token, refresh_token = result["access_token"], result["refresh_token"]
+        refresh_access_token_and_update_db(user_id, refresh_token, app_id)
+        return get_current_user_profile(access_token, user_id, app_id)
     else:
         logger.error(f"Failed to fetch user profile: {response.status_code} - {response.text}")
         return None

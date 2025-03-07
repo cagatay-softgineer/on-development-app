@@ -24,3 +24,26 @@ class Settings(BaseSettings):
         env_file_encoding = "utf-8"
 
 settings = Settings()
+
+class FirebaseConfig(BaseSettings):
+    api_key: str = Field(..., env="FIREBASECONFIG_APIKEY")
+    auth_domain: str = Field(..., env="FIREBASECONFIG_AUTHDOMAIN")
+    project_id: str = Field(..., env="FIREBASECONFIG_PROJECTID")
+    storage_bucket: str = Field(..., env="FIREBASECONFIG_STORAGEBUCKET")
+    messaging_sender_id: str = Field(..., env="FIREBASECONFIG_MESSAGINGSENDERID")
+    app_id: str = Field(..., env="FIREBASECONFIG_APPID")
+    measurement_id: str = Field(..., env="FIREBASECONFIG_MEASUREMENTID")
+
+firebase_config = FirebaseConfig()
+
+class SQLServerConfig(BaseSettings):
+    sql_server_host: str = Field(..., env="SQL_SERVER_HOST")
+    sql_server_port: str = Field(..., env="SQL_SERVER_PORT")
+    sql_server_database: str = Field(..., env="SQL_SERVER_DATABASE")
+    sql_server_user: str = Field(..., env="SQL_SERVER_USER")
+    sql_server_password: str = Field(..., env="SQL_SERVER_PASSWORD")
+    
+sql_config = SQLServerConfig()
+
+# db = init_firebase(firebase_config)
+# converter = SQLToFirestoreConverter(db, alias_map=sql2firebase.alias_map)

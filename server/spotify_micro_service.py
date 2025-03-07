@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from utils import make_request, get_access_token_from_db, execute_query_with_logging
+from utils import make_request, get_access_token_from_db
 from error_handling import log_error
 from config import settings
 import logging
@@ -7,6 +7,7 @@ from cmd_gui_kit import CmdGUI
 import sys
 from models import PlaylistDurationRequest  # Import the model
 from pydantic import ValidationError
+import firebase_operations
 
 # Initialize CmdGUI for visual feedback
 gui = CmdGUI()
@@ -64,11 +65,9 @@ def get_playlist_duration():
     try:
         while True:
             url = url_template.format(playlist_id=playlist_id, offset=offset)
-            query = "SELECT user_id FROM users WHERE email = ?"
-            rows = execute_query_with_logging(query, "primary", params=(user_email,), fetch=True)
-            user_id = rows[0][0][0] if rows else None
+            user_id = firebase_operations.get_user_id_by_email(user_email)[0]
             
-            access_token, _ = get_access_token_from_db(user_id)
+            access_token, _ = get_access_token_from_db(user_id, app_id=1)
             response = make_request(url,access_token=access_token)
             if not response or response.status_code != 200:
                 logging.error(f"Failed to fetch playlist tracks. Response: {response.text if response else 'None'}")

@@ -3,10 +3,11 @@ from flask_jwt_extended import create_access_token, jwt_required  # noqa: F401
 from flask_limiter import Limiter
 from flask_cors import CORS
 from flask_limiter.util import get_remote_address
-from utils import execute_query_with_logging, get_current_user_profile
+from utils import get_current_user_profile
 import logging
 from models import LinkedAppRequest  # Import the model
 from pydantic import ValidationError
+import firebase_operations
 
 apps_bp = Blueprint('apps', __name__)
 limiter = Limiter(key_func=get_remote_address)
@@ -41,42 +42,26 @@ def check_linked_app():
     try:
         payload = LinkedAppRequest.parse_obj(request.get_json())
     except ValidationError as ve:
-        return jsonify({"error": ve.errors()}), 400
+        return jsonify({"error": ve.errors()}), 400 
 
     # Use validated data
     app_name = payload.app_name
     user_email = payload.user_email
-
-    query = "SELECT user_id FROM users WHERE email = ?"
-    rows = execute_query_with_logging(query, "primary", params=(user_email,), fetch=True)
-    user_id = rows[0][0][0] if rows and rows[0] != [] else False
-
-    query = "SELECT app_id FROM Apps WHERE app_name = ?"
-    rows = execute_query_with_logging(query, "primary", params=(app_name,), fetch=True)
-    app_id = rows[0][0][0] if rows and rows[0] != [] else False
+    
+    user_id = firebase_operations.get_user_id_by_email(user_email)[0]
+    app_id = firebase_operations.get_app_id_by_name(app_name)[0]
         
     if not app_id:
         return jsonify({"error": "All fields are required",
                         "user_linked": False,
                         "user_profile": None}), 400
-
-    query = """
-        SELECT 
-            (SELECT COUNT(*) 
-             FROM UserLinkedApps 
-             WHERE app_id = ? AND user_id = ?) AS user_linked, 
-            access_token 
-        FROM UserLinkedApps 
-        WHERE app_id = ? AND user_id = ?
-    """
+    access_token = firebase_operations.get_userlinkedapps_count_and_access_token(user_id, app_id)
     
-    rows = execute_query_with_logging(query, "primary", (app_id, user_id, app_id, user_id), fetch=True)
-    if rows and rows[0] != []:
-        user_linked = rows[0][0][0]
-        access_token = rows[0][0][1]
+    if access_token:
+        user_linked, access_token = access_token[0], access_token[1][0]
 
         if user_linked > 0:
-            user_profile = get_current_user_profile(access_token, user_id)
+            user_profile = get_current_user_profile(access_token, user_id, app_id)
             return jsonify({
                 "user_linked": True,
                 "user_profile": user_profile
@@ -103,17 +88,12 @@ def unlink_app():
     app_name = payload.app_name
     user_email = payload.user_email
 
-    query = "SELECT user_id FROM users WHERE email = ?"
-    rows = execute_query_with_logging(query, "primary", params=(user_email,), fetch=True)
-    user_id = rows[0][0][0] if rows else None
-    
-    query = "SELECT app_id FROM Apps WHERE app_name = ?"
-    rows = execute_query_with_logging(query, "primary", params=(app_name,), fetch=True)
-    app_id = rows[0][0][0] if rows else None
+    user_id = firebase_operations.get_user_id_by_email(user_email)[0]
+    app_id = firebase_operations.get_app_id_by_name(app_name)[0]
         
     if not app_id:
         return jsonify({"error": "All fields are required"}), 400
+    
+    firebase_operations.delete_userlinkedapps(app_id, user_id)
 
-    query = "DELETE FROM UserLinkedApps WHERE app_id = ? and user_id = ?"
-    execute_query_with_logging(query, "primary", (app_id, user_id))
     return jsonify({"message": "App Unlinked!"}), 201

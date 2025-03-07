@@ -3,7 +3,6 @@ import os
 from cmd_gui_kit import CmdGUI
 import traceback
 
-
 # Initialize CmdGUI for visual feedback
 gui = CmdGUI()
 
