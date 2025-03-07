@@ -136,6 +136,18 @@ class _HomePageState extends State<HomePage> {
               },
               buttonParams: timerButtonParams,
             ),
+            SizedBox(height: 20), // Adds vertical spacing
+            // CustomButton for Logout
+            CustomButton(
+              text: "Custom Timer",
+              onPressed: () {
+                // Implement your logout logic here
+                // For example, navigate back to the login page
+                Navigator.pushNamed(
+                    context, '/custom_timer');
+              },
+              buttonParams: timerButtonParams,
+            ),
             // Add more widgets or buttons as needed
           ],
         ),

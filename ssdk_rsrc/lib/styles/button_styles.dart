@@ -450,6 +450,36 @@ Map<String, dynamic> startSession = {
   "iconSize" : 36,
 };
 
+Map<String, dynamic> startSessionSmall = {
+  "backgroundColor": "Color(0xFFFF0000)", // Spotify Green
+  "textColor": "Color(0xFFFFFFFF)",       // White
+  "borderRadius": 12.0,
+  "padding": "EdgeInsets(0.0, 0.0, 0.0, 0.0)",
+  "textStyle": "TextStyle(fontSize: 18.0, color: Color(0xFFFFFFFF))",
+  "elevation": 6.0,
+  "buttonWidth": 150.0,
+  "buttonHeight": 60.0,
+  "borderColor": "Color(0x00000000)",      // Transparent
+  "letterSpacing": 8.0,
+  "blurAmount": 10.0,
+  "useGradient": true,                    // No gradient for Logout button
+  "gradientStartColor": "Color(0xFF11998e)", // Ignored as useGradient is false
+  "gradientEndColor": "Color(0xFF38ef7d)",   // Ignored as useGradient is false
+  "leadingIcon": "",
+  "trailingIcon": "Icons.start_outlined",                    // No trailing icon
+  "textAlign": "TextAlign.center",
+  "isEnabled": true,
+  "shape": "BoxShape.rectangle",
+  "hoverColor": "Color(0xFF1E88E5)",
+  "focusColor": "Color(0xFF42A5F5)",
+  "shadowColor": "Color(0x66121212)",
+  "shadowOffset": "Offset(0.0, 4.0)",
+  "isLoading": false,
+  "fontFamily": "Roboto",
+  "backgroundAlpha": 0.9,
+  "iconSize" : 28,
+};
+
 Map<String, dynamic> stopSession = {
   "backgroundColor": "Color(0xFFFF0000)", // Spotify Green
   "textColor": "Color(0xFFFFFFFF)",       // White
@@ -480,6 +510,35 @@ Map<String, dynamic> stopSession = {
   "iconSize" : 36,
 };
 
+Map<String, dynamic> stopSessionSmall = {
+  "backgroundColor": "Color(0xFFFF0000)", // Spotify Green
+  "textColor": "Color(0xFFFFFFFF)",       // White
+  "borderRadius": 12.0,
+  "padding": "EdgeInsets(0.0, 0.0, 0.0, 0.0)",
+  "textStyle": "TextStyle(fontSize: 18.0, color: Color(0xFFFFFFFF))",
+  "elevation": 6.0,
+  "buttonWidth": 150.0,
+  "buttonHeight": 60.0,
+  "borderColor": "Color(0x00000000)",      // Transparent
+  "letterSpacing": 8.0,
+  "blurAmount": 10.0,
+  "useGradient": true,                    // No gradient for Logout button
+  "gradientStartColor": "Color(0xFF333333)", // Ignored as useGradient is false
+  "gradientEndColor": "Color(0xFFdd1818)",   // Ignored as useGradient is false
+  "leadingIcon": "",
+  "trailingIcon": "Icons.start_outlined",                    // No trailing icon
+  "textAlign": "TextAlign.center",
+  "isEnabled": true,
+  "shape": "BoxShape.rectangle",
+  "hoverColor": "Color(0xFF1E88E5)",
+  "focusColor": "Color(0xFF42A5F5)",
+  "shadowColor": "Color(0x66121212)",
+  "shadowOffset": "Offset(0.0, 4.0)",
+  "isLoading": false,
+  "fontFamily": "Roboto",
+  "backgroundAlpha": 0.9,
+  "iconSize" : 28,
+};
 
 ButtonParams mainButtonParams = ButtonParams.fromMap(mainButton);
 ButtonParams navigateButtonParams = ButtonParams.fromMap(navigateButton);
@@ -497,3 +556,5 @@ ButtonParams timerButtonParams = ButtonParams.fromMap(timerButton);
 ButtonParams changeLayoutButtonParams = ButtonParams.fromMap(changeLayout);
 ButtonParams startSessionButtonParams = ButtonParams.fromMap(startSession);
 ButtonParams stopSessionButtonParams = ButtonParams.fromMap(stopSession);
+ButtonParams startSessionSmallButtonParams = ButtonParams.fromMap(startSessionSmall);
+ButtonParams stopSessionSmallButtonParams = ButtonParams.fromMap(stopSessionSmall);
