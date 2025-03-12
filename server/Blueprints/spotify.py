@@ -3,13 +3,13 @@ from flask_limiter import Limiter
 from flask_cors import CORS
 from flask_limiter.util import get_remote_address
 import requests
-from utils import get_user_profile, fetch_user_playlists, get_access_token_from_db, get_email_username
-from models import UserIdRequest  # Example model for endpoints needing a user_id
+from util.utils import get_user_profile, fetch_user_playlists, get_access_token_from_db, get_email_username
+import database.firebase_operations as firebase_operations
+from util.models import UserIdRequest
+from config.config import settings
 from pydantic import ValidationError
 import secrets
 import logging
-from config import settings
-import firebase_operations
 
 spotify_bp = Blueprint('spotify', __name__)
 limiter = Limiter(key_func=get_remote_address)
@@ -93,7 +93,7 @@ def get_playlists():
     except Exception as e:
         return jsonify({"error": str(e)}), 400
 
-    user_id = firebase_operations.get_user_id_by_email(user_email)[0]
+    user_id = firebase_operations.get_user_id_by_email(user_email)
 
     playlists_json = fetch_user_playlists(user_id, app_id=1)
     return jsonify(playlists_json), 200
@@ -108,7 +108,7 @@ def get_token():
     except Exception as e:
         return jsonify({"error": str(e)}), 400
 
-    user_id = firebase_operations.get_user_id_by_email(user_email)[0]
+    user_id = firebase_operations.get_user_id_by_email(user_email)
 
     token, _ = get_access_token_from_db(user_id, 1)
     return jsonify({"token": token}), 200
@@ -142,7 +142,7 @@ def callback():
         
         logger.info("Successfully obtained access token.")
         
-        user_id = firebase_operations.get_user_id_by_email(USER_EMAIL)[0]
+        user_id = firebase_operations.get_user_id_by_email(USER_EMAIL)
 
         firebase_operations.if_not_exists_insert_userlinkedapps(user_id, 1, access_token, refresh_token, scopes)
 

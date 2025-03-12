@@ -33,6 +33,10 @@ class FirebaseConfig(BaseSettings):
     messaging_sender_id: str = Field(..., env="FIREBASECONFIG_MESSAGINGSENDERID")
     app_id: str = Field(..., env="FIREBASECONFIG_APPID")
     measurement_id: str = Field(..., env="FIREBASECONFIG_MEASUREMENTID")
+    
+    class Config:
+        env_file = ".env"
+        env_file_encoding = "utf-8"
 
 firebase_config = FirebaseConfig()
 
@@ -42,6 +46,10 @@ class SQLServerConfig(BaseSettings):
     sql_server_database: str = Field(..., env="SQL_SERVER_DATABASE")
     sql_server_user: str = Field(..., env="SQL_SERVER_USER")
     sql_server_password: str = Field(..., env="SQL_SERVER_PASSWORD")
+    
+    class Config:
+        env_file = ".env"
+        env_file_encoding = "utf-8"
     
 sql_config = SQLServerConfig()
 

@@ -1,4 +1,3 @@
-import firebase_operations
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import create_access_token
 from flask_limiter import Limiter
@@ -6,7 +5,8 @@ from flask_cors import CORS
 from flask_limiter.util import get_remote_address
 import bcrypt
 import logging
-from models import RegisterRequest, LoginRequest  # Import models
+import database.firebase_operations as firebase_operations
+from util.models import RegisterRequest, LoginRequest  # Import models
 from pydantic import ValidationError
 
 auth_bp = Blueprint('auth', __name__)
@@ -44,9 +44,9 @@ def register():
     except ValidationError as ve:
         return jsonify({"error": ve.errors()}), 400
 
-    hashed_password = bcrypt.hashpw(payload.password.encode('utf-8'), bcrypt.gensalt())
+    # hashed_password = bcrypt.hashpw(payload.password.encode('utf-8'), bcrypt.gensalt())
 
-    firebase_operations.insert_user(payload.email,hashed_password)
+    firebase_operations.insert_user(payload.email,payload.password)
     return jsonify({"message": "User registered successfully"}), 201
 
 @auth_bp.route('/login', methods=['POST'])

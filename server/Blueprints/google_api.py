@@ -3,10 +3,10 @@ from flask_jwt_extended import create_access_token, jwt_required  # noqa: F401
 from flask_limiter import Limiter
 from flask_cors import CORS
 from flask_limiter.util import get_remote_address
-import firebase_operations
-from utils import get_email_username # noqa: F401
+import database.firebase_operations as firebase_operations
+from util.utils import get_email_username # noqa: F401
+from config.config import settings
 import logging
-from config import settings
 from google_auth_oauthlib.flow import Flow
 
 OAUTHLIB_INSECURE_TRANSPORT=1
@@ -101,7 +101,7 @@ def google_api_callback():
             return jsonify({"error": "Missing user_email parameter."}), 400
 
         # Fetch the user_id from the users table
-        user_id = firebase_operations.get_user_id_by_email(user_email)[0]
+        user_id = firebase_operations.get_user_id_by_email(user_email)
         if not user_id:
             logger.error("User not found for email: %s", user_email)
             return jsonify({"error": "User not found."}), 404

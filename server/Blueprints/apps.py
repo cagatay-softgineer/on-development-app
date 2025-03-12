@@ -3,11 +3,11 @@ from flask_jwt_extended import create_access_token, jwt_required  # noqa: F401
 from flask_limiter import Limiter
 from flask_cors import CORS
 from flask_limiter.util import get_remote_address
-from utils import get_current_user_profile
-import logging
-from models import LinkedAppRequest  # Import the model
+from util.utils import get_current_user_profile
+from util.models import LinkedAppRequest  # Import the model
+import database.firebase_operations as firebase_operations
 from pydantic import ValidationError
-import firebase_operations
+import logging
 
 apps_bp = Blueprint('apps', __name__)
 limiter = Limiter(key_func=get_remote_address)
@@ -48,17 +48,27 @@ def check_linked_app():
     app_name = payload.app_name
     user_email = payload.user_email
     
-    user_id = firebase_operations.get_user_id_by_email(user_email)[0]
-    app_id = firebase_operations.get_app_id_by_name(app_name)[0]
-        
-    if not app_id:
-        return jsonify({"error": "All fields are required",
-                        "user_linked": False,
-                        "user_profile": None}), 400
-    access_token = firebase_operations.get_userlinkedapps_count_and_access_token(user_id, app_id)
+    user_id = firebase_operations.get_user_id_by_email(user_email)
+    app_id = firebase_operations.get_app_id_by_name(app_name)
     
-    if access_token:
-        user_linked, access_token = access_token[0], access_token[1][0]
+    if not app_name or not user_email:
+        return jsonify({
+            "error": "All required fields must be provided.",
+            "user_linked": False,
+            "user_profile": None
+        }), 400
+
+    if not app_id or not user_id:
+        return jsonify({
+            "error": "Missing application or user identifier. This may indicate that the user is not linked, does not exist, or the application is unrecognized.",
+            "user_linked": False,
+            "user_profile": None
+        }), 400
+
+    user_linked, access_tokens = firebase_operations.get_userlinkedapps_count_and_access_token(user_id, app_id)
+
+    if access_tokens:
+        access_token = access_tokens[0]
 
         if user_linked > 0:
             user_profile = get_current_user_profile(access_token, user_id, app_id)
@@ -73,7 +83,7 @@ def check_linked_app():
         }), 200
 
     return jsonify({
-        "error": "User not linked or not found",
+        "error": "Unable to verify user linkage; the user is either not linked or not found.",
         "user_linked": False,
         "user_profile": None
     }), 404
@@ -88,8 +98,8 @@ def unlink_app():
     app_name = payload.app_name
     user_email = payload.user_email
 
-    user_id = firebase_operations.get_user_id_by_email(user_email)[0]
-    app_id = firebase_operations.get_app_id_by_name(app_name)[0]
+    user_id = firebase_operations.get_user_id_by_email(user_email)
+    app_id = firebase_operations.get_app_id_by_name(app_name)
         
     if not app_id:
         return jsonify({"error": "All fields are required"}), 400

@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 import requests
-from config import settings
+from config.config import settings
 import logging
 
 LOG_FILE = "logs/spotify_micro_service.log"

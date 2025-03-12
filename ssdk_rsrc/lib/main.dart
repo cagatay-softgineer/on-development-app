@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:app_links/app_links.dart' as deepLink;
+import 'package:ssdk_rsrc/api_service.dart';
 import 'package:ssdk_rsrc/timer_page.dart';
 import 'package:ssdk_rsrc/custom_timer_page.dart';
 import 'button_customizer_app.dart';
@@ -36,6 +37,7 @@ class _MyAppState extends State<MyApp> {
     super.initState();
     _appLinks = deepLink.AppLinks();
     _initDeepLinkListener();
+    mainAPI.initializeBaseUrl();
   }
 
   Future<void> _initDeepLinkListener() async {

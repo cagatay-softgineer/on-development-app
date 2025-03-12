@@ -1,0 +1,528 @@
+{
+    "mobile": {
+        "development": {
+            "current": "0.7.2-alpha+alpha",
+            "history": [
+                {
+                    "version": "0.0.0",
+                    "update_type": "initial",
+                    "environment": "development",
+                    "timestamp": "2025-03-12T22:07:02.332423",
+                    "prerelease": null,
+                    "build": null
+                },
+                {
+                    "version": "0.1.0-alpha+alpha",
+                    "update_type": "minor",
+                    "environment": "development",
+                    "timestamp": "2025-03-12T22:07:18.277296",
+                    "prerelease": "alpha",
+                    "build": "alpha"
+                },
+                {
+                    "version": "0.2.0-alpha+alpha",
+                    "update_type": "feature update",
+                    "environment": "development",
+                    "timestamp": "2025-03-12T22:07:23.248498",
+                    "prerelease": "alpha",
+                    "build": "alpha"
+                },
+                {
+                    "version": "0.3.0-alpha+alpha",
+                    "update_type": "feature update",
+                    "environment": "development",
+                    "timestamp": "2025-03-12T22:07:35.202346",
+                    "prerelease": "alpha",
+                    "build": "alpha"
+                },
+                {
+                    "version": "0.4.0-alpha+alpha",
+                    "update_type": "minor",
+                    "environment": "development",
+                    "timestamp": "2025-03-12T22:08:34.562449",
+                    "prerelease": "alpha",
+                    "build": "alpha"
+                },
+                {
+                    "version": "0.5.0-alpha+alpha",
+                    "update_type": "feature update",
+                    "environment": "development",
+                    "timestamp": "2025-03-12T22:08:35.271182",
+                    "prerelease": "alpha",
+                    "build": "alpha"
+                },
+                {
+                    "version": "0.6.0-alpha+alpha",
+                    "update_type": "feature update",
+                    "environment": "development",
+                    "timestamp": "2025-03-12T22:09:26.319327",
+                    "prerelease": "alpha",
+                    "build": "alpha"
+                },
+                {
+                    "version": "0.7.0-alpha+alpha",
+                    "update_type": "feature update",
+                    "environment": "development",
+                    "timestamp": "2025-03-12T22:09:31.400031",
+                    "prerelease": "alpha",
+                    "build": "alpha"
+                },
+                {
+                    "version": "0.7.0.1-alpha+alpha",
+                    "update_type": "revision",
+                    "environment": "development",
+                    "timestamp": "2025-03-12T22:09:42.369285",
+                    "prerelease": "alpha",
+                    "build": "alpha"
+                },
+                {
+                    "version": "0.7.0.2-alpha+alpha",
+                    "update_type": "revision",
+                    "environment": "development",
+                    "timestamp": "2025-03-12T22:10:38.290858",
+                    "prerelease": "alpha",
+                    "build": "alpha"
+                },
+                {
+                    "version": "0.7.1-alpha+alpha",
+                    "update_type": "bug fix",
+                    "environment": "development",
+                    "timestamp": "2025-03-12T22:10:41.339463",
+                    "prerelease": "alpha",
+                    "build": "alpha"
+                },
+                {
+                    "version": "0.7.1.1-alpha+alpha",
+                    "update_type": "revision",
+                    "environment": "development",
+                    "timestamp": "2025-03-12T22:10:47.945424",
+                    "prerelease": "alpha",
+                    "build": "alpha"
+                },
+                {
+                    "version": "0.7.2-alpha+alpha",
+                    "update_type": "patch",
+                    "environment": "development",
+                    "timestamp": "2025-03-12T22:11:01.194940",
+                    "prerelease": "alpha",
+                    "build": "alpha"
+                }
+            ]
+        },
+        "deployment": {
+            "current": "0.0.0",
+            "history": [
+                {
+                    "version": "0.0.0",
+                    "update_type": "initial",
+                    "environment": "deployment",
+                    "timestamp": "2025-03-12T22:07:02.332423",
+                    "prerelease": null,
+                    "build": null
+                }
+            ]
+        },
+        "pre-production": {
+            "current": "0.0.0",
+            "history": [
+                {
+                    "version": "0.0.0",
+                    "update_type": "initial",
+                    "environment": "pre-production",
+                    "timestamp": "2025-03-12T22:07:02.332423",
+                    "prerelease": null,
+                    "build": null
+                }
+            ]
+        },
+        "production": {
+            "current": "0.0.0",
+            "history": [
+                {
+                    "version": "0.0.0",
+                    "update_type": "initial",
+                    "environment": "production",
+                    "timestamp": "2025-03-12T22:07:02.332423",
+                    "prerelease": null,
+                    "build": null
+                }
+            ]
+        }
+    },
+    "web": {
+        "development": {
+            "current": "0.0.0",
+            "history": [
+                {
+                    "version": "0.0.0",
+                    "update_type": "initial",
+                    "environment": "development",
+                    "timestamp": "2025-03-12T22:07:02.332423",
+                    "prerelease": null,
+                    "build": null
+                }
+            ]
+        },
+        "deployment": {
+            "current": "0.0.0",
+            "history": [
+                {
+                    "version": "0.0.0",
+                    "update_type": "initial",
+                    "environment": "deployment",
+                    "timestamp": "2025-03-12T22:07:02.332423",
+                    "prerelease": null,
+                    "build": null
+                }
+            ]
+        },
+        "pre-production": {
+            "current": "0.0.0",
+            "history": [
+                {
+                    "version": "0.0.0",
+                    "update_type": "initial",
+                    "environment": "pre-production",
+                    "timestamp": "2025-03-12T22:07:02.332423",
+                    "prerelease": null,
+                    "build": null
+                }
+            ]
+        },
+        "production": {
+            "current": "0.0.0",
+            "history": [
+                {
+                    "version": "0.0.0",
+                    "update_type": "initial",
+                    "environment": "production",
+                    "timestamp": "2025-03-12T22:07:02.332423",
+                    "prerelease": null,
+                    "build": null
+                }
+            ]
+        }
+    },
+    "backend": {
+        "development": {
+            "current": "0.8.1.1-alpha+alpha",
+            "history": [
+                {
+                    "version": "0.0.0",
+                    "update_type": "initial",
+                    "environment": "development",
+                    "timestamp": "2025-03-12T22:07:02.332423",
+                    "prerelease": null,
+                    "build": null
+                },
+                {
+                    "version": "0.1.0-alpha+alpha",
+                    "update_type": "minor",
+                    "environment": "development",
+                    "timestamp": "2025-03-12T22:07:41.136566",
+                    "prerelease": "alpha",
+                    "build": "alpha"
+                },
+                {
+                    "version": "0.2.0-alpha+alpha",
+                    "update_type": "feature update",
+                    "environment": "development",
+                    "timestamp": "2025-03-12T22:07:44.332232",
+                    "prerelease": "alpha",
+                    "build": "alpha"
+                },
+                {
+                    "version": "0.2.1-alpha+alpha",
+                    "update_type": "bug fix",
+                    "environment": "development",
+                    "timestamp": "2025-03-12T22:07:49.185538",
+                    "prerelease": "alpha",
+                    "build": "alpha"
+                },
+                {
+                    "version": "0.2.1.1-alpha+alpha",
+                    "update_type": "revision",
+                    "environment": "development",
+                    "timestamp": "2025-03-12T22:07:59.767600",
+                    "prerelease": "alpha",
+                    "build": "alpha"
+                },
+                {
+                    "version": "0.3.0-alpha+alpha",
+                    "update_type": "minor",
+                    "environment": "development",
+                    "timestamp": "2025-03-12T22:08:17.084128",
+                    "prerelease": "alpha",
+                    "build": "alpha"
+                },
+                {
+                    "version": "0.4.0-alpha+alpha",
+                    "update_type": "feature update",
+                    "environment": "development",
+                    "timestamp": "2025-03-12T22:08:20.455135",
+                    "prerelease": "alpha",
+                    "build": "alpha"
+                },
+                {
+                    "version": "0.4.0.1-alpha+alpha",
+                    "update_type": "revision",
+                    "environment": "development",
+                    "timestamp": "2025-03-12T22:08:43.840546",
+                    "prerelease": "alpha",
+                    "build": "alpha"
+                },
+                {
+                    "version": "0.4.1-alpha+alpha",
+                    "update_type": "patch",
+                    "environment": "development",
+                    "timestamp": "2025-03-12T22:08:54.387839",
+                    "prerelease": "alpha",
+                    "build": "alpha"
+                },
+                {
+                    "version": "0.4.2-alpha+alpha",
+                    "update_type": "patch",
+                    "environment": "development",
+                    "timestamp": "2025-03-12T22:09:03.108205",
+                    "prerelease": "alpha",
+                    "build": "alpha"
+                },
+                {
+                    "version": "0.5.0-alpha+alpha",
+                    "update_type": "feature update",
+                    "environment": "development",
+                    "timestamp": "2025-03-12T22:09:15.285817",
+                    "prerelease": "alpha",
+                    "build": "alpha"
+                },
+                {
+                    "version": "0.6.0-alpha+alpha",
+                    "update_type": "feature update",
+                    "environment": "development",
+                    "timestamp": "2025-03-12T22:09:36.481073",
+                    "prerelease": "alpha",
+                    "build": "alpha"
+                },
+                {
+                    "version": "0.6.0.1-alpha+alpha",
+                    "update_type": "revision",
+                    "environment": "development",
+                    "timestamp": "2025-03-12T22:09:37.164215",
+                    "prerelease": "alpha",
+                    "build": "alpha"
+                },
+                {
+                    "version": "0.6.0.2-alpha+alpha",
+                    "update_type": "revision",
+                    "environment": "development",
+                    "timestamp": "2025-03-12T22:09:47.649002",
+                    "prerelease": "alpha",
+                    "build": "alpha"
+                },
+                {
+                    "version": "0.6.1-alpha+alpha",
+                    "update_type": "bug fix",
+                    "environment": "development",
+                    "timestamp": "2025-03-12T22:09:51.130675",
+                    "prerelease": "alpha",
+                    "build": "alpha"
+                },
+                {
+                    "version": "0.7.0-alpha+alpha",
+                    "update_type": "feature update",
+                    "environment": "development",
+                    "timestamp": "2025-03-12T22:10:02.394564",
+                    "prerelease": "alpha",
+                    "build": "alpha"
+                },
+                {
+                    "version": "0.7.0.1-alpha+alpha",
+                    "update_type": "revision",
+                    "environment": "development",
+                    "timestamp": "2025-03-12T22:10:12.104459",
+                    "prerelease": "alpha",
+                    "build": "alpha"
+                },
+                {
+                    "version": "0.7.1-alpha+alpha",
+                    "update_type": "patch",
+                    "environment": "development",
+                    "timestamp": "2025-03-12T22:10:13.046933",
+                    "prerelease": "alpha",
+                    "build": "alpha"
+                },
+                {
+                    "version": "0.8.0-alpha+alpha",
+                    "update_type": "minor",
+                    "environment": "development",
+                    "timestamp": "2025-03-12T22:10:26.591803",
+                    "prerelease": "alpha",
+                    "build": "alpha"
+                },
+                {
+                    "version": "0.8.1-alpha+alpha",
+                    "update_type": "patch",
+                    "environment": "development",
+                    "timestamp": "2025-03-12T22:10:27.126372",
+                    "prerelease": "alpha",
+                    "build": "alpha"
+                },
+                {
+                    "version": "0.8.1.1-alpha+alpha",
+                    "update_type": "revision",
+                    "environment": "development",
+                    "timestamp": "2025-03-12T22:11:23.396874",
+                    "prerelease": "alpha",
+                    "build": "alpha"
+                }
+            ]
+        },
+        "deployment": {
+            "current": "0.0.0",
+            "history": [
+                {
+                    "version": "0.0.0",
+                    "update_type": "initial",
+                    "environment": "deployment",
+                    "timestamp": "2025-03-12T22:07:02.332423",
+                    "prerelease": null,
+                    "build": null
+                }
+            ]
+        },
+        "pre-production": {
+            "current": "0.0.0",
+            "history": [
+                {
+                    "version": "0.0.0",
+                    "update_type": "initial",
+                    "environment": "pre-production",
+                    "timestamp": "2025-03-12T22:07:02.332423",
+                    "prerelease": null,
+                    "build": null
+                }
+            ]
+        },
+        "production": {
+            "current": "0.0.0",
+            "history": [
+                {
+                    "version": "0.0.0",
+                    "update_type": "initial",
+                    "environment": "production",
+                    "timestamp": "2025-03-12T22:07:02.332423",
+                    "prerelease": null,
+                    "build": null
+                }
+            ]
+        }
+    },
+    "google_cloud": {
+        "development": {
+            "current": "0.0.0",
+            "history": [
+                {
+                    "version": "0.0.0",
+                    "update_type": "initial",
+                    "environment": "development",
+                    "timestamp": "2025-03-12T22:07:02.332423",
+                    "prerelease": null,
+                    "build": null
+                }
+            ]
+        },
+        "deployment": {
+            "current": "0.0.0",
+            "history": [
+                {
+                    "version": "0.0.0",
+                    "update_type": "initial",
+                    "environment": "deployment",
+                    "timestamp": "2025-03-12T22:07:02.332423",
+                    "prerelease": null,
+                    "build": null
+                }
+            ]
+        },
+        "pre-production": {
+            "current": "0.0.0",
+            "history": [
+                {
+                    "version": "0.0.0",
+                    "update_type": "initial",
+                    "environment": "pre-production",
+                    "timestamp": "2025-03-12T22:07:02.332423",
+                    "prerelease": null,
+                    "build": null
+                }
+            ]
+        },
+        "production": {
+            "current": "0.0.0",
+            "history": [
+                {
+                    "version": "0.0.0",
+                    "update_type": "initial",
+                    "environment": "production",
+                    "timestamp": "2025-03-12T22:07:02.332423",
+                    "prerelease": null,
+                    "build": null
+                }
+            ]
+        }
+    },
+    "docker": {
+        "development": {
+            "current": "0.0.0",
+            "history": [
+                {
+                    "version": "0.0.0",
+                    "update_type": "initial",
+                    "environment": "development",
+                    "timestamp": "2025-03-12T22:07:02.332423",
+                    "prerelease": null,
+                    "build": null
+                }
+            ]
+        },
+        "deployment": {
+            "current": "0.0.0",
+            "history": [
+                {
+                    "version": "0.0.0",
+                    "update_type": "initial",
+                    "environment": "deployment",
+                    "timestamp": "2025-03-12T22:07:02.332423",
+                    "prerelease": null,
+                    "build": null
+                }
+            ]
+        },
+        "pre-production": {
+            "current": "0.0.0",
+            "history": [
+                {
+                    "version": "0.0.0",
+                    "update_type": "initial",
+                    "environment": "pre-production",
+                    "timestamp": "2025-03-12T22:07:02.332423",
+                    "prerelease": null,
+                    "build": null
+                }
+            ]
+        },
+        "production": {
+            "current": "0.0.0",
+            "history": [
+                {
+                    "version": "0.0.0",
+                    "update_type": "initial",
+                    "environment": "production",
+                    "timestamp": "2025-03-12T22:07:02.332423",
+                    "prerelease": null,
+                    "build": null
+                }
+            ]
+        }
+    }
+}

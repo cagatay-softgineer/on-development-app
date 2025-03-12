@@ -1,14 +1,14 @@
 import logging
 import os
-from error_handling import log_error
 from cmd_gui_kit import CmdGUI
 import requests
 import base64
 from datetime import datetime
 import hashlib
 import pandas as pd
-from config import settings
-import firebase_operations
+from config.config import settings
+from util.error_handling import log_error
+import database.firebase_operations as firebase_operations
 
 # Initialize CmdGUI for visual feedback
 gui = CmdGUI()

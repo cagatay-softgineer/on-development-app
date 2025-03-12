@@ -1,13 +1,13 @@
 from flask import Blueprint, request, jsonify
-from utils import make_request, get_access_token_from_db
-from error_handling import log_error
-from config import settings
-import logging
-from cmd_gui_kit import CmdGUI
-import sys
-from models import PlaylistDurationRequest  # Import the model
+from util.utils import make_request, get_access_token_from_db
+from util.error_handling import log_error
+from config.config import settings
+from util.models import PlaylistDurationRequest  # Import the model
+import database.firebase_operations as firebase_operations
 from pydantic import ValidationError
-import firebase_operations
+from cmd_gui_kit import CmdGUI
+import logging
+import sys
 
 # Initialize CmdGUI for visual feedback
 gui = CmdGUI()
@@ -65,7 +65,7 @@ def get_playlist_duration():
     try:
         while True:
             url = url_template.format(playlist_id=playlist_id, offset=offset)
-            user_id = firebase_operations.get_user_id_by_email(user_email)[0]
+            user_id = firebase_operations.get_user_id_by_email(user_email)
             
             access_token, _ = get_access_token_from_db(user_id, app_id=1)
             response = make_request(url,access_token=access_token)

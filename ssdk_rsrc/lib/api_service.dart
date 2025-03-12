@@ -416,16 +416,61 @@ class SpotifyAPI {
 
 class MainAPI {
 
-  final Dio _dio = Dio(
-    BaseOptions(
-      baseUrl: 'https://api-sync-branch.yggbranch.dev/',
-      connectTimeout: const Duration(milliseconds: 5000),
-      receiveTimeout: const Duration(milliseconds: 5000),
-    ),
-  );
+   // Create Dio without a base URL for now.
+  final Dio _dio = Dio(BaseOptions(
+    connectTimeout: Duration(milliseconds: 5000),
+    receiveTimeout: Duration(milliseconds: 5000),
+  ));
+
+  // List of candidate base URLs.
+  final List<String> _baseUrls = [
+    'https://api-sync-branch.yggbranch.dev/',
+    'https://python-hello-world-911611650068.europe-west3.run.app/'
+  ];
+
+  MainAPI() {
+    // Set the active base URL when initializing.
+    initializeBaseUrl();
+  }
+
+  // Asynchronously set the active base URL.
+  Future<void> initializeBaseUrl() async {
+    try {
+      String activeUrl = await _getActiveBaseUrl();
+      _dio.options.baseUrl = activeUrl;
+      print('Active base URL set to: $activeUrl');
+    } catch (e) {
+      // Handle the case when no URL is active.
+      print('Error: No active base URL found. $e');
+    }
+  }
+
+  // Method to check which base URL is active.
+  Future<String> _getActiveBaseUrl() async {
+    for (final url in _baseUrls) {
+      try {
+        // Assumes each service exposes a /health endpoint for a basic check.
+        final response = await Dio().get('${url}healthcheck');
+        if (response.statusCode == 200) {
+          return url;
+        }
+      } catch (e) {
+        // If the request fails, move on to the next URL.
+        continue;
+      }
+    }
+    // If none of the URLs responded with 200, throw an exception.
+    throw Exception('No active base URL found.');
+  }
+
+  // Example API method that uses the active base URL.
+  Future<Response> fetchData(String endpoint) async {
+    return await _dio.get(endpoint);
+  }
 
   Future<Map<String, dynamic>> login(String email, String password) async {
     try {
+      print(_dio.options.baseUrl);
       final response = await _dio.post(
         'auth/login',
         data: {

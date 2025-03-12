@@ -1,6 +1,6 @@
 try:
     # Code that may trigger the error
-    from error_handling import log_error
+    from util.error_handling import log_error
     import flask
     from flask import Flask, jsonify, render_template, request
     from flask_jwt_extended import JWTManager
@@ -9,17 +9,17 @@ try:
     from cmd_gui_kit import CmdGUI
     from flask_cors import CORS
     import logging
-    from utils import route_descriptions, parse_logs_from_folder, parse_logs_to_dataframe
-    from auth import auth_bp
-    from apps import apps_bp
-    from spotify import spotify_bp
-    from user_profile import profile_bp
-    from google_api import google_bp
-    from spotify_micro_service import SpotifyMicroService_bp
-    from lyrics import lyrics_bp
+    from util.utils import route_descriptions, parse_logs_from_folder, parse_logs_to_dataframe
+    from Blueprints.auth import auth_bp
+    from Blueprints.apps import apps_bp
+    from Blueprints.spotify import spotify_bp
+    from Blueprints.user_profile import profile_bp
+    from Blueprints.google_api import google_bp
+    from Blueprints.spotify_micro_service import SpotifyMicroService_bp
+    from Blueprints.lyrics import lyrics_bp
     import pandas as pd
     import argparse
-    from config import settings
+    from config.config import settings
     import json
     import plotly.graph_objects as go
     from plotly.utils import PlotlyJSONEncoder
@@ -468,4 +468,4 @@ if __name__ == "__main__":
     parser.add_argument("--port", type=int, default=8080, help="Port to run the Flask app.")
     args = parser.parse_args()
 
-    app.run(host="0.0.0.0", port=args.port, ssl_context=('server\cert.pem', 'server\key.pem'))
+    app.run(host="0.0.0.0", port=args.port, ssl_context=('cert.pem', 'key.pem'))

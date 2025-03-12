@@ -1,11 +1,12 @@
 # firebase_commands.py
 
 import datetime
+import bcrypt
 from google.cloud.firestore_v1.base_query import FieldFilter
 from google.cloud.firestore_v1.collection import CollectionReference
 from google.cloud.firestore_v1.transforms import SERVER_TIMESTAMP
-from config import firebase_config
-from config import FirebaseConfig
+from config.config import firebase_config
+from config.config import FirebaseConfig
 from firebase_admin import credentials, firestore
 import firebase_admin
 
@@ -19,7 +20,8 @@ alias_map = {
 }
 
 def init_firebase(config: FirebaseConfig):
-    cred = credentials.Certificate("server/fb-cc.json")
+    cred = credentials.Certificate("database/fb-cc.json")
+    print(config)
     firebase_admin.initialize_app(cred, {
         'apiKey': config.api_key,
         'authDomain': config.auth_domain,
@@ -59,7 +61,12 @@ def get_user_id_by_email(email: str, alias_map: dict = alias_map):
         data = doc.to_dict()
         if "user_id" in data:
             user_ids.append(data["user_id"])
-    return user_ids
+            
+    if user_ids:
+        user_id = user_ids[0]
+        return user_id
+    else:
+        return None
 
 
 def get_app_id_by_name(app_name: str, alias_map: dict = alias_map):
@@ -75,7 +82,12 @@ def get_app_id_by_name(app_name: str, alias_map: dict = alias_map):
         data = doc.to_dict()
         if "app_id" in data:
             app_ids.append(data["app_id"])
-    return app_ids
+    
+    if app_ids:
+        app_id = app_ids[0]
+        return app_id
+    else:
+        return None
 
 
 def get_userlinkedapps_count_and_access_token(app_id: int, user_id: int, alias_map: dict = alias_map):
@@ -122,9 +134,16 @@ def insert_user(email: str, password: str, alias_map: dict = alias_map):
       INSERT INTO users (email, password) VALUES (?, ?)
     """
     col = get_collection("users", alias_map)
+    
+    # Encrypt the password using bcrypt
+    hashed = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+    
+    # Decode the hashed password to convert it from a bytes object to a string
+    hashed_str = hashed.decode('utf-8')
+    
     col.add({
         "email": email,
-        "password": password
+        "password": hashed_str
     })
 
 
