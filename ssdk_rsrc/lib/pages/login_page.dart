@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ssdk_rsrc/styles/button_styles.dart';
-import 'api_service.dart';
-import 'widgets/custom_button.dart'; // Import the CustomButton widget
+import '../services/api_service.dart';
+import '../widgets/custom_button.dart'; // Import the CustomButton widget
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class LoginPage extends StatefulWidget {

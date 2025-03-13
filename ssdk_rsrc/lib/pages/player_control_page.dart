@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:ssdk_rsrc/api_service.dart';
-import 'authlib.dart';
-import 'widgets/music_player.dart';
+import 'package:ssdk_rsrc/services/api_service.dart';
+import '../utils/authlib.dart';
+import '../models/music_player.dart';
 
 class PlayerControlPage extends StatefulWidget {
   const PlayerControlPage({Key? key}) : super(key: key);

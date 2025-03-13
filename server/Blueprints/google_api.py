@@ -3,8 +3,10 @@ from flask_jwt_extended import create_access_token, jwt_required  # noqa: F401
 from flask_limiter import Limiter
 from flask_cors import CORS
 from flask_limiter.util import get_remote_address
+from pydantic import ValidationError
 import database.firebase_operations as firebase_operations
-from util.utils import get_email_username # noqa: F401
+from util.models import UserEmailRequest
+from util.utils import get_email_username, get_current_user_profile_google
 from config.config import settings
 import logging
 from google_auth_oauthlib.flow import Flow
@@ -32,7 +34,7 @@ logger.propagate = False
 
 # Constants for Google OAuth
 GOOGLE_SCOPES = ["https://www.googleapis.com/auth/youtube.readonly","https://www.googleapis.com/auth/iam.test","https://www.googleapis.com/auth/youtube.download","https://www.googleapis.com/auth/userinfo.email","https://www.googleapis.com/auth/userinfo.profile","https://www.googleapis.com/auth/youtubepartner-channel-audit","https://www.googleapis.com/auth/youtubepartner","https://www.googleapis.com/auth/youtube.upload","https://www.googleapis.com/auth/youtube.third-party-link.creator","https://www.googleapis.com/auth/youtube.force-ssl","https://www.googleapis.com/auth/youtube.channel-memberships.creator","https://www.googleapis.com/auth/youtube","https://www.googleapis.com/auth/service.management.readonly","https://www.googleapis.com/auth/service.management","openid"] # Adjust scopes as needed
-GOOGLE_CLIENT_SECRETS_FILE = settings.GOOGLE_CLIENT_SECRET  # Path to your downloaded client secrets file
+GOOGLE_CLIENT_SECRETS_FILE = settings.google_client_secret  # Path to your downloaded client secrets file
 # Make sure to set a secret key for Flask session management in your app configuration
 
 @google_bp.route('/google_api_bind', methods=['GET'])
@@ -108,18 +110,20 @@ def google_api_callback():
 
         # Fetch the app_id for the Google app from the Apps table.
         # Assumes your app is registered with the name "Google".
-        app_id = firebase_operations.get_app_id_by_name("Google")[0]
+        app_id = firebase_operations.get_app_id_by_name("Google")
         if not app_id:
             logger.error("Google app not configured in Apps table.")
             return jsonify({"error": "Google app not configured."}), 400
 
-        existing_rows = firebase_operations.get_userlinkedapps_tokens(user_id, app_id)[0]
+        existing_rows = firebase_operations.get_userlinkedapps_tokens(user_id, app_id)
         if existing_rows and existing_rows[0]:
             logger.info("User already connected for user_id: %s, app_id: %s", user_id, app_id)
             # Optionally, you might update the existing token details here.
-            return render_template(
-            "google.html",
-            success = True, user_id = get_email_username(user_email)), 200
+            
+            #return render_template(
+            #"google.html",
+            #success = True, user_id = get_email_username(user_email)), 200
+            
             #return jsonify({
             #    "message": "User already connected.",
             #    "access_token": access_token,
@@ -129,7 +133,11 @@ def google_api_callback():
             #}), 200
 
         # Save the token details into the database.
-        firebase_operations.insert_userlinkedapps(user_id, app_id, access_token, refresh_token, token_expires_at, scopes)
+        firebase_operations.delete_userlinkedapps(user_id, 4)
+        firebase_operations.delete_userlinkedapps(user_id, 3)
+        
+        firebase_operations.insert_userlinkedapps(user_id, 4, access_token, refresh_token, token_expires_at, scopes)
+        firebase_operations.insert_userlinkedapps(user_id, 3, access_token, refresh_token, token_expires_at, scopes)
         logger.info("Google API token saved for user_id: %s, app_id: %s", user_id, app_id)
         
         return render_template(
@@ -147,3 +155,111 @@ def google_api_callback():
     except Exception as e:
         logger.error("Error during Google OAuth callback: %s", e)
         return jsonify({"error": "Failed to complete Google OAuth callback."}), 500
+
+
+@google_bp.route('/google_profile', methods=['POST'])
+def google_profile():
+    """
+    Endpoint to retrieve the current user's Google profile information.
+    It expects that the user is already bound (i.e., tokens are stored in the database).
+    """
+    try:
+        payload = UserEmailRequest.parse_obj(request.get_json())
+    except ValidationError as ve:
+        return jsonify({"error": ve.errors()}), 400 
+    
+    user_email = payload.user_email
+    
+    try:
+        print(user_email)
+        if not user_email:
+            return jsonify({"error": "Missing user_email in session."}), 400
+
+        # Retrieve user_id based on email
+        user_id = firebase_operations.get_user_id_by_email(user_email)
+        if not user_id:
+            return jsonify({"error": "User not found."}), 404
+        
+        print(user_id)
+        
+        # Retrieve the Google app id (assumes your app is registered with the name "Google")
+        app_id_data = firebase_operations.get_app_id_by_name("Google")
+        if not app_id_data:
+            return jsonify({"error": "Google app not configured."}), 400
+        app_id = app_id_data
+
+        print(app_id)
+        
+        # Retrieve stored token details
+        tokens_data = firebase_operations.get_userlinkedapps_tokens(user_id, app_id)
+        if not tokens_data or not tokens_data[0]:
+            return jsonify({"error": "No token found. Please bind your account first."}), 400
+        
+        # Assuming tokens_data returns a dictionary with keys "access_token" and "refresh_token"
+        #print(tokens_data)
+        #print(tokens_data[0])
+        #print(tokens_data[0]["access_token"])
+        access_token = tokens_data[0]["access_token"]
+        print(access_token)
+        
+        # Get the user's Google profile using the helper function
+        profile = get_current_user_profile_google(access_token, user_id)
+        print(profile)
+        if profile is None:
+            return jsonify({"error": "Failed to fetch Google user profile."}), 500
+        
+        return jsonify(profile), 200
+
+    except Exception as e:
+        logger.error("Error fetching Google user profile: %s", e)
+        return jsonify({"error": "Failed to fetch Google user profile."}), 500
+    
+def get_google_profile(user_email):
+    """
+    Endpoint to retrieve the current user's Google profile information.
+    It expects that the user is already bound (i.e., tokens are stored in the database).
+    """
+
+    try:
+        print(user_email)
+        if not user_email:
+            return jsonify({"error": "Missing user_email in session."}), 400
+
+        # Retrieve user_id based on email
+        user_id = firebase_operations.get_user_id_by_email(user_email)
+        if not user_id:
+            return jsonify({"error": "User not found."}), 404
+        
+        print(user_id)
+        
+        # Retrieve the Google app id (assumes your app is registered with the name "Google")
+        app_id_data = firebase_operations.get_app_id_by_name("Google")
+        if not app_id_data:
+            return jsonify({"error": "Google app not configured."}), 400
+        app_id = app_id_data
+
+        print(app_id)
+        
+        # Retrieve stored token details
+        tokens_data = firebase_operations.get_userlinkedapps_tokens(user_id, app_id)
+        if not tokens_data or not tokens_data[0]:
+            return jsonify({"error": "No token found. Please bind your account first."}), 400
+        
+        # Assuming tokens_data returns a dictionary with keys "access_token" and "refresh_token"
+        #print(tokens_data)
+        #print(tokens_data[0])
+        #print(tokens_data[0]["access_token"])
+        access_token = tokens_data[0]["access_token"]
+        print(access_token)
+        
+        # Get the user's Google profile using the helper function
+        profile = get_current_user_profile_google(access_token, user_id)
+        print(profile)
+        if profile is None:
+            return jsonify({"error": "Failed to fetch Google user profile."}), 500
+        
+        return profile
+
+    except Exception as e:
+        logger.error("Error fetching Google user profile: %s", e)
+        return jsonify({"error": "Failed to fetch Google user profile."}), 500

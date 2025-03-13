@@ -1,18 +1,19 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+// ignore: library_prefixes
 import 'package:app_links/app_links.dart' as deepLink;
-import 'package:ssdk_rsrc/api_service.dart';
-import 'package:ssdk_rsrc/timer_page.dart';
-import 'package:ssdk_rsrc/custom_timer_page.dart';
-import 'button_customizer_app.dart';
-import 'widgets/custom_button.dart'; // Import the CustomButton widget
+import 'package:ssdk_rsrc/services/api_service.dart';
+import 'package:ssdk_rsrc/pages/timer_page.dart';
+import 'package:ssdk_rsrc/pages/custom_timer_page.dart';
+import 'pages/button_customizer_app.dart';
+import 'widgets/custom_button.dart';
 import 'styles/button_styles.dart';
-import 'login_page.dart';
-import 'register_page.dart';
-import 'home_page.dart';
-import 'app_links.dart';
-import 'playlist_page.dart';
-import 'player_control_page.dart';
+import 'pages/login_page.dart';
+import 'pages/register_page.dart';
+import 'pages/home_page.dart';
+import 'pages/app_links.dart';
+import 'pages/playlist_page.dart';
+import 'pages/player_control_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -48,20 +49,20 @@ class _MyAppState extends State<MyApp> {
         _handleDeepLink(initialLink);
       }
     } catch (e) {
-      print("Error retrieving initial link: $e");
+      //print("Error retrieving initial link: $e");
     }
 
     // Listen for deep links while the app is running.
     _sub = _appLinks.uriLinkStream.listen((link) {
       _handleDeepLink(link);
     }, onError: (err) {
-      print("Error in link stream: $err");
+      //print("Error in link stream: $err");
     });
   }
 
   void _handleDeepLink(Uri link) {
     // Process the deep link. If needed, convert the Uri to a String using link.toString()
-    print('Deep link received: $link');
+    //print('Deep link received: $link');
     //navigatorKey.currentState?.pushNamed('/applinks');
   }
 
@@ -86,7 +87,7 @@ class _MyAppState extends State<MyApp> {
         '/button_customizer': (context) => ButtonCustomizerApp(),
         '/login_page': (context) => LoginPage(),
         '/main': (context) => HomePage(),
-        '/applinks': (context) => AppLinks(), // Your custom widget for deep links.
+        '/applinks': (context) => AppLinkPage(),
         '/register_page': (context) => RegisterPage(),
         '/playlists': (context) => PlaylistPage(),
         '/player': (context) => PlayerControlPage(),

@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:ssdk_rsrc/styles/button_styles.dart';
-import 'models/button_params.dart';
-import 'models/linked_app.dart';
-import 'widgets/app_card.dart';
-import 'authlib.dart';
-import '/api_service.dart';
+import '../models/button_params.dart';
+import '../models/linked_app.dart';
+import '../widgets/app_card.dart';
+import '../utils/authlib.dart';
+import '../services/api_service.dart';
+import '../constants/default/user.dart';
 
 
-class AppLinks extends StatefulWidget {
-  const AppLinks({super.key});
+class AppLinkPage extends StatefulWidget {
+  const AppLinkPage({super.key});
 
   @override
-  AppLinksState createState() => AppLinksState();
+  AppLinkPageState createState() => AppLinkPageState();
 }
 
-class AppLinksState extends State<AppLinks> with WidgetsBindingObserver {
-  final String defaultUserPicUrl = "https://sync-branch.yggbranch.dev/assets/default_user.png";
+class AppLinkPageState extends State<AppLinkPage> with WidgetsBindingObserver {
 
   // Define a list of apps
   final List<LinkedApp> linkedApps = [
@@ -46,18 +46,31 @@ class AppLinksState extends State<AppLinks> with WidgetsBindingObserver {
       return null;
     } else {
       final userLinked = response['user_linked'];
-      final userDisplayName = response['user_profile']['display_name'] ?? "No Display Name";
-      final userPic = response['user_profile']['images'][0]['url'] ?? "";
-      return {
-        'userLinked': userLinked,
-        'userDisplayName': userDisplayName,
-        'userPic': userPic,
-      };
+      if (appName == "Spotify"){
+        final userDisplayName = response['user_profile']['display_name'] ?? "No Display Name";
+        final userPic = response['user_profile']['images'][0]['url'] ?? "";
+        return {
+          'userLinked': userLinked,
+          'userDisplayName': userDisplayName,
+          'userPic': userPic,
+        };
+      } else if (appName == "AppleMusic"){
+        // Implement AppleMusic specific logic here
+      } else if (appName == "YoutubeMusic"){
+        final userDisplayName = response['user_profile']['name'] ?? "No Display Name";
+        final userPic = response['user_profile']['picture'] ?? "";
+        return {
+          'userLinked': userLinked,
+          'userDisplayName': userDisplayName,
+          'userPic': userPic,
+        };
+      } 
     }
   } catch (e) {
     debugPrint('Error in checkLinkedApp: $e');
     return null;
   }
+  return null;
 }
 
   Future<void> _initializeLinkedApps() async {
@@ -69,7 +82,7 @@ class AppLinksState extends State<AppLinks> with WidgetsBindingObserver {
       setState(() {
         app.isLinked = result?['userLinked'] ?? false;
         app.buttonText = app.isLinked ? "Unlink ${app.name}" : "Link ${app.name}";
-        app.userPic = result?['userPic'] ?? defaultUserPicUrl;
+        app.userPic = result?['userPic'] ?? UserConstants.defaultAvatarUrl;
         app.userDisplayName = result?['userDisplayName'] ?? "No Display Name";
       });
     }
@@ -98,10 +111,10 @@ class AppLinksState extends State<AppLinks> with WidgetsBindingObserver {
                     appParams: app.appButtonParams,
                     appName: app.name,
                     appText: app.buttonText,
-                    defaultUserPicUrl: defaultUserPicUrl,
+                    defaultUserPicUrl: UserConstants.defaultAvatarUrl,
                     onReinitializeApps: _initializeLinkedApps,
                   );
-                }).toList(),
+                }),
               ],
             ),
           ),

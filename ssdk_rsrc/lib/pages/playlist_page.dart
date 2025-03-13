@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 
-import 'package:ssdk_rsrc/api_service.dart';
+import 'package:ssdk_rsrc/services/api_service.dart';
 import 'package:ssdk_rsrc/widgets/custom_button.dart';
-import 'authlib.dart';
-import 'models/playlist.dart';
-import 'styles/button_styles.dart';
+import '../utils/authlib.dart';
+import '../models/playlist.dart';
+import '../styles/button_styles.dart';
+import '../utils/timer_funcs.dart'; // Timer utilities (e.g. player state functions)
+import '../constants/default/user.dart';
 // import 'player_control_page.dart';
 
 class PlaylistPage extends StatefulWidget {
@@ -18,7 +20,6 @@ class PlaylistPageState extends State<PlaylistPage> {
   final ApiService apiService = ApiService();
   List<Playlist> playlists = [];
   final Map<String, String> _userPicCache = {}; // Cache for user images
-  final String defaultUserPicUrl = "https://sync-branch.yggbranch.dev/assets/default_user.png";
   String? userID = "";
   bool isLoading = true;
 
@@ -71,7 +72,7 @@ class PlaylistPageState extends State<PlaylistPage> {
         print("Fetched from API: $image");
       } else {
         // Use default URL if no images are available
-        image = defaultUserPicUrl;
+        image = UserConstants.defaultAvatarUrl;
         print("Using default image for $ownerId");
       }
 
@@ -83,61 +84,9 @@ class PlaylistPageState extends State<PlaylistPage> {
       print("Error fetching user pic: $e");
 
       // Return default URL on error
-      return defaultUserPicUrl;
+      return UserConstants.defaultAvatarUrl;
     }
   }
-
-  String extractFirstDeviceId(Map<String, dynamic> response) {
-  // Check if 'devices' key exists and is a list
-  if (response.containsKey('devices') && response['devices'] is List) {
-    List<dynamic> devices = response['devices'];
-    
-    if (devices.isNotEmpty) {
-      // Access the first device
-      Map<String, dynamic> firstDevice = devices[0];
-      
-      // Check if 'id' key exists
-      if (firstDevice.containsKey('id') && firstDevice['id'] is String) {
-        String deviceId = firstDevice['id'];
-        return deviceId;
-      } else {
-        return ('Device ID not found or is not a string.');
-      }
-    } else {
-      return ('No devices available.');
-    }
-  } else {
-    return ('Invalid response format: "devices" key missing or not a list.');
-  }
-}
-
-String extractFirstSmartphoneDeviceId(Map<String, dynamic> response) {
-  // Check if 'devices' key exists and is a list
-  if (response.containsKey('devices') && response['devices'] is List) {
-    List<dynamic> devices = response['devices'];
-    
-    if (devices.isNotEmpty) {
-      // Iterate through devices to find the first Smartphone
-      for (var device in devices) {
-        if (device is Map<String, dynamic>) {
-          if (device['type'] == 'Smartphone') {
-            if (device.containsKey('id') && device['id'] is String) {
-              String deviceId = device['id'];
-              return deviceId;
-            } else {
-              return 'Device ID not found or is not a string.';
-            }
-          }
-        }
-      }
-      return 'No Smartphone devices found.';
-    } else {
-      return 'No devices available.';
-    }
-  } else {
-    return 'Invalid response format: "devices" key missing or not a list.';
-  }
-}
 
 
   @override

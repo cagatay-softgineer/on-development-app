@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:ssdk_rsrc/authlib.dart';
-import 'widgets/custom_button.dart'; // Ensure the correct path
-import 'styles/button_styles.dart';
+import 'package:ssdk_rsrc/utils/authlib.dart';
+import '../widgets/custom_button.dart'; // Ensure the correct path
+import '../styles/button_styles.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -54,23 +54,14 @@ class _HomePageState extends State<HomePage> {
         title: Text('Welcome'),
         automaticallyImplyLeading: false, // Removes the back button
       ),
-      body: Padding(
+      body: SingleChildScrollView(
+        child: Padding(
         padding: const EdgeInsets.all(16.0), // Adds padding around the content
         child: Center(
           child: Column(
           crossAxisAlignment: CrossAxisAlignment.center, // Centers horizontally
           children: [
-            SizedBox(height: 40), // Adds space from the top
-            // Welcome Message
-            Text(
-              'Welcome to the App!',
-              style: TextStyle(
-                fontSize: 24.0,
-                fontWeight: FontWeight.bold,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            SizedBox(height: 20), 
+            SizedBox(height: 20), // Adds space from the top
             // CustomButton to Navigate to Button Customizer
             CustomButton(
               text: "Navigate To\nButton Customizer",
@@ -152,6 +143,7 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
         ),
+      ),
       ),
     );
   }

@@ -111,7 +111,7 @@ def get_userlinkedapps_count_and_access_token(app_id: int, user_id: int, alias_m
     return count, access_tokens
 
 
-def delete_userlinkedapps(app_id: int, user_id: int, alias_map: dict = alias_map):
+def delete_userlinkedapps(user_id: int, app_id: int, alias_map: dict = alias_map):
     """
     Emulates:
       DELETE FROM UserLinkedApps WHERE app_id = ? AND user_id = ?

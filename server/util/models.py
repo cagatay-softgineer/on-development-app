@@ -15,6 +15,9 @@ class LinkedAppRequest(BaseModel):
 
 class UserIdRequest(BaseModel):
     user_id: str
+    
+class UserEmailRequest(BaseModel):
+    user_email: EmailStr
 
 class PlaylistDurationRequest(BaseModel):
     playlist_id: str

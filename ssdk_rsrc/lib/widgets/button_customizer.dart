@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'models/button_params.dart';
+import '../models/button_params.dart';
 
 class ButtonCustomizer extends StatefulWidget {
   final ButtonParams initialParams;

@@ -28,7 +28,7 @@ class MusicPlayerWidget extends StatefulWidget {
   final Future<void> Function()? onShufflePressed;
 
   const MusicPlayerWidget({
-    Key? key,
+    super.key,
     required this.layoutType,
     required this.albumArtUrl,
     required this.songTitle,
@@ -45,7 +45,7 @@ class MusicPlayerWidget extends StatefulWidget {
     required this.shuffleMode,
     this.onRepeatPressed,
     this.onShufflePressed,
-  }) : super(key: key);
+  });
 
   @override
   MusicPlayerWidgetState createState() => MusicPlayerWidgetState();

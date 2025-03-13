@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import '/models/button_params.dart';
 import '/widgets/custom_button.dart';
-import '/api_service.dart';
-import '/authlib.dart';
+import '../services/api_service.dart';
+import '../utils/authlib.dart';
 
 class AppCard extends StatelessWidget {
   final String userPic;

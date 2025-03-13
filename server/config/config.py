@@ -16,7 +16,9 @@ class Settings(BaseSettings):
     debug_mode: str = Field(default=False, env="DEBUG_MODE")
     salt: str = Field(..., env="SALT")
     musixmatch_API_KEY: str = Field(..., env="MUSIXMATCH_API_KEY")
-    GOOGLE_CLIENT_SECRET: str = Field(..., env="GOOGLE_CLIENT_SECRET")
+    google_client_id: str = Field(..., env="GOOGLE_CLIENT_ID")
+    google_client_secret: str = Field(..., env="GOOGLE_CLIENT_SECRET")
+    google_client_secret_file: str = Field(..., env="GOOGLE_CLIENT_SECRET_FILE")
     SECRET_KEY: str = Field(default_factory=lambda: secrets.token_hex(16))
     
     class Config:

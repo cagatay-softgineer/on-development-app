@@ -1,7 +1,7 @@
 {
     "mobile": {
         "development": {
-            "current": "0.7.2-alpha+alpha",
+            "current": "0.7.4-alpha+alpha",
             "history": [
                 {
                     "version": "0.0.0",
@@ -106,6 +106,38 @@
                     "timestamp": "2025-03-12T22:11:01.194940",
                     "prerelease": "alpha",
                     "build": "alpha"
+                },
+                {
+                    "version": "0.7.2.1-alpha+alpha",
+                    "update_type": "revision",
+                    "environment": "development",
+                    "timestamp": "2025-03-14T00:42:31.336009",
+                    "prerelease": "alpha",
+                    "build": "alpha"
+                },
+                {
+                    "version": "0.7.2.2-alpha+alpha",
+                    "update_type": "revision",
+                    "environment": "development",
+                    "timestamp": "2025-03-14T00:42:33.787981",
+                    "prerelease": "alpha",
+                    "build": "alpha"
+                },
+                {
+                    "version": "0.7.3-alpha+alpha",
+                    "update_type": "patch",
+                    "environment": "development",
+                    "timestamp": "2025-03-14T00:42:34.623164",
+                    "prerelease": "alpha",
+                    "build": "alpha"
+                },
+                {
+                    "version": "0.7.4-alpha+alpha",
+                    "update_type": "patch",
+                    "environment": "development",
+                    "timestamp": "2025-03-14T00:42:40.684104",
+                    "prerelease": "alpha",
+                    "build": "alpha"
                 }
             ]
         },
@@ -205,7 +237,7 @@
     },
     "backend": {
         "development": {
-            "current": "0.8.1.1-alpha+alpha",
+            "current": "0.8.2-alpha+alpha",
             "history": [
                 {
                     "version": "0.0.0",
@@ -372,6 +404,14 @@
                     "update_type": "revision",
                     "environment": "development",
                     "timestamp": "2025-03-12T22:11:23.396874",
+                    "prerelease": "alpha",
+                    "build": "alpha"
+                },
+                {
+                    "version": "0.8.2-alpha+alpha",
+                    "update_type": "patch",
+                    "environment": "development",
+                    "timestamp": "2025-03-14T00:42:49.219982",
                     "prerelease": "alpha",
                     "build": "alpha"
                 }
