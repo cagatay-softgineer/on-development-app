@@ -1,9 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:url_launcher/url_launcher.dart';
-import '../utils/authlib.dart';
+import 'package:ssdk_rsrc/utils/authlib.dart';
 import 'package:flutter/material.dart';
-import '../models/playlist.dart';
+import 'package:ssdk_rsrc/models/playlist.dart';
+import 'package:ssdk_rsrc/enums/enums.dart';
 
 final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
 MainAPI mainAPI = MainAPI();
@@ -19,7 +20,7 @@ class SpotifyAPI {
     BaseOptions(
       baseUrl: 'https://api.spotify.com/',
       connectTimeout: const Duration(milliseconds: 5000),
-      receiveTimeout: const Duration(milliseconds: 5000),
+      receiveTimeout: const Duration(milliseconds: 10000),
     ),
   );
 
@@ -419,7 +420,7 @@ class MainAPI {
    // Create Dio without a base URL for now.
   final Dio _dio = Dio(BaseOptions(
     connectTimeout: Duration(milliseconds: 5000),
-    receiveTimeout: Duration(milliseconds: 5000),
+    receiveTimeout: Duration(milliseconds: 10000),
   ));
 
   // List of candidate base URLs.
@@ -590,20 +591,58 @@ class MainAPI {
     }
   }
 
-  Future<List<Playlist>> fetchPlaylists(String? userId) async {
+  Future<List<Playlist>> fetchPlaylists(String? userId, { MusicApp app = MusicApp.Spotify }) async {
+    // Determine the endpoint based on the MusicApp
+    String endpoint;
+    switch (app) {
+      case MusicApp.Spotify:
+        endpoint = 'spotify/playlists';
+        break;
+      case MusicApp.YouTube:
+        endpoint = 'youtube-music/playlists';
+        break;
+    }
+
     final response = await _dio.post(
-          'spotify/playlists',
-          data: {
-            "user_email": userId
-          }
+      endpoint,
+      data: {
+        "user_email": userId,
+      },
     );
 
     if (response.statusCode == 200) {
-      final List<dynamic> data = response.data;
-      return data.map((json) => Playlist.fromJson(json)).toList();
+      List<dynamic> data;
+      // For YouTube, assume the response JSON contains an "items" array.
+      if (app == MusicApp.YouTube) {
+        data = response.data["items"] ?? [];
+      } else {
+        data = response.data;
+      }
+      return data.map((json) => Playlist.fromJson(json, app)).toList();
     } else {
       throw Exception('Failed to load playlists');
     }
+  }
+
+  Future<String?> fetchFirstVideoId(String? userId, String? playlistId) async {
+    if (playlistId == null || playlistId.isEmpty) return null;
+    try {
+      final response = await _dio.post(
+        "/youtube-music/fetch_first_video_id",
+        data: {"playlist_id": playlistId, "user_email": userId},
+        options: Options(
+        contentType: "application/json", // Sets "application/json"
+        ),
+      );
+      if (response.statusCode == 200) {
+        return response.data["videoId"];
+      } else {
+        print("Error: ${response.statusCode} - ${response.data}");
+      }
+    } catch (e) {
+      print("Error fetching first video id: $e");
+    }
+    return null;
   }
 
   Future<String> getToken(String? userId) async {

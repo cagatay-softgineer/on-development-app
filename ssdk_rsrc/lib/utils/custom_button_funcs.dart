@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:convert';
-import '../models/button_params.dart';
+import 'package:ssdk_rsrc/models/button_params.dart';
 
 /// Formats the [ButtonParams] as a pretty-printed JSON string.
 String formatParamsAsJson(ButtonParams params) {

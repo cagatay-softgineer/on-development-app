@@ -1,4 +1,4 @@
-import '/models/button_params.dart'; // Ensure the correct path
+import 'package:ssdk_rsrc/models/button_params.dart'; // Ensure the correct path
 
 Map<String, dynamic> mainButton = {
   "backgroundColor": "Color(0xFF0000FF)", // Blue
@@ -192,10 +192,10 @@ Map<String, dynamic> spotifyPlay = {
   "borderColor": "Color(0x00000000)",      // Transparent
   "letterSpacing": 0.0,
   "blurAmount": 10.0,
-  "useGradient": false,                    // No gradient for Logout button
-  "gradientStartColor": "Color(0xFF0000FF)", // Ignored as useGradient is false
-  "gradientEndColor": "Color(0xFFFF00FF)",   // Ignored as useGradient is false
-  "leadingIcon": "Icons.play_circle_outline",
+  "useGradient": true,                    // No gradient for Logout button
+  "gradientStartColor": "Color(0xFF4E54C8)", // Ignored as useGradient is false
+  "gradientEndColor": "Color(0xFF8F94FB)",   // Ignored as useGradient is false
+  "leadingIcon": "Icons.play_arrow_rounded",
   "trailingIcon": "",                    // No trailing icon
   "textAlign": "TextAlign.center",
   "isEnabled": true,

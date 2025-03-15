@@ -1,4 +1,17 @@
 try:
+    import os
+    # Define logs directory and log file path
+    LOG_DIR = "logs"
+    LOG_FILE = os.path.join(LOG_DIR, "service.log")
+
+    # Ensure the logs directory exists; if not, create it
+    if not os.path.exists(LOG_DIR):
+        os.makedirs(LOG_DIR)
+except OSError:
+    print("Unable to create logs directory")
+
+
+try:
     # Code that may trigger the error
     from util.error_handling import log_error
     import flask
@@ -17,6 +30,7 @@ try:
     from Blueprints.google_api import google_bp
     from Blueprints.spotify_micro_service import SpotifyMicroService_bp
     from Blueprints.lyrics import lyrics_bp
+    from Blueprints.youtube_music import youtubeMusic_bp
     import pandas as pd
     import argparse
     from config.config import settings
@@ -159,6 +173,16 @@ def google_healthcheck():
     logger.info("Google Service healthcheck requested")
     return jsonify({"status": "ok", "service": "Google Service"}), 200
 
+@youtubeMusic_bp.before_request
+def log_youtube_music_requests():
+    logger.info("Youtube Music blueprint request received.")
+    
+@youtubeMusic_bp.route("/healthcheck", methods=["GET"])
+def youtube_music_healthcheck():
+    gui.log("Youtube Music Service healthcheck requested")
+    logger.info("Youtube Music Service healthcheck requested")
+    return jsonify({"status": "ok", "service": "Youtube Music Service"}), 200
+
 @app.route("/healthcheck", methods=['POST', 'GET'])
 def app_healthcheck():
     #gui.log("App healthcheck requested")
@@ -189,6 +213,7 @@ app.register_blueprint(profile_bp, url_prefix="/profile")
 app.register_blueprint(SpotifyMicroService_bp, url_prefix="/spotify-micro-service")
 app.register_blueprint(lyrics_bp, url_prefix="/lyrics")
 app.register_blueprint(google_bp, url_prefix="/google")
+app.register_blueprint(youtubeMusic_bp, url_prefix="/youtube-music")
 app.register_blueprint(swaggerui_blueprint, url_prefix=app.config['SWAGGER_URL'])
 
 

@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import '../widgets/custom_button.dart';
-import '../styles/button_styles.dart';
+import 'package:ssdk_rsrc/widgets/custom_button.dart';
+import 'package:ssdk_rsrc/styles/button_styles.dart';
 import 'dart:async';
 import 'package:ssdk_rsrc/services/api_service.dart';
-import '../models/playlist.dart';
-import '../utils/timer_funcs.dart'; // Timer utilities (e.g. player state functions)
-import '../utils/pomodoro_funcs.dart'; // Pomodoro mixin
-import '../widgets/player_widget.dart'; // Custom player widget
-import '../models/music_player.dart'; // Custom player widget
-import '../services/spotify.dart'; //spotify
+import 'package:ssdk_rsrc/models/playlist.dart';
+import 'package:ssdk_rsrc/utils/timer_funcs.dart'; // Timer utilities (e.g. player state functions)
+import 'package:ssdk_rsrc/utils/pomodoro_funcs.dart'; // Pomodoro mixin
+import 'package:ssdk_rsrc/widgets/player_widget.dart'; // Custom player widget
+import 'package:ssdk_rsrc/models/music_player.dart'; // Custom player widget
+import 'package:ssdk_rsrc/services/spotify.dart'; //spotify
 
 class TimerPage extends StatefulWidget {
   const TimerPage({Key? key}) : super(key: key);

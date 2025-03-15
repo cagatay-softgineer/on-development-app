@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../widgets/button_customizer.dart';
-import '../models/button_params.dart';
-import '../utils/custom_button_funcs.dart'; // Import the utilities
+import 'package:ssdk_rsrc/widgets/button_customizer.dart';
+import 'package:ssdk_rsrc/models/button_params.dart';
+import 'package:ssdk_rsrc/utils/custom_button_funcs.dart'; // Import the utilities
 
 class ButtonCustomizerApp extends StatefulWidget {
   const ButtonCustomizerApp({super.key});

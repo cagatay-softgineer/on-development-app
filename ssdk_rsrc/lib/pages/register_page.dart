@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ssdk_rsrc/styles/button_styles.dart';
-import '../services/api_service.dart';
-import '../widgets/custom_button.dart'; // Import the CustomButton widget
+import 'package:ssdk_rsrc/services/api_service.dart';
+import 'package:ssdk_rsrc/widgets/custom_button.dart'; // Import the CustomButton widget
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({Key? key}) : super(key: key);

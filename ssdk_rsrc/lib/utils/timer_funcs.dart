@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:ssdk_rsrc/services/api_service.dart';
-import '../models/playlist.dart';
-import '../utils/authlib.dart';
+import 'package:ssdk_rsrc/models/playlist.dart';
+import 'package:ssdk_rsrc/utils/authlib.dart';
 
 /// Extracts the first device ID from the provided response.
 /// Returns a descriptive string if not found.

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:ssdk_rsrc/styles/button_styles.dart';
-import '../models/button_params.dart';
-import '../models/linked_app.dart';
-import '../widgets/app_card.dart';
-import '../utils/authlib.dart';
-import '../services/api_service.dart';
-import '../constants/default/user.dart';
+import 'package:ssdk_rsrc/models/button_params.dart';
+import 'package:ssdk_rsrc/models/linked_app.dart';
+import 'package:ssdk_rsrc/widgets/app_card.dart';
+import 'package:ssdk_rsrc/utils/authlib.dart';
+import 'package:ssdk_rsrc/services/api_service.dart';
+import 'package:ssdk_rsrc/constants/default/user.dart';
 
 
 class AppLinkPage extends StatefulWidget {

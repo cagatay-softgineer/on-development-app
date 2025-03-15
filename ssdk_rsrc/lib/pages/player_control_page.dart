@@ -1,12 +1,21 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:ssdk_rsrc/services/api_service.dart';
-import '../utils/authlib.dart';
-import '../models/music_player.dart';
+import 'package:ssdk_rsrc/utils/authlib.dart';
+import 'package:ssdk_rsrc/models/music_player.dart';
+import 'package:ssdk_rsrc/enums/enums.dart';
+import 'package:ssdk_rsrc/constants/default/app_icons.dart';
 
 class PlayerControlPage extends StatefulWidget {
-  const PlayerControlPage({Key? key}) : super(key: key);
-
+  final String? selectedPlaylistId;
+  final MusicApp selectedApp; // New parameter to indicate which app (Spotify/YouTube)
+  
+  const PlayerControlPage({
+    Key? key,
+    this.selectedPlaylistId,
+    required this.selectedApp,
+  }) : super(key: key);
+  
   @override
   _PlayerControlPageState createState() => _PlayerControlPageState();
 }
@@ -43,9 +52,11 @@ class _PlayerControlPageState extends State<PlayerControlPage> {
   @override
   void initState() {
     super.initState();
+    if (widget.selectedApp == MusicApp.Spotify) {
     _initializeData().then((_) {
-      _startStateCheckTimer();
+        _startStateCheckTimer();
     });
+    }
   }
 
   Future<void> _initializeData() async {
@@ -53,10 +64,21 @@ class _PlayerControlPageState extends State<PlayerControlPage> {
       final userId = await AuthService.getUserId();
       setState(() {
         userID = userId;
+      });
+      // If a selectedPlaylistId is provided, trigger playback.
+      if (widget.selectedPlaylistId != null && widget.selectedPlaylistId!.isNotEmpty) {
+        final responseDevices = await spotifyAPI.getDevices(userID);
+        final String deviceId = extractFirstDeviceId(responseDevices);
+        // Start playback for the selected playlist.
+        await spotifyAPI.playPlaylist(widget.selectedPlaylistId!, userID, deviceId);
+        // Optionally, you can set repeat/shuffle mode here if needed.
+      }
+      // Then load the current player state.
+      setState(() {
         _playerFuture = spotifyAPI.getPlayer(userID);
       });
     } catch (e) {
-      print("Error fetching userID: $e");
+      print("Error during initialization: $e");
     }
   }
 
@@ -69,10 +91,8 @@ class _PlayerControlPageState extends State<PlayerControlPage> {
           final newData = await spotifyAPI.getPlayer(userID);
           // ignore: unnecessary_null_comparison
           if (newData != null && newData['item'] != null) {
-            // Update local repeat and shuffle state from the API.
             final String newRepeat = newData["repeat_state"] ?? "off";
             final bool newShuffle = newData["shuffle_state"] ?? false;
-            // Update local state if different.
             if (_currentRepeatMode != newRepeat || _currentShuffleMode != newShuffle) {
               setState(() {
                 _currentRepeatMode = newRepeat;
@@ -97,184 +117,100 @@ class _PlayerControlPageState extends State<PlayerControlPage> {
     super.dispose();
   }
 
-  Widget _buildPlayerWidget(Map<String, dynamic> data) {
-    // Update local repeat and shuffle state from the API response.
-    final String repeatState = data["repeat_state"] ?? "off";
-    final bool shuffleState = data["shuffle_state"] ?? false;
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (_currentRepeatMode != repeatState || _currentShuffleMode != shuffleState) {
-        setState(() {
-          _currentRepeatMode = repeatState;
-          _currentShuffleMode = shuffleState;
-        });
+  /// Builds the appropriate player widget based on the MusicApp type.
+  Widget _buildPlayerWidget(Map<String, dynamic> data, MusicApp app) {
+    if (widget.selectedApp == MusicApp.YouTube) {
+      // For YouTube tracks, assume the API returns a video ID in data['item']['videoId'].
+      final String videoId = widget.selectedPlaylistId!;
+      if (videoId.isNotEmpty) {
+        print(videoId);
+        return const Center(child: Text('No YouTube video available.'));
+      } else {
+        return const Center(child: Text('No YouTube video available.'));
       }
-    });
+    } else {
+      // Build Spotify player widget.
+      final track = data['item'];
+      final album = track['album'];
+      final String albumArtUrl = (album['images'] as List).isNotEmpty
+          ? album['images'][0]['url']
+          : 'https://via.placeholder.com/300';
+      final String songTitle = track['name'] ?? 'Song Title';
+      final String artistName = (track['artists'] as List).isNotEmpty
+          ? track['artists'][0]['name']
+          : 'Artist Name';
+      final Duration currentPosition =
+          Duration(milliseconds: data['progress_ms'] ?? 0);
+      final Duration totalDuration =
+          Duration(milliseconds: track['duration_ms'] ?? 0);
+      final bool isPlaying = data['is_playing'] ?? false;
 
-    final track = data['item'];
-    final album = track['album'];
-    final String albumArtUrl = (album['images'] as List).isNotEmpty
-        ? album['images'][0]['url']
-        : 'https://via.placeholder.com/300';
-    final String songTitle = track['name'] ?? 'Song Title';
-    final String artistName = (track['artists'] as List).isNotEmpty
-        ? track['artists'][0]['name']
-        : 'Artist Name';
-    final Duration currentPosition =
-        Duration(milliseconds: data['progress_ms'] ?? 0);
-    final Duration totalDuration =
-        Duration(milliseconds: track['duration_ms'] ?? 0);
-    final bool isPlaying = data['is_playing'] ?? false;
-
-    return ListView(
-      padding: const EdgeInsets.all(16.0),
-      children: [
-        // Compact layout player.
-        MusicPlayerWidget(
-          layoutType: PlayerLayoutType.compact,
-          albumArtUrl: albumArtUrl,
-          songTitle: songTitle,
-          artistName: artistName,
-          currentPosition: currentPosition,
-          totalDuration: totalDuration,
-          isPlaying: isPlaying,
-          repeatMode: _currentRepeatMode,
-          shuffleMode: _currentShuffleMode,
-          isDynamic: true,
-          onPlayPausePressed: () async {
-            final response = await spotifyAPI.getDevices(userID);
-            final String deviceId = extractFirstDeviceId(response);
-            if (isPlaying) {
-              await spotifyAPI.pausePlayer(userID, deviceId);
-            } else {
-              await spotifyAPI.resumePlayer(userID, deviceId);
-            }
-            setState(() {
-              _playerFuture = spotifyAPI.getPlayer(userID);
-            });
-          },
-          onNextPressed: () async {
-            final response = await spotifyAPI.getDevices(userID);
-            final String deviceId = extractFirstDeviceId(response);
-            await spotifyAPI.skipToNext(userID, deviceId);
-            setState(() {
-              _playerFuture = spotifyAPI.getPlayer(userID);
-            });
-          },
-          onPreviousPressed: () async {
-            final response = await spotifyAPI.getDevices(userID);
-            final String deviceId = extractFirstDeviceId(response);
-            await spotifyAPI.skipToPrevious(userID, deviceId);
-            setState(() {
-              _playerFuture = spotifyAPI.getPlayer(userID);
-            });
-          },
-          onSeek: (newPosition) async {
-            final response = await spotifyAPI.getDevices(userID);
-            final String deviceId = extractFirstDeviceId(response);
-            await spotifyAPI.seekToPosition(
-                userID, deviceId, newPosition.inMilliseconds.toString());
-          },
-          onRepeatPressed: () async {
-            final response = await spotifyAPI.getDevices(userID);
-            final String deviceId = extractFirstDeviceId(response);
-            String newMode;
-            if (repeatState == "off") {
-              newMode = "track";
-            } else if (repeatState == "track") {
-              newMode = "context";
-            } else {
-              newMode = "off";
-            }
-            await spotifyAPI.setRepeatMode(userID, deviceId, newMode);
-            setState(() {
-              _playerFuture = spotifyAPI.getPlayer(userID);
-            });
-          },
-          onShufflePressed: () async {
-            final response = await spotifyAPI.getDevices(userID);
-            final String deviceId = extractFirstDeviceId(response);
-            bool newShuffle = !shuffleState;
-            await spotifyAPI.setShuffleMode(userID, deviceId, newShuffle);
-            setState(() {
-              _playerFuture = spotifyAPI.getPlayer(userID);
-            });
-          },
-        ),
-        const SizedBox(height: 24.0),
-        // Expanded layout player.
-        MusicPlayerWidget(
-          layoutType: PlayerLayoutType.expanded,
-          albumArtUrl: albumArtUrl,
-          songTitle: songTitle,
-          artistName: artistName,
-          currentPosition: currentPosition,
-          totalDuration: totalDuration,
-          isPlaying: isPlaying,
-          repeatMode: _currentRepeatMode,
-          shuffleMode: _currentShuffleMode,
-          isDynamic: true,
-          onPlayPausePressed: () async {
-            final response = await spotifyAPI.getDevices(userID);
-            final String deviceId = extractFirstDeviceId(response);
-            if (isPlaying) {
-              await spotifyAPI.pausePlayer(userID, deviceId);
-            } else {
-              await spotifyAPI.resumePlayer(userID, deviceId);
-            }
-            setState(() {
-              _playerFuture = spotifyAPI.getPlayer(userID);
-            });
-          },
-          onNextPressed: () async {
-            final response = await spotifyAPI.getDevices(userID);
-            final String deviceId = extractFirstDeviceId(response);
-            await spotifyAPI.skipToNext(userID, deviceId);
-            setState(() {
-              _playerFuture = spotifyAPI.getPlayer(userID);
-            });
-          },
-          onPreviousPressed: () async {
-            final response = await spotifyAPI.getDevices(userID);
-            final String deviceId = extractFirstDeviceId(response);
-            await spotifyAPI.skipToPrevious(userID, deviceId);
-            setState(() {
-              _playerFuture = spotifyAPI.getPlayer(userID);
-            });
-          },
-          onSeek: (newPosition) async {
-            final response = await spotifyAPI.getDevices(userID);
-            final String deviceId = extractFirstDeviceId(response);
-            await spotifyAPI.seekToPosition(
-                userID, deviceId, newPosition.inMilliseconds.toString());
-          },
-          onRepeatPressed: () async {
-            final response = await spotifyAPI.getDevices(userID);
-            final String deviceId = extractFirstDeviceId(response);
-            String newMode;
-            if (repeatState == "off") {
-              newMode = "track";
-            } else if (repeatState == "track") {
-              newMode = "context";
-            } else {
-              newMode = "off";
-            }
-            await spotifyAPI.setRepeatMode(userID, deviceId, newMode);
-            setState(() {
-              _playerFuture = spotifyAPI.getPlayer(userID);
-            });
-          },
-          onShufflePressed: () async {
-            final response = await spotifyAPI.getDevices(userID);
-            final String deviceId = extractFirstDeviceId(response);
-            bool newShuffle = !shuffleState;
-            await spotifyAPI.setShuffleMode(userID, deviceId, newShuffle);
-            setState(() {
-              _playerFuture = spotifyAPI.getPlayer(userID);
-            });
-          },
-        ),
-      ],
-    );
+      return MusicPlayerWidget(
+        layoutType: PlayerLayoutType.compact,
+        albumArtUrl: albumArtUrl,
+        songTitle: songTitle,
+        artistName: artistName,
+        currentPosition: currentPosition,
+        totalDuration: totalDuration,
+        isPlaying: isPlaying,
+        repeatMode: _currentRepeatMode,
+        shuffleMode: _currentShuffleMode,
+        isDynamic: true,
+        onPlayPausePressed: () async {
+          final response = await spotifyAPI.getDevices(userID);
+          final String deviceId = extractFirstDeviceId(response);
+          if (isPlaying) {
+            await spotifyAPI.pausePlayer(userID, deviceId);
+          } else {
+            await spotifyAPI.resumePlayer(userID, deviceId);
+          }
+          setState(() {
+            _playerFuture = spotifyAPI.getPlayer(userID);
+          });
+        },
+        onNextPressed: () async {
+          final response = await spotifyAPI.getDevices(userID);
+          final String deviceId = extractFirstDeviceId(response);
+          await spotifyAPI.skipToNext(userID, deviceId);
+          setState(() {
+            _playerFuture = spotifyAPI.getPlayer(userID);
+          });
+        },
+        onPreviousPressed: () async {
+          final response = await spotifyAPI.getDevices(userID);
+          final String deviceId = extractFirstDeviceId(response);
+          await spotifyAPI.skipToPrevious(userID, deviceId);
+          setState(() {
+            _playerFuture = spotifyAPI.getPlayer(userID);
+          });
+        },
+        onSeek: (newPosition) async {
+          final response = await spotifyAPI.getDevices(userID);
+          final String deviceId = extractFirstDeviceId(response);
+          await spotifyAPI.seekToPosition(
+              userID, deviceId, newPosition.inMilliseconds.toString());
+        },
+        onRepeatPressed: () async {
+          final response = await spotifyAPI.getDevices(userID);
+          final String deviceId = extractFirstDeviceId(response);
+          String newMode;
+          if (_currentRepeatMode == "off") {
+            newMode = "track";
+          } else if (_currentRepeatMode == "track") {
+            newMode = "context";
+          } else {
+            newMode = "off";
+          }
+          await spotifyAPI.setRepeatMode(userID, deviceId, newMode);
+        },
+        onShufflePressed: () async {
+          final response = await spotifyAPI.getDevices(userID);
+          final String deviceId = extractFirstDeviceId(response);
+          bool newShuffle = !_currentShuffleMode;
+          await spotifyAPI.setShuffleMode(userID, deviceId, newShuffle);
+        },
+      );
+    }
   }
 
   @override
@@ -287,33 +223,48 @@ class _PlayerControlPageState extends State<PlayerControlPage> {
     }
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Player')),
+      appBar: AppBar(
+        title: const Text('Player'),
+        actions: [
+          // Show current app icon on top-right if player data is available.
+          if (_lastPlayerData != null)
+            Builder(builder: (context) {
+              return Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: AppIcons.getAppIcon(widget.selectedApp),
+              );
+            }),
+        ],
+      ),
       body: FutureBuilder<Map<String, dynamic>>(
         future: _playerFuture,
         builder: (context, snapshot) {
+          Map<String, dynamic>? data;
+          
           if (snapshot.connectionState == ConnectionState.waiting) {
             if (_lastPlayerData != null) {
-              return _buildPlayerWidget(_lastPlayerData!);
+              data = _lastPlayerData;
             } else {
               return const Center(child: Text('Loading...'));
             }
-          }
-          if (snapshot.hasError) {
+          } else if (snapshot.hasError) {
             if (_lastPlayerData != null) {
-              return _buildPlayerWidget(_lastPlayerData!);
+              data = _lastPlayerData;
             } else {
               return Center(child: Text('Error: ${snapshot.error}'));
             }
-          }
-          if (!snapshot.hasData || snapshot.data!['item'] == null) {
+          } else if (!snapshot.hasData || snapshot.data!['item'] == null) {
             if (_lastPlayerData != null) {
-              return _buildPlayerWidget(_lastPlayerData!);
+              data = _lastPlayerData;
             } else {
               return const Center(child: Text('No track is currently playing.'));
             }
+          } else {
+            data = snapshot.data;
+            _lastPlayerData = snapshot.data;
           }
-          _lastPlayerData = snapshot.data;
-          return _buildPlayerWidget(snapshot.data!);
+          
+          return _buildPlayerWidget(data!, widget.selectedApp);
         },
       ),
     );

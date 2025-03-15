@@ -19,6 +19,10 @@ class UserIdRequest(BaseModel):
 class UserEmailRequest(BaseModel):
     user_email: EmailStr
 
-class PlaylistDurationRequest(BaseModel):
+class PlaylistRequest(BaseModel):
     playlist_id: str
     user_id: str
+    
+class PlaylistItemsRequest(BaseModel):
+    playlist_id: str
+    user_email: EmailStr

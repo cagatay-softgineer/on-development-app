@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ssdk_rsrc/services/api_service.dart';
-import '../models/music_player.dart';
-import '../utils/timer_funcs.dart';
+import 'package:ssdk_rsrc/models/music_player.dart';
+import 'package:ssdk_rsrc/utils/timer_funcs.dart';
 
 /// A widget that builds a MusicPlayerWidget based on the provided player data.
 /// It manages the repeat and shuffle mode state internally.

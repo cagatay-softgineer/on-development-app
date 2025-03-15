@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
-import '/models/all_icons.dart';
+import 'package:ssdk_rsrc/models/all_icons.dart';
 
 class ButtonParams {
   // Private fields

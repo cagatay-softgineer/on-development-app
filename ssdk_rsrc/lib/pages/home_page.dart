@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ssdk_rsrc/utils/authlib.dart';
-import '../widgets/custom_button.dart'; // Ensure the correct path
-import '../styles/button_styles.dart';
+import 'package:ssdk_rsrc/widgets/custom_button.dart'; // Ensure the correct path
+import 'package:ssdk_rsrc/styles/button_styles.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);

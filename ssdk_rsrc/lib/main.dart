@@ -2,18 +2,19 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 // ignore: library_prefixes
 import 'package:app_links/app_links.dart' as deepLink;
+import 'package:ssdk_rsrc/enums/enums.dart';
 import 'package:ssdk_rsrc/services/api_service.dart';
 import 'package:ssdk_rsrc/pages/timer_page.dart';
 import 'package:ssdk_rsrc/pages/custom_timer_page.dart';
-import 'pages/button_customizer_app.dart';
-import 'widgets/custom_button.dart';
-import 'styles/button_styles.dart';
-import 'pages/login_page.dart';
-import 'pages/register_page.dart';
-import 'pages/home_page.dart';
-import 'pages/app_links.dart';
-import 'pages/playlist_page.dart';
-import 'pages/player_control_page.dart';
+import 'package:ssdk_rsrc/pages/button_customizer_app.dart';
+import 'package:ssdk_rsrc/widgets/custom_button.dart';
+import 'package:ssdk_rsrc/styles/button_styles.dart';
+import 'package:ssdk_rsrc/pages/login_page.dart';
+import 'package:ssdk_rsrc/pages/register_page.dart';
+import 'package:ssdk_rsrc/pages/home_page.dart';
+import 'package:ssdk_rsrc/pages/app_links.dart';
+import 'package:ssdk_rsrc/pages/playlist_page.dart';
+import 'package:ssdk_rsrc/pages/player_control_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -90,7 +91,7 @@ class _MyAppState extends State<MyApp> {
         '/applinks': (context) => AppLinkPage(),
         '/register_page': (context) => RegisterPage(),
         '/playlists': (context) => PlaylistPage(),
-        '/player': (context) => PlayerControlPage(),
+        '/player': (context) => PlayerControlPage(selectedApp: MusicApp.Spotify),
         '/timer': (context) => TimerPage(),
         '/custom_timer': (context) => CustomTimerPage(),
       },

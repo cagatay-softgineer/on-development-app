@@ -2,7 +2,7 @@ from flask import Blueprint, request, jsonify
 from util.utils import make_request, get_access_token_from_db
 from util.error_handling import log_error
 from config.config import settings
-from util.models import PlaylistDurationRequest  # Import the model
+from util.models import PlaylistRequest  # Import the model
 import database.firebase_operations as firebase_operations
 from pydantic import ValidationError
 from cmd_gui_kit import CmdGUI
@@ -50,7 +50,7 @@ if DEBUG_MODE == "True":
 @SpotifyMicroService_bp.route("/playlist_duration", methods=["POST"])
 def get_playlist_duration():
     try:
-        payload = PlaylistDurationRequest.parse_obj(request.get_json())
+        payload = PlaylistRequest.parse_obj(request.get_json())
     except ValidationError as ve:
         return jsonify({"error": ve.errors()}), 400
     

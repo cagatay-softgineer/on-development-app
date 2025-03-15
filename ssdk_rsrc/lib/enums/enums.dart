@@ -1,0 +1,4 @@
+enum MusicApp {
+  Spotify,
+  YouTube,
+}
