@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ssdk_rsrc/widgets/custom_button.dart';
 import 'package:ssdk_rsrc/styles/button_styles.dart';
 import 'dart:async';
-import 'package:ssdk_rsrc/services/api_service.dart';
+import 'package:ssdk_rsrc/services/main_api.dart';
 import 'package:ssdk_rsrc/models/playlist.dart';
 import 'package:ssdk_rsrc/utils/timer_funcs.dart';       // Timer utilities (player state functions)
 import 'package:ssdk_rsrc/utils/pomodoro_funcs.dart';    // Pomodoro mixin
@@ -32,7 +32,6 @@ class _CustomTimerPageState extends State<CustomTimerPage> with PomodoroMixin {
   // Control for expansion toggle.
   bool isTimeSelectorExpanded = false;
 
-  final ApiService apiService = ApiService();
   Future<Map<String, dynamic>>? _playerFuture;
   Map<String, dynamic>? _lastPlayerData;
   Timer? _stateCheckTimer;

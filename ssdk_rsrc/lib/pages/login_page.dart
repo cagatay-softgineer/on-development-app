@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ssdk_rsrc/styles/button_styles.dart';
-import 'package:ssdk_rsrc/services/api_service.dart';
+import 'package:ssdk_rsrc/services/main_api.dart';
 import 'package:ssdk_rsrc/widgets/custom_button.dart'; // Import the CustomButton widget
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
@@ -13,7 +13,6 @@ class LoginPage extends StatefulWidget {
 
 
 class _LoginPageState extends State<LoginPage> {
-  final ApiService apiService = ApiService();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();

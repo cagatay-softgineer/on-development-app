@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ssdk_rsrc/styles/button_styles.dart';
-import 'package:ssdk_rsrc/services/api_service.dart';
+import 'package:ssdk_rsrc/services/main_api.dart';
 import 'package:ssdk_rsrc/widgets/custom_button.dart'; // Import the CustomButton widget
 
 class RegisterPage extends StatefulWidget {
@@ -12,7 +12,6 @@ class RegisterPage extends StatefulWidget {
 
 
 class _RegisterPageState extends State<RegisterPage> {
-  final ApiService apiService = ApiService();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   // ignore: unused_field

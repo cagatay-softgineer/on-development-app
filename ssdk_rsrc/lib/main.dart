@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 // ignore: library_prefixes
 import 'package:app_links/app_links.dart' as deepLink;
 import 'package:ssdk_rsrc/enums/enums.dart';
-import 'package:ssdk_rsrc/services/api_service.dart';
+import 'package:ssdk_rsrc/services/main_api.dart';
 import 'package:ssdk_rsrc/pages/timer_page.dart';
 import 'package:ssdk_rsrc/pages/custom_timer_page.dart';
 import 'package:ssdk_rsrc/pages/button_customizer_app.dart';

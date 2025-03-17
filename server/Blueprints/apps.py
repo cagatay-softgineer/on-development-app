@@ -161,7 +161,9 @@ def unlink_app():
         
     if not app_id:
         return jsonify({"error": "All fields are required"}), 400
-    
+    if app_id == 3:
+        firebase_operations.delete_userlinkedapps(user_id, 4)
+        
     firebase_operations.delete_userlinkedapps(user_id, app_id)
 
     return jsonify({"message": "App Unlinked!"}), 201

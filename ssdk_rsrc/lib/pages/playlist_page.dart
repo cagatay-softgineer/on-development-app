@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:ssdk_rsrc/pages/player_control_page.dart';
-import 'package:ssdk_rsrc/services/api_service.dart';
+import 'package:ssdk_rsrc/services/main_api.dart';
 import 'package:ssdk_rsrc/widgets/playlist_card.dart';
 import 'package:ssdk_rsrc/utils/authlib.dart';
 import 'package:ssdk_rsrc/models/playlist.dart';
@@ -16,7 +16,6 @@ class PlaylistPage extends StatefulWidget {
 }
 
 class PlaylistPageState extends State<PlaylistPage> {
-  final ApiService apiService = ApiService();
   List<Playlist> playlists = [];
   final Map<String, String> _userPicCache = {}; // Cache for user images
   String? userID = "";

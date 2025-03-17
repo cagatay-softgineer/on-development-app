@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:ssdk_rsrc/services/api_service.dart';
+import 'package:ssdk_rsrc/services/main_api.dart';
 import 'package:ssdk_rsrc/models/music_player.dart';
 import 'package:ssdk_rsrc/utils/timer_funcs.dart';
 

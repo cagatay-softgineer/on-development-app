@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ssdk_rsrc/models/button_params.dart';
 import 'package:ssdk_rsrc/widgets/custom_button.dart';
-import 'package:ssdk_rsrc/services/api_service.dart';
+import 'package:ssdk_rsrc/services/main_api.dart';
 import 'package:ssdk_rsrc/utils/authlib.dart';
 
 class AppCard extends StatelessWidget {
@@ -100,6 +100,9 @@ class AppCard extends StatelessWidget {
                       } else {
                         if (appName == "Spotify") {
                           await mainAPI.openSpotifyLogin(context);
+                        }
+                        else if (appName == "YoutubeMusic") {
+                          await mainAPI.openGoogleLogin(context);
                         }
                       }
 
