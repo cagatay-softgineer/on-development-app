@@ -222,6 +222,25 @@ class MainAPI {
     }
   }
 
+  Future<List<Track>> fetchPlaylistTracks(String? userEmail, String? playlistId) async {
+    const endpoint = 'youtube-music/playlist_tracks';
+    final response = await _dio.post(
+      endpoint,
+      data: {
+        "user_email": userEmail,
+        "playlist_id": playlistId,
+      },
+    );
+  
+    if (response.statusCode == 200) {
+      List<dynamic> data = response.data["tracks"] ?? [];
+      return data.map((json) => Track.fromJson(json, MusicApp.YouTube)).toList();
+    } else {
+      throw Exception('Failed to load playlist tracks');
+    }
+  }
+
+
   Future<String?> fetchFirstVideoId(String? userId, String? playlistId) async {
     if (playlistId == null || playlistId.isEmpty) return null;
     try {

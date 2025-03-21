@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ssdk_rsrc/enums/enums.dart';
 import 'package:ssdk_rsrc/widgets/custom_button.dart';
 import 'package:ssdk_rsrc/styles/button_styles.dart';
 import 'dart:async';
@@ -315,8 +316,9 @@ class _CustomTimerPageState extends State<CustomTimerPage> with PomodoroMixin {
               return Container(
                 height: 210,
                 child: CustomPlayerWidget(
-                  data: _lastPlayerData!,
+                  spotifyData: _lastPlayerData!,
                   userID: userID ?? '',
+                  app: MusicApp.Spotify,
                   musicPlayerKey: _musicPlayerKey,
                 ),
               );
@@ -331,8 +333,9 @@ class _CustomTimerPageState extends State<CustomTimerPage> with PomodoroMixin {
               return Container(
                 height: 210,
                 child: CustomPlayerWidget(
-                  data: _lastPlayerData!,
+                  spotifyData: _lastPlayerData!,
                   userID: userID ?? '',
+                  app: MusicApp.Spotify,
                   musicPlayerKey: _musicPlayerKey,
                 ),
               );
@@ -347,8 +350,9 @@ class _CustomTimerPageState extends State<CustomTimerPage> with PomodoroMixin {
               return Container(
                 height: 210,
                 child: CustomPlayerWidget(
-                  data: _lastPlayerData!,
+                  spotifyData: _lastPlayerData!,
                   userID: userID ?? '',
+                  app: MusicApp.Spotify,
                   musicPlayerKey: _musicPlayerKey,
                 ),
               );
@@ -363,8 +367,9 @@ class _CustomTimerPageState extends State<CustomTimerPage> with PomodoroMixin {
             return Container(
               height: 210,
               child: CustomPlayerWidget(
-                data: snapshot.data!,
+                spotifyData: snapshot.data!,
                 userID: userID ?? '',
+                app: MusicApp.Spotify,
                 musicPlayerKey: _musicPlayerKey,
               ),
             );

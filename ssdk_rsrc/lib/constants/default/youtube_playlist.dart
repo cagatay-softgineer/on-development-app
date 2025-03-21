@@ -8,7 +8,7 @@ class YouTubePlaylistConstants {
 
   /// Default image URL for a YouTube playlist.
   static const String defaultPlaylistImage =
-      'https://raw.githubusercontent.com/Yggbranch/assets/refs/heads/main/YouTubeDefaultImage.png';
+      'https://raw.githubusercontent.com/Yggbranch/assets/refs/heads/main/Placeholder/PNG/Placeholder-Circle%400.5x.png';
 
   /// Default owner name for a YouTube playlist.
   static const String defaultPlaylistOwner = 'YouTube User';

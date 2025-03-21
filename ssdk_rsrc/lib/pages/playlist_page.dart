@@ -211,20 +211,31 @@ class PlaylistPageState extends State<PlaylistPage> {
                               });
                             },
                             onPlayButtonPressed: () async {
-                              // Navigate to the appropriate player page based on the playlist source.
+                              // For YouTube, use our backend endpoint to fetch all playlist tracks.
                               if (playlist.app == MusicApp.YouTube) {
-                                print(playlist.playlistId);
-                                print(playlist.app);
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => PlayerControlPage(
-                                      selectedPlaylistId: playlist.playlistId,
-                                      selectedApp: playlist.app, // Pass the MusicApp from the playlist.
+                                try {
+                                  // Assuming AuthService provides the user's email.
+                                  final userEmail = await AuthService.getUserId();
+                                  // Call your custom backend endpoint.
+                                  final List<Track> songs = await mainAPI.fetchPlaylistTracks(userEmail, playlist.playlistId);
+                                  print('Playlist ID: ${playlist.playlistId}');
+                                  print('App: ${playlist.app}');
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => PlayerControlPage(
+                                        selectedPlaylistId: playlist.playlistId,
+                                        selectedApp: playlist.app,
+                                        songs: songs, // songs is now a List<Playlist>
+                                      ),
                                     ),
-                                  ),
-                                );
+                                  );
+                                } catch (e) {
+                                  print('Error fetching playlist tracks: $e');
+                                  // Optionally, show an error message.
+                                }
                               } else {
+                                // For Spotify, navigate as before.
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(

@@ -324,12 +324,25 @@ def update_userlinkedapps_tokens(new_access_token: str,
                                  app_id: int,
                                  alias_map: dict = alias_map):
     """
+    Updates the access token, refresh token, and token expiration time for a specific user and app in the UserLinkedApps collection.
+
     Emulates:
       UPDATE UserLinkedApps
       SET access_token = ?,
           refresh_token = ?,
           token_expires_at = DATEADD(SECOND, ?, GETDATE())
       WHERE user_id = ? AND app_id = ?
+    
+    Parameters:
+    - new_access_token (str): The new access token to be updated.
+    - new_refresh_token (str): The new refresh token to be updated.
+    - seconds_from_now (int): The number of seconds from the current time to set as the new token expiration time.
+    - user_id (int): The user ID for which the tokens need to be updated.
+    - app_id (int): The app ID for which the tokens need to be updated.
+    - alias_map (dict, optional): A dictionary mapping table aliases to their actual paths in the Firestore collection. Defaults to the global `alias_map`.
+
+    Returns:
+    - None. The function updates the tokens in the Firestore collection directly.
     """
     col = get_collection("userlinkedapps", alias_map)
     filt_user = FieldFilter(field_path="user_id", op_string="==", value=user_id)
@@ -342,3 +355,4 @@ def update_userlinkedapps_tokens(new_access_token: str,
             "refresh_token": new_refresh_token,
             "token_expires_at": new_expires
         })
+

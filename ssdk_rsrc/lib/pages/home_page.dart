@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:ssdk_rsrc/widgets/adaptive_widgets/appbar.dart';
+import 'package:ssdk_rsrc/widgets/adaptive_widgets/buttons.dart';
+import 'package:ssdk_rsrc/widgets/adaptive_widgets/icons.dart';
 import 'package:ssdk_rsrc/utils/authlib.dart';
 import 'package:ssdk_rsrc/widgets/custom_button.dart'; // Ensure the correct path
 import 'package:ssdk_rsrc/styles/button_styles.dart';
@@ -50,8 +53,9 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+      appBar: AdaptiveAppBar(
         title: Text('Welcome'),
+        centerTitle: true,
         automaticallyImplyLeading: false, // Removes the back button
       ),
       body: SingleChildScrollView(
@@ -139,6 +143,8 @@ class _HomePageState extends State<HomePage> {
               },
               buttonParams: timerButtonParams,
             ),
+            SizedBox(height: 20), // Adds vertical spacing
+            AdaptiveButton(child: Icon(AdaptiveIcons.share), onPressed: ()async{})
             // Add more widgets or buttons as needed
           ],
         ),

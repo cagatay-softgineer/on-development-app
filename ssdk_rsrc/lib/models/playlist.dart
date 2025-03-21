@@ -83,34 +83,24 @@ class Track {
     required this.trackImage,
   });
 
-  factory Track.fromJson(Map<String, dynamic> json, MusicApp app) {
-    switch (app) {
-      case MusicApp.Spotify:
-        return Track(
-          trackName: json['track_name'] ?? '',
-          artistName: json['artist_name'] ?? '',
-          trackId: json['track_id'] ?? '',
-          trackImage: json['track_image'] ?? '',
-        );
-      case MusicApp.YouTube:
-        final snippet = json['snippet'] ?? {};
-        final resourceId = snippet['resourceId'] ?? {};
-        final thumbnails = snippet['thumbnails'] ?? {};
-
-        String imageUrl = '';
-        if (thumbnails['high'] != null && thumbnails['high']['url'] != null) {
-          imageUrl = thumbnails['high']['url'];
-        } else if (thumbnails['default'] != null &&
-            thumbnails['default']['url'] != null) {
-          imageUrl = thumbnails['default']['url'];
-        }
-
-        return Track(
-          trackName: snippet['title'] ?? '',
-          artistName: snippet['videoOwnerChannelTitle'] ?? '',
-          trackId: resourceId['videoId'] ?? '',
-          trackImage: imageUrl,
-        );
-    }
+factory Track.fromJson(Map<String, dynamic> json, MusicApp app) {
+  switch (app) {
+    case MusicApp.YouTube:
+      return Track(
+        trackName: json['title'] ?? '',
+        // You can assign a default or empty value for artistName if it isn’t provided
+        artistName: '',
+        trackId: json['videoId'] ?? '',
+        // If your JSON doesn’t include an image, you can provide a default image or an empty string
+        trackImage: '',
+      );
+    case MusicApp.Spotify:
+      return Track(
+        trackName: json['track_name'] ?? '',
+        artistName: json['artist_name'] ?? '',
+        trackId: json['track_id'] ?? '',
+        trackImage: json['track_image'] ?? '',
+      );
   }
+}
 }

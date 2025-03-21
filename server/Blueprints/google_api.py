@@ -6,9 +6,10 @@ from flask_limiter.util import get_remote_address
 from pydantic import ValidationError
 import database.firebase_operations as firebase_operations
 from util.models import UserEmailRequest
-from util.utils import get_email_username, get_current_user_profile_google
+from util.utils import get_email_username
+from util.google import get_current_user_profile_google
 from config.config import settings
-import logging
+from util.logit import get_logger
 from google_auth_oauthlib.flow import Flow
 
 OAUTHLIB_INSECURE_TRANSPORT=1
@@ -18,19 +19,7 @@ google_bp = Blueprint('google', __name__)
 limiter = Limiter(key_func=get_remote_address)
 CORS(google_bp, resources={r"/*": {"origins": "*"}})
 
-# Logger configuration
-LOG_DIR = "logs/google_bp.log"
-logger = logging.getLogger("Google")
-logger.setLevel(logging.DEBUG)
-file_handler = logging.FileHandler(LOG_DIR, encoding="utf-8")
-file_handler.setLevel(logging.DEBUG)
-console_handler = logging.StreamHandler()
-console_handler.setLevel(logging.INFO)
-formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-file_handler.setFormatter(formatter)
-logger.addHandler(file_handler)
-logger.addHandler(console_handler)
-logger.propagate = False
+logger = get_logger("logs/google_bp.log", "Google")
 
 # Constants for Google OAuth
 GOOGLE_SCOPES = ["https://www.googleapis.com/auth/youtube.readonly","https://www.googleapis.com/auth/iam.test","https://www.googleapis.com/auth/youtube.download","https://www.googleapis.com/auth/userinfo.email","https://www.googleapis.com/auth/userinfo.profile","https://www.googleapis.com/auth/youtubepartner-channel-audit","https://www.googleapis.com/auth/youtubepartner","https://www.googleapis.com/auth/youtube.upload","https://www.googleapis.com/auth/youtube.third-party-link.creator","https://www.googleapis.com/auth/youtube.force-ssl","https://www.googleapis.com/auth/youtube.channel-memberships.creator","https://www.googleapis.com/auth/youtube","https://www.googleapis.com/auth/service.management.readonly","https://www.googleapis.com/auth/service.management","openid"] # Adjust scopes as needed
@@ -41,6 +30,15 @@ GOOGLE_CLIENT_SECRETS_FILE = settings.google_client_secret_file  # Path to your 
 def google_api_bind():
     """
     Initiate the OAuth 2.0 flow with Google by redirecting the user to the authorization URL.
+
+    Parameters:
+    - request (flask.Request): The incoming request object containing the user's email as a query parameter.
+
+    Returns:
+    - flask.Response:
+        - If the user_email parameter is missing in the request, returns a jsonify object with an error message and a 400 status code.
+        - Otherwise, initiates the OAuth 2.0 flow with Google, stores the user_email in the session, and redirects the user to the authorization URL.
+          If any exception occurs during the process, logs the error, and returns a jsonify object with an error message and a 500 status code.
     """
     try:
         user_email = request.args.get('user_email')
@@ -65,6 +63,7 @@ def google_api_bind():
     except Exception as e:
         logger.error("Error initiating Google OAuth flow: %s", e)
         return jsonify({"error": "Failed to initiate Google OAuth flow."}), 500
+
 
 @google_bp.route('/google_api_callback', methods=['GET'])
 def google_api_callback():
@@ -162,14 +161,25 @@ def google_profile():
     """
     Endpoint to retrieve the current user's Google profile information.
     It expects that the user is already bound (i.e., tokens are stored in the database).
+
+    Parameters:
+    request (flask.Request): The incoming request object containing the user's email.
+
+    Returns:
+    flask.Response:
+        - If the user's email is missing or not found in the session, returns a jsonify object with an error message.
+        - If the user's ID or Google app ID is not found, returns a jsonify object with an error message.
+        - If no token is found for the user and app, returns a jsonify object with an error message.
+        - If the Google profile retrieval fails, returns a jsonify object with an error message.
+        - Otherwise, returns the user's Google profile information as a jsonify object.
     """
     try:
         payload = UserEmailRequest.parse_obj(request.get_json())
     except ValidationError as ve:
         return jsonify({"error": ve.errors()}), 400 
-    
+
     user_email = payload.user_email
-    
+
     try:
         print(user_email)
         if not user_email:
@@ -179,9 +189,9 @@ def google_profile():
         user_id = firebase_operations.get_user_id_by_email(user_email)
         if not user_id:
             return jsonify({"error": "User not found."}), 404
-        
+
         print(user_id)
-        
+
         # Retrieve the Google app id (assumes your app is registered with the name "Google")
         app_id_data = firebase_operations.get_app_id_by_name("Google")
         if not app_id_data:
@@ -189,35 +199,47 @@ def google_profile():
         app_id = app_id_data
 
         print(app_id)
-        
+
         # Retrieve stored token details
         tokens_data = firebase_operations.get_userlinkedapps_tokens(user_id, app_id)
         if not tokens_data or not tokens_data[0]:
             return jsonify({"error": "No token found. Please bind your account first."}), 400
-        
+
         # Assuming tokens_data returns a dictionary with keys "access_token" and "refresh_token"
         #print(tokens_data)
         #print(tokens_data[0])
         #print(tokens_data[0]["access_token"])
         access_token = tokens_data[0]["access_token"]
         print(access_token)
-        
+
         # Get the user's Google profile using the helper function
         profile = get_current_user_profile_google(access_token, user_id)
         print(profile)
         if profile is None:
             return jsonify({"error": "Failed to fetch Google user profile."}), 500
-        
+
         return jsonify(profile), 200
 
     except Exception as e:
         logger.error("Error fetching Google user profile: %s", e)
         return jsonify({"error": "Failed to fetch Google user profile."}), 500
+
     
 def get_google_profile(user_email):
     """
     Endpoint to retrieve the current user's Google profile information.
     It expects that the user is already bound (i.e., tokens are stored in the database).
+
+    Parameters:
+    user_email (str): The email of the user for whom the Google profile needs to be fetched.
+
+    Returns:
+    dict or jsonify object:
+        - If the user's email is missing or not found in the session, returns a jsonify object with an error message.
+        - If the user's ID or Google app ID is not found, returns a jsonify object with an error message.
+        - If no token is found for the user and app, returns a jsonify object with an error message.
+        - If the Google profile retrieval fails, returns a jsonify object with an error message.
+        - Otherwise, returns the user's Google profile information.
     """
 
     try:
@@ -229,9 +251,9 @@ def get_google_profile(user_email):
         user_id = firebase_operations.get_user_id_by_email(user_email)
         if not user_id:
             return jsonify({"error": "User not found."}), 404
-        
+
         print(user_id)
-        
+
         # Retrieve the Google app id (assumes your app is registered with the name "Google")
         app_id_data = firebase_operations.get_app_id_by_name("Google")
         if not app_id_data:
@@ -239,25 +261,25 @@ def get_google_profile(user_email):
         app_id = app_id_data
 
         print(app_id)
-        
+
         # Retrieve stored token details
         tokens_data = firebase_operations.get_userlinkedapps_tokens(user_id, app_id)
         if not tokens_data or not tokens_data[0]:
             return jsonify({"error": "No token found. Please bind your account first."}), 400
-        
+
         # Assuming tokens_data returns a dictionary with keys "access_token" and "refresh_token"
         #print(tokens_data)
         #print(tokens_data[0])
         #print(tokens_data[0]["access_token"])
         access_token = tokens_data[0]["access_token"]
         print(access_token)
-        
+
         # Get the user's Google profile using the helper function
         profile = get_current_user_profile_google(access_token, user_id)
         print(profile)
         if profile is None:
             return jsonify({"error": "Failed to fetch Google user profile."}), 500
-        
+
         return profile
 
     except Exception as e:
