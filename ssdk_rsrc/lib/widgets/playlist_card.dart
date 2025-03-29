@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ssdk_rsrc/models/playlist.dart';
+import 'package:ssdk_rsrc/services/main_api.dart';
 import 'package:ssdk_rsrc/widgets/custom_button.dart';
 import 'package:ssdk_rsrc/constants/default/app_icons.dart';
 import 'package:ssdk_rsrc/styles/button_styles.dart';
@@ -104,6 +105,67 @@ class PlaylistCard extends StatelessWidget {
                             const SizedBox(width: 4),
                             // Display the app icon.
                             AppIcons.getAppIcon(playlist.app),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: FutureBuilder<Map<String, dynamic>>(
+                                future: mainAPI.getPlaylistDuration(playlist.playlistId, playlist.app, playlist.playlistTrackCount),
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState == ConnectionState.waiting) {
+                                    return Text(
+                                      "Loading duration...",
+                                      style: theme.textTheme.bodySmall?.copyWith(
+                                        color: Colors.grey.shade600,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    );
+                                  } else if (snapshot.hasError) {
+                                    return Text(
+                                      "Error loading duration",
+                                      style: theme.textTheme.bodySmall?.copyWith(
+                                        color: Colors.grey.shade600,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    );
+                                  } else if (snapshot.hasData) {
+                                    final data = snapshot.data!;
+                                    // Check if an error was returned in the response.
+                                    if (data['error'] == true) {
+                                      return Text(
+                                        data['message'] ?? "Unavailable",
+                                        style: theme.textTheme.bodySmall?.copyWith(
+                                          color: Colors.grey.shade600,
+                                        ),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      );
+                                    } else {
+                                      return Text(
+                                        "${data['formatted_duration']}",
+                                        style: theme.textTheme.bodySmall?.copyWith(
+                                          color: Colors.grey.shade600,
+                                        ),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      );
+                                    }
+                                  } else {
+                                    return Text(
+                                      "Unknown",
+                                      style: theme.textTheme.bodySmall?.copyWith(
+                                        color: Colors.grey.shade600,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    );
+                                  }
+                                },
+                              ),
+                            ),
                           ],
                         ),
                         const SizedBox(height: 8),

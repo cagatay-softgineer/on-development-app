@@ -25,4 +25,4 @@ class PlaylistRequest(BaseModel):
     
 class PlaylistItemsRequest(BaseModel):
     playlist_id: str
-    user_email: EmailStr
+    user_id: str

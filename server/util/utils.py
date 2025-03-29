@@ -74,6 +74,23 @@ route_descriptions = {
     "/spotify/user_profile": "Retrieves profile information of the logged-in Spotify user."
 }
 
+def ms2FormattedDuration(total_duration_ms: int) -> str:
+    """
+    Converts a given duration in milliseconds to a formatted string representing hours, minutes, and seconds.
+
+    Parameters:
+    total_duration_ms (int): The total duration in milliseconds.
+
+    Returns:
+    str: A formatted string representing the duration in the format "HH:MM:SS".
+    """
+    total_seconds = total_duration_ms // 1000
+    hours = total_seconds // 3600
+    minutes = (total_seconds % 3600) // 60
+    seconds = total_seconds % 60
+    formatted_duration = f"{hours:02}:{minutes:02}:{seconds:02}"
+    return formatted_duration
+
 def parse_logs_from_folder(folder_path: str) -> list[dict] | None:
     """
     Parses log files from a specified folder and returns a list of parsed log data.

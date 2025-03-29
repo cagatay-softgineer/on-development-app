@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ssdk_rsrc/services/main_api.dart';
 import 'package:ssdk_rsrc/widgets/adaptive_widgets/appbar.dart';
 import 'package:ssdk_rsrc/widgets/adaptive_widgets/buttons.dart';
 import 'package:ssdk_rsrc/widgets/adaptive_widgets/icons.dart';
@@ -144,7 +145,12 @@ class _HomePageState extends State<HomePage> {
               buttonParams: timerButtonParams,
             ),
             SizedBox(height: 20), // Adds vertical spacing
-            AdaptiveButton(child: Icon(AdaptiveIcons.share), onPressed: ()async{})
+            AdaptiveButton(
+              child: Icon(AdaptiveIcons.home),
+              onPressed: () async {
+                await mainAPI.openOurWebSite(context);
+              },
+            )
             // Add more widgets or buttons as needed
           ],
         ),

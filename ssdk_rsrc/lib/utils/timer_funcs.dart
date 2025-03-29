@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:ssdk_rsrc/enums/enums.dart';
 import 'package:ssdk_rsrc/services/main_api.dart';
 import 'package:ssdk_rsrc/models/playlist.dart';
 import 'package:ssdk_rsrc/utils/authlib.dart';
@@ -64,7 +65,18 @@ Future<void> initializeUserAndPlaylists({
   try {
     final uid = await AuthService.getUserId();
     updateUserId(uid ?? '');
-    final fetchedPlaylists = await mainAPI.fetchPlaylists("${uid ?? ''}");
+    //final fetchedPlaylists = await mainAPI.fetchPlaylists("${uid ?? ''}");
+    final spotifyPlaylistsFuture =
+        mainAPI.fetchPlaylists(uid, app: MusicApp.Spotify);
+    final youtubePlaylistsFuture =
+        mainAPI.fetchPlaylists(uid, app: MusicApp.YouTube);
+
+    final results = await Future.wait([spotifyPlaylistsFuture, youtubePlaylistsFuture]);
+    final mergedPlaylists = <Playlist>[];
+    mergedPlaylists.addAll(results[0]);
+    mergedPlaylists.addAll(results[1]);
+    final fetchedPlaylists = mergedPlaylists;
+    
     updatePlaylists(fetchedPlaylists);
     updateIsLoading(false);
   } catch (e) {

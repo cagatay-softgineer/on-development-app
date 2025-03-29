@@ -1,9 +1,11 @@
+import time
 from cmd_gui_kit import CmdGUI
 import requests
 import base64
 from config.config import settings
 from util.error_handling import log_error
 from util.logit import get_logger
+from util.utils import ms2FormattedDuration
 import database.firebase_operations as firebase_operations
 
 # Initialize CmdGUI for visual feedback
@@ -14,6 +16,13 @@ logger = get_logger("logs/spotify_util.log", "SpotifyUtils")
 
 SPOTIFY_CLIENT_ID = settings.spotify_client_id
 SPOTIFY_CLIENT_SECRET = settings.spotify_client_secret
+
+
+# Global cache for playlist durations
+# Each key is a playlist_id and the value is a tuple: (result_data, expiration_time)
+playlist_cache = {}
+CACHE_DURATION = 3600  # Cache duration in seconds (1 hour)
+
 
 def get_access_token_for_request():
     """
@@ -176,60 +185,161 @@ def fetch_user_playlists(user_id, app_id):
     #print(refresh_token)
 
     # Spotify API endpoint for user playlists
-    url = "https://api.spotify.com/v1/me/playlists"
-    headers = {"Authorization": f"Bearer {access_token}"}
+    url_template = "https://api.spotify.com/v1/me/playlists?limit=50&offset={offset}"
+    offset = 0
+    order = 0
+    formatted_playlists = []
+    playlist_count_limit = 10
+    is_playlist_count_exceeded_to_limit = False
+    while True:
+        url = url_template.format(offset=offset)
+        response = make_request(url, access_token=access_token)
 
-    response = requests.get(url, headers=headers)
-    
-    if response.status_code == 200:
-        playlists_data = response.json()
-        formatted_playlists = []
+        if response.status_code == 200:
+            playlists_data = response.json()
+            items = playlists_data.get('items', [])
+            if not items:
+                print("Not Found Any Item")
+                break
+            for item in playlists_data.get("items", []):
+                # Fetch track details for each playlist
+                #tracks_url = item["tracks"]["href"]
+                #tracks_response = requests.get(tracks_url, headers=headers)
+                #
+                #if tracks_response.status_code == 200:
+                #    tracks_data = tracks_response.json()
+                #    print(tracks_data)
+                #    tracks = [
+                #        {
+                #            "track_name": track["track"]["name"],
+                #            "artist_name": ", ".join(
+                #                [artist["name"] for artist in track["track"]["artists"]]
+                #            ),
+                #            "track_id": track["track"]["id"],
+                #            "track_images": track["track"]["album"]["images"][0]["url"]
+                #            if track["track"]["album"]["images"]
+                #            else "",
+                #        }
+                #        for track in tracks_data.get("items", [])
+                #    ]
+                #else:
+                #    logger.error(f"Failed to fetch tracks for playlist {item['id']}.")
+                #    tracks = []
+
+                formatted_playlist = {
+                    "order": order,
+                    "offset": offset, 
+                    "playlist_name": item["name"],
+                    "playlist_id": item["id"],
+                    "playlist_image": item["images"][0]["url"] if item["images"] else "",
+                    "playlist_owner": item["owner"]["display_name"],
+                    "playlist_owner_id": item["owner"]["id"],
+                    "playlist_track_count": item["tracks"]["total"],
+                    "playlist_duration": "Loading..",
+                    #"playlist_duration": calculate_playlist_duration(user_id, item["id"], access_token, refresh_token)["formatted_duration"],
+                    "tracks": [],
+                }
+                if formatted_playlist["playlist_track_count"] < 100:    
+                    order += 1
+                    formatted_playlists.append(formatted_playlist)
+                    
+                    is_playlist_count_exceeded_to_limit = len(formatted_playlists) > playlist_count_limit
+                    if is_playlist_count_exceeded_to_limit:
+                        break
+            if is_playlist_count_exceeded_to_limit:
+                        break        
+            offset += 50
         
-        for item in playlists_data.get("items", []):
-            # Fetch track details for each playlist
-            #tracks_url = item["tracks"]["href"]
-            #tracks_response = requests.get(tracks_url, headers=headers)
-            #
-            #if tracks_response.status_code == 200:
-            #    tracks_data = tracks_response.json()
-            #    print(tracks_data)
-            #    tracks = [
-            #        {
-            #            "track_name": track["track"]["name"],
-            #            "artist_name": ", ".join(
-            #                [artist["name"] for artist in track["track"]["artists"]]
-            #            ),
-            #            "track_id": track["track"]["id"],
-            #            "track_images": track["track"]["album"]["images"][0]["url"]
-            #            if track["track"]["album"]["images"]
-            #            else "",
-            #        }
-            #        for track in tracks_data.get("items", [])
-            #    ]
-            #else:
-            #    logger.error(f"Failed to fetch tracks for playlist {item['id']}.")
-            #    tracks = []
+        elif response.status_code == 401:
+            refresh_access_token_and_update_db(user_id, refresh_token, app_id)
+            formatted_playlists.clear()
+            return fetch_user_playlists(user_id, app_id)
+        else:
+            logger.error(f"Failed to fetch playlists: {response.status_code} - {response.text}")
+            return None
+    logger.info("Successfully fetched and formatted playlists.")
+    return formatted_playlists
 
-            formatted_playlist = {
-                "playlist_name": item["name"],
-                "playlist_id": item["id"],
-                "playlist_image": item["images"][0]["url"] if item["images"] else "",
-                "playlist_owner": item["owner"]["display_name"],
-                "playlist_owner_id": item["owner"]["id"],
-                "playlist_track_count": item["tracks"]["total"],
-                "tracks": [],
-            }
-            formatted_playlists.append(formatted_playlist)
 
-        logger.info("Successfully fetched and formatted playlists.")
-        return formatted_playlists
-    elif response.status_code == 401:
-        refresh_access_token_and_update_db(user_id, refresh_token, app_id)
-        return fetch_user_playlists(user_id, app_id)
-    else:
-        logger.error(f"Failed to fetch playlists: {response.status_code} - {response.text}")
-        return None
+def calculate_playlist_duration(
+    user_email: str,
+    playlist_id: str,
+    access_token: str | None = None,
+    refresh_token: str | None = None
+) -> dict:
+    """
+    Calculates and returns the playlist duration and track count for a given Spotify playlist.
+    
+    Parameters:
+      user_email (str): The user's email.
+      playlist_id (str): The Spotify playlist ID.
+      access_token (str | None): The access token (optional). If None, it will be retrieved.
+      refresh_token (str | None): The refresh token (optional).
+      
+    Returns:
+      dict: A dictionary containing playlist_id, total_duration_ms, formatted_duration, and total_track_count.
+    
+    Raises:
+      Exception: If fetching the playlist tracks fails.
+    """
+    # Check if the result is in the cache and not expired
+    cached_entry = playlist_cache.get(playlist_id)
+    if cached_entry:
+        cached_data, expiration_time = cached_entry
+        if time.time() < expiration_time:
+            return cached_data
+        else:
+            # Remove expired cache entry
+            del playlist_cache[playlist_id]
 
+    # Compute the playlist duration
+    url_template = "https://api.spotify.com/v1/playlists/{playlist_id}/tracks?limit=50&offset={offset}"
+    offset = 0
+    total_duration_ms = 0
+    total_track_count = 0
+
+    while True:
+        url = url_template.format(playlist_id=playlist_id, offset=offset)
+        # Retrieve the user_id from the email if tokens are not provided.
+        if access_token is None and refresh_token is None:
+            user_id = firebase_operations.get_user_id_by_email(user_email)
+            # Get the access token (and ignore the refresh token here)
+            access_token, _ = get_access_token_from_db(user_id, app_id=1)
+        
+        response = make_request(url, access_token=access_token)
+        
+        if not response or response.status_code != 200:
+            raise Exception(f"Failed to fetch playlist tracks. Response: {response.text if response else 'None'}")
+        
+        if response.status_code == 401:
+           access_token = refresh_access_token_and_update_db(user_id,refresh_token,app_id=1)
+           calculate_playlist_duration(user_id, access_token)
+        
+        data = response.json()
+        items = data.get('items', [])
+        if not items:
+            break
+
+        for item in items:
+            track = item.get('track')
+            if track and 'duration_ms' in track:
+                total_duration_ms += track['duration_ms']
+                total_track_count += 1
+
+        offset += 50
+
+    formatted_duration = ms2FormattedDuration(total_duration_ms)
+
+    result_data = {
+        "playlist_id": playlist_id,
+        "total_duration_ms": total_duration_ms,
+        "formatted_duration": formatted_duration,
+        "total_track_count": total_track_count
+    }
+
+    # Store the result in the cache with a 1-hour expiration
+    playlist_cache[playlist_id] = (result_data, time.time() + CACHE_DURATION)
+    return result_data
 
 # Function to refresh access token
 def refresh_access_token_and_update_db(user_id, refresh_token, app_id):
@@ -350,6 +460,7 @@ def get_access_token_from_db(user_id, app_id):
     tuple: A tuple containing the access token and refresh token. If the access token is not found, returns None.
     """
     result = firebase_operations.get_userlinkedapps_access_refresh(user_id, app_id)[0]
+    print(result)
     if not result:
         logger.error(f"Access token not found for user_id: {user_id}")
         return None

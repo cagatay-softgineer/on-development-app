@@ -1,9 +1,8 @@
 from flask import Blueprint, request, jsonify
-from util.spotify import make_request, get_access_token_from_db
+from util.spotify import calculate_playlist_duration
 from util.error_handling import log_error
 from config.config import settings
 from util.models import PlaylistRequest  # Import the model
-import database.firebase_operations as firebase_operations
 from pydantic import ValidationError
 from cmd_gui_kit import CmdGUI
 from util.logit import get_logger
@@ -25,21 +24,16 @@ ERROR_MODE = '--error' in sys.argv
 DEBUG_MODE = settings.debug_mode
 if DEBUG_MODE == "True":
     DEBUG_MODE = True
-    
+
+# Global cache for playlist durations
+# Each key is a playlist_id and the value is a tuple: (result_data, expiration_time)
+playlist_cache = {}
+CACHE_DURATION = 3600  # Cache duration in seconds (1 hour)
 
 @SpotifyMicroService_bp.route("/playlist_duration", methods=["POST"])
-def get_playlist_duration():
+def get_playlist_duration_route():
     """
-    This function retrieves the total duration and track count of a given Spotify playlist.
-
-    Parameters:
-    - request: The incoming HTTP request containing the user's email and playlist ID in JSON format.
-
-    Returns:
-    - A JSON response containing the playlist ID, total duration in milliseconds, total duration in hours, minutes, and seconds, and total track count.
-    - HTTP status code 400 if the request payload is invalid.
-    - HTTP status code 500 if an error occurs while fetching playlist tracks.
-    - HTTP status code 500 if an internal error occurs.
+    API endpoint that returns the playlist duration and track count by using the calculate_playlist_duration method.
     """
     try:
         payload = PlaylistRequest.parse_obj(request.get_json())
@@ -48,51 +42,10 @@ def get_playlist_duration():
 
     user_email = payload.user_id
     playlist_id = payload.playlist_id
-    # (The remainder of the logic remains similar.)
-    url_template = "https://api.spotify.com/v1/playlists/{playlist_id}/tracks?limit=50&offset={offset}"
-    offset = 0
-    total_duration_ms = 0
-    total_track_count = 0
 
     try:
-        while True:
-            url = url_template.format(playlist_id=playlist_id, offset=offset)
-            user_id = firebase_operations.get_user_id_by_email(user_email)
-
-            access_token, _ = get_access_token_from_db(user_id, app_id=1)
-            response = make_request(url,access_token=access_token)
-            if not response or response.status_code != 200:
-                logger.error(f"Failed to fetch playlist tracks. Response: {response.text if response else 'None'}")
-                return jsonify({"error": "Failed to fetch playlist tracks"}), 500
-
-            data = response.json()
-            items = data.get('items', [])
-            if not items:
-                break
-
-            for item in items:
-                track = item.get('track')
-                if track and 'duration_ms' in track:
-                    total_duration_ms += track['duration_ms']
-                    total_track_count += 1
-
-            if len(items) < 50:
-                break
-            offset += 50
-
-        total_seconds = total_duration_ms // 1000
-        hours = total_seconds // 3600
-        minutes = (total_seconds % 3600) // 60
-        seconds = total_seconds % 60
-        formatted_duration = f"{hours:02}:{minutes:02}:{seconds:02}"
-
-        return jsonify({
-            "playlist_id": playlist_id,
-            "total_duration_ms": total_duration_ms,
-            "formatted_duration": formatted_duration,
-            "total_track_count": total_track_count
-        }), 200
-
+        result_data = calculate_playlist_duration(user_email, playlist_id)
+        return jsonify(result_data), 200
     except Exception as e:
         log_error(e)
         logger.error(f"Error occurred while fetching playlist duration: {str(e)}")

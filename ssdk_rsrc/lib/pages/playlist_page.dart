@@ -44,6 +44,8 @@ class PlaylistPageState extends State<PlaylistPage> {
       // Fetch Spotify and YouTube playlists concurrently.
       final spotifyPlaylistsFuture =
           mainAPI.fetchPlaylists("$userId", app: MusicApp.Spotify);
+      
+        
       final youtubePlaylistsFuture =
           mainAPI.fetchPlaylists("$userId", app: MusicApp.YouTube);
 
@@ -62,10 +64,13 @@ class PlaylistPageState extends State<PlaylistPage> {
 
   Future<String> getUserPic(Playlist playlist) async {
     // For YouTube, if the playlist already includes a channelImage, use it.
-    if (playlist.app == MusicApp.YouTube &&
-        playlist.channelImage != null &&
-        playlist.channelImage!.isNotEmpty) {
-      return playlist.channelImage!;
+    if (playlist.app == MusicApp.YouTube){
+      if(playlist.channelImage != null && playlist.channelImage!.isNotEmpty) {
+        return playlist.channelImage!;
+        }
+      else{
+        return UserConstants.defaultAvatarUrl;
+      }
     }
   
     final ownerId = playlist.playlistOwnerID;

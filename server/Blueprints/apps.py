@@ -205,3 +205,82 @@ def unlink_app():
     firebase_operations.delete_userlinkedapps(user_id, app_id)
 
     return jsonify({"message": "App Unlinked!"}), 201
+
+
+@apps_bp.route('/get_all_apps_binding', methods=['POST'])
+def get_all_apps_binding():
+    """
+    Retrieves the binding state for all available applications for a given user.
+
+    Expects a JSON payload with:
+        - user_email: The email address of the user.
+
+    Returns a JSON response containing the user's email and a list of applications,
+    each with its name, binding state (true/false), and user profile data if linked.
+    
+    Example Response:
+    {
+        "user_email": "user@example.com",
+        "apps": [
+            {
+                "app_name": "Spotify",
+                "user_linked": true,
+                "user_profile": { ... }
+            },
+            {
+                "app_name": "AppleMusic",
+                "user_linked": false,
+                "user_profile": null
+            },
+            ...
+        ]
+    }
+    """
+    try:
+        # Validate and extract the JSON payload
+        data = request.get_json()
+        user_email = data.get("user_email")
+        if not user_email:
+            return jsonify({"error": "User email is required."}), 400
+    except Exception:
+        return jsonify({"error": "Invalid JSON payload."}), 400
+
+    # Retrieve user ID using Firebase operations
+    user_id = firebase_operations.get_user_id_by_email(user_email)
+    if not user_id:
+        return jsonify({"error": "User not found."}), 400
+
+    apps_status = []
+    # Iterate over all configured applications
+    for app_name, app_id in APP_ALIAS_TO_ID.items():
+        response = firebase_operations.get_userlinkedapps_tokens(user_id, app_id)
+        # Check if the response exists and contains access tokens
+        if response and response[0].get("access_token"):
+            tokens = response[0]["access_token"]
+            # Depending on the application, retrieve the user profile if linked
+            if app_name == "Spotify":
+                user_profile = get_current_user_profile(tokens[0], user_id, app_id)
+            elif app_name == "AppleMusic":
+                user_profile = "Apple Music Not Implementated"
+            elif app_name == "YoutubeMusic":
+                user_profile = get_google_profile(user_email)
+            elif app_name == "Google API":
+                user_profile = "Google API Not Implementated"
+            else:
+                user_profile = None
+            apps_status.append({
+                "app_name": app_name,
+                "user_linked": True,
+                "user_profile": user_profile
+            })
+        else:
+            apps_status.append({
+                "app_name": app_name,
+                "user_linked": False,
+                "user_profile": None
+            })
+
+    return jsonify({
+        "user_email": user_email,
+        "apps": apps_status
+    }), 200

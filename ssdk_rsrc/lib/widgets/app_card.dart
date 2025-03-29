@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:ssdk_rsrc/models/button_params.dart';
 import 'package:ssdk_rsrc/widgets/custom_button.dart';
 import 'package:ssdk_rsrc/services/main_api.dart';
-import 'package:ssdk_rsrc/utils/authlib.dart';
 
 class AppCard extends StatelessWidget {
   final String userPic;
@@ -28,10 +27,11 @@ class AppCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Ensure valid userPic URL
+    // Validate the user picture URL; fallback to default if invalid.
     final validUserPic = (userPic.isNotEmpty && Uri.tryParse(userPic)?.hasAbsolutePath == true)
         ? userPic
         : defaultUserPicUrl;
+    // Set the trailing icon based on the linked state.
     appParams.trailingIcon = isLinked ? Icons.link_off : Icons.link;
 
     return Card(
@@ -47,19 +47,19 @@ class AppCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center, // Center elements vertically
             crossAxisAlignment: CrossAxisAlignment.center, // Center elements horizontally
             children: [
-              // Conditionally render user info only if the app is linked
+              // Conditionally render user information if the app is linked.
               if (isLinked) ...[
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.center, // Center elements horizontally
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Image.network(
-                      validUserPic, // Use the validated URL
+                      validUserPic,
                       width: 100,
                       height: 100,
                       fit: BoxFit.cover,
                       errorBuilder: (context, error, stackTrace) {
                         return Image.network(
-                          defaultUserPicUrl, // Fallback to the default image
+                          defaultUserPicUrl,
                           width: 100,
                           height: 100,
                           fit: BoxFit.cover,
@@ -70,7 +70,7 @@ class AppCard extends StatelessWidget {
                     Expanded(
                       child: Text(
                         userDisplayName.isNotEmpty ? userDisplayName : "No Display Name",
-                        textAlign: TextAlign.center, // Center-align text
+                        textAlign: TextAlign.center,
                         style: const TextStyle(
                           fontSize: 18,
                           fontFamily: "Montserrat",
@@ -82,31 +82,24 @@ class AppCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
               ],
-              // Always render the button
+              // Render the action button.
               Center(
                 child: CustomButton(
                   text: appText,
                   onPressed: () async {
                     try {
-                      // Fetch current link state
-                      final userId = await AuthService.getUserId();
-                      final result = await mainAPI.checkLinkedApp(userId, appName);
-
-                      final isLinked = result['user_linked'] ?? false;
-
-                      // Handle linking or unlinking
+                      // Use the provided isLinked state to decide on linking or unlinking.
                       if (isLinked) {
                         await mainAPI.unlinkApp(appName);
                       } else {
+                        // Open the corresponding login flow based on the app.
                         if (appName == "Spotify") {
                           await mainAPI.openSpotifyLogin(context);
-                        }
-                        else if (appName == "YoutubeMusic") {
+                        } else if (appName == "YoutubeMusic") {
                           await mainAPI.openGoogleLogin(context);
                         }
                       }
-
-                      // Reinitialize the linked apps state
+                      // Reinitialize the app binding state.
                       await onReinitializeApps();
                     } catch (e) {
                       ScaffoldMessenger.of(context).showSnackBar(

@@ -7,6 +7,7 @@ class Playlist {
   final String playlistOwner;
   final String playlistOwnerID;
   final int playlistTrackCount;
+  final String? playlistDuration;
   final String? channelImage; // Used for YouTube playlists (optional)
   final List<Track> tracks;
   final MusicApp app; // New field to mark the source
@@ -18,6 +19,7 @@ class Playlist {
     required this.playlistOwner,
     required this.playlistOwnerID,
     required this.playlistTrackCount,
+    this.playlistDuration,
     this.channelImage,
     required this.tracks,
     required this.app,
@@ -33,6 +35,7 @@ class Playlist {
           playlistOwner: json['playlist_owner'] ?? '',
           playlistOwnerID: json['playlist_owner_id'] ?? '',
           playlistTrackCount: json['playlist_track_count'] ?? 0,
+          playlistDuration: json['playlist_duration'] ?? 0,
           channelImage: null,
           tracks: (json['tracks'] as List<dynamic>?)
                   ?.map((trackJson) => Track.fromJson(trackJson, app))

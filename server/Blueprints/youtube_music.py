@@ -4,6 +4,8 @@ from flask_limiter import Limiter
 from flask_cors import CORS
 from flask_limiter.util import get_remote_address
 from config.config import settings
+from util.youtube import playlist_items
+from util.utils import ms2FormattedDuration
 from util.logit import get_logger
 import requests
 from pydantic import ValidationError
@@ -58,11 +60,13 @@ def get_playlists():
         payload = UserEmailRequest.parse_obj(request.get_json())
     except ValidationError as ve:
         return jsonify({"error": ve.errors()}), 400
-
+    
     user_email = payload.user_email
     if not user_email:
         return jsonify({"error": "Missing user_email parameter."}), 400
 
+    playlist_count_limit = 5
+    
     try:
         # Retrieve the user ID from Firebase based on the email
         user_id = firebase_operations.get_user_id_by_email(user_email)
@@ -136,15 +140,30 @@ def get_playlists():
                     channel_map[cid] = channel_image
 
                 # Add the channel image URL to each playlist's snippet
-                for item in items:
+                for count, item in enumerate(items):
+                    if count < playlist_count_limit:
+                        break
                     snippet = item.get("snippet", {})
                     cid = snippet.get("channelId")
+                    playlist_id = item.get("id")
+                    print(playlist_id)
+                    try:
+                        tracks, total_duration, total_tracks = playlist_items(access_token, playlist_id)
+                        item["tracks"] = tracks
+                        item["total_duration"] = total_duration
+                        item["formatted_duraiton"] = ms2FormattedDuration(total_duration)
+                        item["total_tracks"] = total_tracks
+                        
+                    except Exception as err:
+                        logger.error("Error fetching tracks for playlist %s: %s", playlist_id, err)
+                        # Option 1: Set tracks to an empty list if there's an error.
+                        item["tracks"] = []
                     if cid in channel_map:
                         snippet["channelImage"] = channel_map[cid]
             else:
                 logger.error("Error fetching channel images: %s", channels_response.text)
                 # Proceed without channel images if the channels API call fails
-
+        #print(playlists_data)
         logger.info("Successfully retrieved playlists for user: %s", user_email)
         return jsonify(playlists_data), 200
 
@@ -197,48 +216,63 @@ def playlist_tracks():
         logger.error("Exception occurred while fetching playlist tracks: %s", e)
         return jsonify({"error": "An error occurred while fetching playlist tracks."}), 500
 
-    # Now, fetch all playlist items from YouTube
-    url = "https://www.googleapis.com/youtube/v3/playlistItems"
-    headers = {
-        "Authorization": f"Bearer {access_token}"
-    }
-    tracks = []
-    nextPageToken = None
+    tracks, total_duration, total_tracks = playlist_items(access_token, playlist_id)
+    logger.info("Successfully fetched %d tracks for playlist %s", total_tracks, playlist_id)
+    return jsonify({"tracks": tracks, "total_duration": total_duration, "formatted_duration": ms2FormattedDuration(total_duration)}), 200
+
+
+@youtubeMusic_bp.route("/playlist_duration", methods=["POST"])
+def get_playlist_duration():
+    """
+    Fetches all video IDs and titles from a specified YouTube Music playlist.
+    
+    Expects a JSON payload in the format:
+        {
+            "user_email": "user@example.com",
+            "playlist_id": "YOUR_PLAYLIST_ID"
+        }
+    
+    Returns:
+        JSON response containing a list of tracks, each with a videoId and title.
+    """
+    try:
+        payload = PlaylistItemsRequest.parse_obj(request.get_json())
+    except ValidationError as ve:
+        return jsonify({"error": ve.errors()}), 400
+
+    user_email = payload.user_id
+    playlist_id = payload.playlist_id
+    if not user_email or not playlist_id:
+        return jsonify({"error": "Missing user_email or playlist_id parameter."}), 400
 
     try:
-        while True:
-            params = {
-                "part": "snippet",
-                "playlistId": playlist_id,
-                "maxResults": 50,
-                "client_id": settings.google_client_id
-            }
-            if nextPageToken:
-                params["pageToken"] = nextPageToken
+        # Retrieve the user ID from Firebase based on the email
+        user_id = firebase_operations.get_user_id_by_email(user_email)
+        if not user_id:
+            return jsonify({"error": "User not found."}), 404
 
-            response = requests.get(url, headers=headers, params=params)
-            if response.status_code != 200:
-                logger.error("Error fetching playlist items: %s", response.text)
-                return jsonify({"error": "Failed to fetch playlist items."}), response.status_code
+        # Retrieve YouTube Music app ID (assumed to be 3)
+        app_id = 3
+        result = firebase_operations.get_userlinkedapps_access_refresh(user_id, app_id)[0]
+        access_token, refresh_token = result["access_token"], result["refresh_token"]
 
-            data = response.json()
-            for item in data.get("items", []):
-                snippet = item.get("snippet", {})
-                video_id = snippet.get("resourceId", {}).get("videoId")
-                title = snippet.get("title")
-                if video_id:
-                    tracks.append({"videoId": video_id, "title": title})
-
-            nextPageToken = data.get("nextPageToken")
-            if not nextPageToken:
-                break
-
-        logger.info("Successfully fetched %d tracks for playlist %s", len(tracks), playlist_id)
-        return jsonify({"tracks": tracks}), 200
+        # Refresh the access token if needed
+        new_access_token = refresh_access_token_and_update_db_for_Google(user_id, refresh_token)
+        if not new_access_token or not new_access_token[0]:
+            return jsonify({"error": "No token found. Please bind your YouTube Music account first."}), 400
+        access_token = new_access_token
 
     except Exception as e:
-        logger.error("Error fetching all tracks: %s", e)
-        return jsonify({"error": "An error occurred while fetching tracks."}), 500
+        logger.error("Exception occurred while fetching playlist tracks: %s", e)
+        return jsonify({"error": "An error occurred while fetching playlist tracks."}), 500
+
+    _, total_duration, total_tracks = playlist_items(access_token, playlist_id)
+    return jsonify({"total_duration": total_duration, 
+                    "formatted_duration": ms2FormattedDuration(total_duration), 
+                    "playlist_id": playlist_id,
+                    "total_tracks": total_tracks}), 200
+
+    
 
 @youtubeMusic_bp.route("/fetch_first_video_id", methods=["POST"])
 def fetch_first_video_id():

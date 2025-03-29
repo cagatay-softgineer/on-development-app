@@ -1,23 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:ssdk_rsrc/styles/button_styles.dart';
-import 'package:ssdk_rsrc/models/button_params.dart';
 import 'package:ssdk_rsrc/models/linked_app.dart';
 import 'package:ssdk_rsrc/widgets/app_card.dart';
 import 'package:ssdk_rsrc/utils/authlib.dart';
 import 'package:ssdk_rsrc/services/main_api.dart';
 import 'package:ssdk_rsrc/constants/default/user.dart';
 
-
 class AppLinkPage extends StatefulWidget {
-  const AppLinkPage({super.key});
+  const AppLinkPage({Key? key}) : super(key: key);
 
   @override
   AppLinkPageState createState() => AppLinkPageState();
 }
 
 class AppLinkPageState extends State<AppLinkPage> with WidgetsBindingObserver {
-
-  // Define a list of apps
+  // Define a list of apps with initial configurations.
   final List<LinkedApp> linkedApps = [
     LinkedApp(name: "Spotify", appButtonParams: spotifyButtonParams),
     LinkedApp(name: "AppleMusic", appButtonParams: appleMusicButtonParams),
@@ -39,51 +36,60 @@ class AppLinkPageState extends State<AppLinkPage> with WidgetsBindingObserver {
     }
   }
 
-  Future<Map<String, dynamic>?> checkLinkedApp(ButtonParams customButton, String? email, String appName) async {
-  try {
-    final response = await mainAPI.checkLinkedApp(email, appName); // Assuming ApiService() has a method for this
-    if (response['error'] == true) {
-      return null;
-    } else {
-      final userLinked = response['user_linked'];
-      if (appName == "Spotify"){
-        final userDisplayName = response['user_profile']['display_name'] ?? "No Display Name";
-        final userPic = response['user_profile']['images'][0]['url'] ?? "";
-        return {
-          'userLinked': userLinked,
-          'userDisplayName': userDisplayName,
-          'userPic': userPic,
-        };
-      } else if (appName == "AppleMusic"){
-        // Implement AppleMusic specific logic here
-      } else if (appName == "YoutubeMusic"){
-        final userDisplayName = response['user_profile']['name'] ?? "No Display Name";
-        final userPic = response['user_profile']['picture'] ?? "";
-        return {
-          'userLinked': userLinked,
-          'userDisplayName': userDisplayName,
-          'userPic': userPic,
-        };
-      } 
-    }
-  } catch (e) {
-    debugPrint('Error in checkLinkedApp: $e');
-    return null;
-  }
-  return null;
-}
-
+  /// Fetches the binding state for all apps using the consolidated API endpoint and updates the local state.
   Future<void> _initializeLinkedApps() async {
-    final userId = await AuthService.getUserId();
+    final String? userEmail = await AuthService.getUserId();
+    if (userEmail == null) {
+      return;
+    }
 
-    // Update the state of each app
-    for (var app in linkedApps) {
-      final result = await checkLinkedApp(ButtonParams(), userId, app.name);
+    final response = await mainAPI.getAllAppsBinding(userEmail);
+
+    // ignore: unnecessary_null_comparison
+    if (response != null && response.containsKey('apps')) {
+      // Create a mapping of app name to its binding data for ease of lookup.
+      final Map<String, dynamic> appsBindingMap = {};
+      for (var app in response['apps']) {
+        if (app is Map<String, dynamic> && app.containsKey('app_name')) {
+          appsBindingMap[app['app_name']] = app;
+        }
+      }
+
       setState(() {
-        app.isLinked = result?['userLinked'] ?? false;
-        app.buttonText = app.isLinked ? "Unlink ${app.name}" : "Link ${app.name}";
-        app.userPic = result?['userPic'] ?? UserConstants.defaultAvatarUrl;
-        app.userDisplayName = result?['userDisplayName'] ?? "No Display Name";
+        for (var app in linkedApps) {
+          if (appsBindingMap.containsKey(app.name)) {
+            final appData = appsBindingMap[app.name];
+            app.isLinked = appData['user_linked'] ?? false;
+            app.buttonText = app.isLinked ? "Unlink ${app.name}" : "Link ${app.name}";
+
+            if (app.isLinked &&
+                appData['user_profile'] != null &&
+                appData['user_profile'] is Map) {
+              final profile = appData['user_profile'];
+              if (app.name == "Spotify") {
+                app.userDisplayName = profile['display_name'] ?? "No Display Name";
+                if (profile['images'] != null &&
+                    profile['images'] is List &&
+                    profile['images'].isNotEmpty) {
+                  app.userPic = profile['images'][0]['url'] ?? UserConstants.defaultAvatarUrl;
+                } else {
+                  app.userPic = UserConstants.defaultAvatarUrl;
+                }
+              } else if (app.name == "YoutubeMusic") {
+                app.userDisplayName = profile['name'] ?? "No Display Name";
+                app.userPic = profile['picture'] ?? UserConstants.defaultAvatarUrl;
+              } else {
+                // For AppleMusic or other apps, adjust the logic as necessary.
+                app.userDisplayName = "No Display Name";
+                app.userPic = UserConstants.defaultAvatarUrl;
+              }
+            } else {
+              // Reset user information when the app is not linked.
+              app.userDisplayName = "No Display Name";
+              app.userPic = UserConstants.defaultAvatarUrl;
+            }
+          }
+        }
       });
     }
   }
