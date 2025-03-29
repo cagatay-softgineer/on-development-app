@@ -1,3 +1,4 @@
+[![CodeQL](https://github.com/cagatay-softgineer/SpotifySDK-Research/actions/workflows/github-code-scanning/codeql/badge.svg?branch=main)](https://github.com/cagatay-softgineer/SpotifySDK-Research/actions/workflows/github-code-scanning/codeql)
 # SpotifySDK-Research
  
 # App Features and Spotify Integration
