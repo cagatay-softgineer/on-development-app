@@ -352,4 +352,4 @@ def fetch_first_video_id():
             return jsonify({"error": response.json()}), response.status_code
     except Exception as e:
         logger.error("Error fetching first video id: %s", e)
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"error": "Error fetching first video id: %s"}), 500
