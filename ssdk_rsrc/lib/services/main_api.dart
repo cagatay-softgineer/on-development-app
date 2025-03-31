@@ -239,7 +239,7 @@ class MainAPI {
     final response = await _dio.post(
       endpoint,
       data: {
-        "user_email": userEmail,
+        "user_id": userEmail,
         "playlist_id": playlistId,
       },
     );
@@ -258,7 +258,7 @@ class MainAPI {
     try {
       final response = await _dio.post(
         "/youtube-music/fetch_first_video_id",
-        data: {"playlist_id": playlistId, "user_email": userId},
+        data: {"playlist_id": playlistId, "user_id": userId},
         options: Options(
         contentType: "application/json", // Sets "application/json"
         ),

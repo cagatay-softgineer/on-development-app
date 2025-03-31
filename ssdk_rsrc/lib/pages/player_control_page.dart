@@ -75,6 +75,7 @@ class _PlayerControlPageState extends State<PlayerControlPage> {
       // For YouTube, load all tracks from widget.songs.
       if (widget.songs != null && widget.songs!.isNotEmpty) {
         _youtubeTracks = widget.songs!.cast<Track>();
+        print(_youtubeTracks[_currentTrackIndex].trackId);
         _currentTrackIndex = 0;
         _initializeYoutubePlayer(_youtubeTracks[_currentTrackIndex].trackId);
       }

@@ -92,10 +92,10 @@ factory Track.fromJson(Map<String, dynamic> json, MusicApp app) {
       return Track(
         trackName: json['title'] ?? '',
         // You can assign a default or empty value for artistName if it isn’t provided
-        artistName: '',
-        trackId: json['videoId'] ?? '',
+        artistName: json['channelTitle'] ?? '',
+        trackId: json['video_id'] ?? '',
         // If your JSON doesn’t include an image, you can provide a default image or an empty string
-        trackImage: '',
+        trackImage: json['thumbnail_url'],
       );
     case MusicApp.Spotify:
       return Track(

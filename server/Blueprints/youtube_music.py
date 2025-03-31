@@ -190,14 +190,14 @@ def playlist_tracks():
     except ValidationError as ve:
         return jsonify({"error": ve.errors()}), 400
 
-    user_email = payload.user_email
+    user_id = payload.user_id
     playlist_id = payload.playlist_id
-    if not user_email or not playlist_id:
+    if not user_id or not playlist_id:
         return jsonify({"error": "Missing user_email or playlist_id parameter."}), 400
 
     try:
         # Retrieve the user ID from Firebase based on the email
-        user_id = firebase_operations.get_user_id_by_email(user_email)
+        user_id = firebase_operations.get_user_id_by_email(user_id)
         if not user_id:
             return jsonify({"error": "User not found."}), 404
 

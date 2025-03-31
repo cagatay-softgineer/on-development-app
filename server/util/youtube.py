@@ -128,18 +128,23 @@ def playlist_items(access_token, playlist_id):
                 raise Exception("Failed to fetch tracks.")
 
             data = response.json()
+            print(data)
             for item in data.get("items", []):
                 snippet = item.get("snippet", {})
                 contentDetails = item.get("contentDetails", {})
                 
                 video_id = item.get("id")
                 title = snippet.get("title")
+                channelTitle = snippet.get("channelTitle")
+                thumbnails = snippet.get("thumbnails")
+                standard_thumbnail = thumbnails.get("standard")
+                thumbnail_url = standard_thumbnail.get("url")
                 duration_iso = contentDetails.get("duration")
                 duration_ms = iso_duration_to_milliseconds(duration_iso)
                 total_duration += duration_ms
                 total_tracks += 1
                 if video_id:
-                    tracks.append({"video_id": video_id, "duration": duration_ms, "title": title})
+                    tracks.append({"video_id": video_id, "duration": duration_ms, "title": title, "thumbnail_url": thumbnail_url, "channelTitle": channelTitle})
 
             nextPageToken = data.get("nextPageToken")
             if not nextPageToken:

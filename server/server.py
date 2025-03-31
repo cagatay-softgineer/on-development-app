@@ -652,4 +652,4 @@ if __name__ == "__main__":
     parser.add_argument("--port", type=int, default=8080, help="Port to run the Flask app.")
     args = parser.parse_args()
 
-    app.run(host="0.0.0.0", port=args.port, ssl_context=('cert.pem', 'key.pem'))
+    app.run(host="0.0.0.0", port=args.port, ssl_context=('keys/cert.pem', 'keys/key.pem'))
