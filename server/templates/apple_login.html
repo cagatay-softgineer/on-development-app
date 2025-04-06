@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Apple Music Login</title>
+    <!-- Link to the provided CSS -->
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+    <!-- Load MusicKit JS -->
+    <script src="https://js-cdn.music.apple.com/musickit/v3/musickit.js" data-web-components async></script>
+    <meta name="apple-music-developer-token" content="{{developer_token}}" />
+    <meta name="apple-music-app-name" content="Pomodoro" />
+    <meta name="apple-music-app-build" content="2025.4.2" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Apple Music Login</h1>
+      <p>Please click the button below to authorize with Apple Music.</p>
+      <div class="center-center">
+        <a id="btn-glitch-fill" class="btn-glitch-fill">
+          <span class="text">// Jack in</span><span class="text-decoration">_</span><span class="decoration">&rArr;</span>
+        </a>
+      </div>
+      </div>
+    </div>
+    <script>
+      console.log("{{developer_token}}");
+      document.addEventListener('musickitloaded', async function () {
+        // Call configure() to configure an instance of MusicKit on the Web.
+        try {
+          await MusicKit.configure({
+            developerToken: '{{developer_token}}',
+            app: {
+              name: 'Pomodoro',
+              build: '2025.4.2',
+            },
+          });
+          console.log("configuration is successful.");
+        } catch (err) {
+            console.error('Error during MusicKit configuration:', err);
+            return;
+        }
+        
+        const music = MusicKit.getInstance();
+        document.getElementById('btn-glitch-fill').addEventListener('click', async function () {
+          try {
+            const userToken = await music.authorize();
+            // Redirect to the callback endpoint with the obtained user token.
+            window.location.href = "/apple/callback?user_token=" + encodeURIComponent(userToken);
+          } catch (err) {
+            console.error("Authorization error:", err);
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

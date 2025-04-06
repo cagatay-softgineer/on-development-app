@@ -189,7 +189,7 @@ def fetch_user_playlists(user_id, app_id):
     offset = 0
     order = 0
     formatted_playlists = []
-    playlist_count_limit = 10
+    playlist_count_limit = 2
     is_playlist_count_exceeded_to_limit = False
     while True:
         url = url_template.format(offset=offset)
@@ -243,7 +243,7 @@ def fetch_user_playlists(user_id, app_id):
                     order += 1
                     formatted_playlists.append(formatted_playlist)
                     
-                    is_playlist_count_exceeded_to_limit = len(formatted_playlists) > playlist_count_limit
+                    is_playlist_count_exceeded_to_limit = len(formatted_playlists) >= playlist_count_limit
                     if is_playlist_count_exceeded_to_limit:
                         break
             if is_playlist_count_exceeded_to_limit:
@@ -460,7 +460,7 @@ def get_access_token_from_db(user_id, app_id):
     tuple: A tuple containing the access token and refresh token. If the access token is not found, returns None.
     """
     result = firebase_operations.get_userlinkedapps_access_refresh(user_id, app_id)[0]
-    print(result)
+    #print(result)
     if not result:
         logger.error(f"Access token not found for user_id: {user_id}")
         return None

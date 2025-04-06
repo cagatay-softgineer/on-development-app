@@ -80,8 +80,8 @@ class AppLinkPageState extends State<AppLinkPage> with WidgetsBindingObserver {
                 app.userPic = profile['picture'] ?? UserConstants.defaultAvatarUrl;
               } else {
                 // For AppleMusic or other apps, adjust the logic as necessary.
-                app.userDisplayName = "No Display Name";
-                app.userPic = UserConstants.defaultAvatarUrl;
+                app.userDisplayName = profile['name'] ?? "No Display Name";
+                app.userPic = profile['picture'] ?? UserConstants.defaultAvatarUrl;
               }
             } else {
               // Reset user information when the app is not linked.

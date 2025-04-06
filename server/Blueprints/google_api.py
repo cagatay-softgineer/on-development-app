@@ -23,7 +23,7 @@ logger = get_logger("logs/google_bp.log", "Google")
 
 # Constants for Google OAuth
 GOOGLE_SCOPES = ["https://www.googleapis.com/auth/youtube.readonly","https://www.googleapis.com/auth/iam.test","https://www.googleapis.com/auth/youtube.download","https://www.googleapis.com/auth/userinfo.email","https://www.googleapis.com/auth/userinfo.profile","https://www.googleapis.com/auth/youtubepartner-channel-audit","https://www.googleapis.com/auth/youtubepartner","https://www.googleapis.com/auth/youtube.upload","https://www.googleapis.com/auth/youtube.third-party-link.creator","https://www.googleapis.com/auth/youtube.force-ssl","https://www.googleapis.com/auth/youtube.channel-memberships.creator","https://www.googleapis.com/auth/youtube","https://www.googleapis.com/auth/service.management.readonly","https://www.googleapis.com/auth/service.management","openid"] # Adjust scopes as needed
-GOOGLE_CLIENT_SECRETS_FILE = settings.google_client_secret_file  # Path to your downloaded client secrets file
+GOOGLE_CLIENT_SECRETS_FILE = f"keys/{settings.google_client_secret_file}"  # Path to your downloaded client secrets file
 # Make sure to set a secret key for Flask session management in your app configuration
 
 @google_bp.route('/google_api_bind', methods=['GET'])
@@ -181,7 +181,7 @@ def google_profile():
     user_email = payload.user_email
 
     try:
-        print(user_email)
+        #print(user_email)
         if not user_email:
             return jsonify({"error": "Missing user_email in session."}), 400
 
@@ -190,7 +190,7 @@ def google_profile():
         if not user_id:
             return jsonify({"error": "User not found."}), 404
 
-        print(user_id)
+        #print(user_id)
 
         # Retrieve the Google app id (assumes your app is registered with the name "Google")
         app_id_data = firebase_operations.get_app_id_by_name("Google")
@@ -198,7 +198,7 @@ def google_profile():
             return jsonify({"error": "Google app not configured."}), 400
         app_id = app_id_data
 
-        print(app_id)
+        #print(app_id)
 
         # Retrieve stored token details
         tokens_data = firebase_operations.get_userlinkedapps_tokens(user_id, app_id)
@@ -210,11 +210,11 @@ def google_profile():
         #print(tokens_data[0])
         #print(tokens_data[0]["access_token"])
         access_token = tokens_data[0]["access_token"]
-        print(access_token)
+        #print(access_token)
 
         # Get the user's Google profile using the helper function
         profile = get_current_user_profile_google(access_token, user_id)
-        print(profile)
+        #print(profile)
         if profile is None:
             return jsonify({"error": "Failed to fetch Google user profile."}), 500
 
@@ -243,7 +243,7 @@ def get_google_profile(user_email):
     """
 
     try:
-        print(user_email)
+        #print(user_email)
         if not user_email:
             return jsonify({"error": "Missing user_email in session."}), 400
 
@@ -252,7 +252,7 @@ def get_google_profile(user_email):
         if not user_id:
             return jsonify({"error": "User not found."}), 404
 
-        print(user_id)
+        #print(user_id)
 
         # Retrieve the Google app id (assumes your app is registered with the name "Google")
         app_id_data = firebase_operations.get_app_id_by_name("Google")
@@ -260,7 +260,7 @@ def get_google_profile(user_email):
             return jsonify({"error": "Google app not configured."}), 400
         app_id = app_id_data
 
-        print(app_id)
+        #print(app_id)
 
         # Retrieve stored token details
         tokens_data = firebase_operations.get_userlinkedapps_tokens(user_id, app_id)
@@ -272,11 +272,11 @@ def get_google_profile(user_email):
         #print(tokens_data[0])
         #print(tokens_data[0]["access_token"])
         access_token = tokens_data[0]["access_token"]
-        print(access_token)
+        #print(access_token)
 
         # Get the user's Google profile using the helper function
         profile = get_current_user_profile_google(access_token, user_id)
-        print(profile)
+        #print(profile)
         if profile is None:
             return jsonify({"error": "Failed to fetch Google user profile."}), 500
 

@@ -39,7 +39,7 @@ GOOGLE_SCOPES = [
     "https://www.googleapis.com/auth/service.management",
     "openid"
 ]  # Adjust scopes as needed
-GOOGLE_CLIENT_SECRETS_FILE = settings.google_client_secret  # Path to your downloaded client secrets file
+GOOGLE_CLIENT_SECRETS_FILE = f"keys/{settings.google_client_secret_file}"  # Path to your downloaded client secrets file
 # Ensure to set a secret key for Flask session management in your app configuration
 
 @youtubeMusic_bp.route('/playlists', methods=['POST'])
@@ -65,7 +65,7 @@ def get_playlists():
     if not user_email:
         return jsonify({"error": "Missing user_email parameter."}), 400
 
-    playlist_count_limit = 5
+    playlist_count_limit = 2
     
     try:
         # Retrieve the user ID from Firebase based on the email
@@ -81,8 +81,8 @@ def get_playlists():
         # Retrieve stored token details for the user
         result = firebase_operations.get_userlinkedapps_access_refresh(user_id, app_id)[0]
         access_token, refresh_token = result["access_token"], result["refresh_token"]
-        print(access_token)
-        print(refresh_token)
+        #access_token)
+        #print(refresh_token)
 
         # Refresh the access token if needed
         new_access_token = refresh_access_token_and_update_db_for_Google(user_id, refresh_token)
@@ -90,7 +90,7 @@ def get_playlists():
             return jsonify({"error": "No token found. Please bind your YouTube Music account first."}), 400
 
         access_token = new_access_token
-        print(access_token, "Access")
+        #print(access_token, "Access")
 
         # Fetch playlists from the YouTube API
         url = "https://www.googleapis.com/youtube/v3/playlists"
@@ -98,7 +98,7 @@ def get_playlists():
             "part": "snippet,contentDetails, id, localizations, player, status",
             "mine":"true",
             "client_id": settings.google_client_id,
-            "maxResults": 50  # Optional: adjust as needed
+            "maxResults": playlist_count_limit  # Optional: adjust as needed
         }
         headers = {
             "Authorization": f"Bearer {access_token}"
@@ -141,12 +141,12 @@ def get_playlists():
 
                 # Add the channel image URL to each playlist's snippet
                 for count, item in enumerate(items):
-                    if count < playlist_count_limit:
+                    if count >= playlist_count_limit:
                         break
                     snippet = item.get("snippet", {})
                     cid = snippet.get("channelId")
                     playlist_id = item.get("id")
-                    print(playlist_id)
+                    #print(playlist_id)
                     try:
                         tracks, total_duration, total_tracks = playlist_items(access_token, playlist_id)
                         item["tracks"] = tracks
@@ -310,8 +310,8 @@ def fetch_first_video_id():
         # Retrieve stored token details for the user
         result = firebase_operations.get_userlinkedapps_access_refresh(user_id, app_id)[0]
         access_token, refresh_token = result["access_token"], result["refresh_token"]
-        print(access_token)
-        print(refresh_token)
+        #print(access_token)
+        #print(refresh_token)
 
         # Refresh the access token if needed
         new_access_token = refresh_access_token_and_update_db_for_Google(user_id, refresh_token)
@@ -319,7 +319,7 @@ def fetch_first_video_id():
             return jsonify({"error": "No token found. Please bind your YouTube Music account first."}), 400
 
         access_token = new_access_token
-        print(access_token, "Access")
+        #print(access_token, "Access")
 
     except Exception as e:
         logger.error("Exception occurred while fetching playlists: %s", e)

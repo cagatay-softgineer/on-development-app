@@ -20,6 +20,7 @@ class Settings(BaseSettings):
     google_client_secret: str = Field(..., env="GOOGLE_CLIENT_SECRET")
     google_client_secret_file: str = Field(..., env="GOOGLE_CLIENT_SECRET_FILE")
     SECRET_KEY: str = Field(default_factory=lambda: secrets.token_hex(16))
+    apple_developer_token: str = Field(..., env="APPLE_DEVELOPER_TOKEN")
     
     class Config:
         env_file = ".env"

@@ -24,7 +24,7 @@ class PlaylistPageState extends State<PlaylistPage> {
   late Future<void> _initializationFuture;
 
   // Filter variables.
-  String selectedAppFilter = "all"; // "all", "spotify", or "youtube"
+  String selectedAppFilter = "all"; // "all", "spotify", or "youtube" or "apple"
   String _searchQuery = "";
 
   // We fetch both Spotify and YouTube playlists concurrently.
@@ -45,14 +45,17 @@ class PlaylistPageState extends State<PlaylistPage> {
       final spotifyPlaylistsFuture =
           mainAPI.fetchPlaylists("$userId", app: MusicApp.Spotify);
       
-        
       final youtubePlaylistsFuture =
           mainAPI.fetchPlaylists("$userId", app: MusicApp.YouTube);
 
-      final results = await Future.wait([spotifyPlaylistsFuture, youtubePlaylistsFuture]);
+       final applePlaylistsFuture =
+          mainAPI.fetchPlaylists("$userId", app: MusicApp.Apple);
+
+      final results = await Future.wait([spotifyPlaylistsFuture, youtubePlaylistsFuture, applePlaylistsFuture]);
       final mergedPlaylists = <Playlist>[];
       mergedPlaylists.addAll(results[0]);
       mergedPlaylists.addAll(results[1]);
+      mergedPlaylists.addAll(results[2]);
 
       setState(() {
         playlists = mergedPlaylists;
@@ -72,6 +75,10 @@ class PlaylistPageState extends State<PlaylistPage> {
         return UserConstants.defaultAvatarUrl;
       }
     }
+
+    if (playlist.app == MusicApp.Apple){
+        return UserConstants.defaultAvatarUrl;
+      }
   
     final ownerId = playlist.playlistOwnerID;
     if (_userPicCache.containsKey(ownerId)) {
@@ -112,6 +119,9 @@ class PlaylistPageState extends State<PlaylistPage> {
               return p.app == MusicApp.Spotify;
             } else if (selectedAppFilter == "youtube") {
               return p.app == MusicApp.YouTube;
+            }
+            else if (selectedAppFilter == "apple") {
+              return p.app == MusicApp.Apple;
             }
             return true;
           }).toList();
@@ -162,6 +172,10 @@ class PlaylistPageState extends State<PlaylistPage> {
                           DropdownMenuItem(
                             value: "youtube",
                             child: Text("YouTube"),
+                          ),
+                          DropdownMenuItem(
+                            value: "apple",
+                            child: Text("Apple"),
                           ),
                         ],
                       ),

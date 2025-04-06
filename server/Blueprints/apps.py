@@ -7,6 +7,7 @@ from util.spotify import get_current_user_profile
 from Blueprints.google_api import get_google_profile
 from util.models import LinkedAppRequest  # Import the model
 from util.logit import get_logger
+from util.utils import get_email_username
 import database.firebase_operations as firebase_operations
 from pydantic import ValidationError
 from config.config import settings
@@ -97,7 +98,7 @@ def check_linked_app():
 
     user_id = firebase_operations.get_user_id_by_email(user_email)
     app_id = firebase_operations.get_app_id_by_name(app_name)
-    print(app_id, user_id, app_name, user_email)
+    #print(app_id, user_id, app_name, user_email)
 
     if not app_name or not user_email:
         return jsonify({
@@ -117,7 +118,7 @@ def check_linked_app():
 
     access_tokens = response[0]["access_token"]
     user_linked = response is not None
-    print("User access_tokens", access_tokens)
+    #print("User access_tokens", access_tokens)
     if access_tokens:
         access_token = access_tokens[0]
 
@@ -261,7 +262,7 @@ def get_all_apps_binding():
             if app_name == "Spotify":
                 user_profile = get_current_user_profile(tokens[0], user_id, app_id)
             elif app_name == "AppleMusic":
-                user_profile = "Apple Music Not Implementated"
+                user_profile = {"name" : get_email_username(user_email)}
             elif app_name == "YoutubeMusic":
                 user_profile = get_google_profile(user_email)
             elif app_name == "Google API":

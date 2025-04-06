@@ -187,8 +187,8 @@ Map<String, dynamic> spotifyPlay = {
   "padding": "EdgeInsets(0.0, 0.0, 0.0, 0.0)",
   "textStyle": "TextStyle(fontSize: 24.0, color: Color(0xFFFFFFFF))",
   "elevation": 6.0,
-  "buttonWidth": 100.0,
-  "buttonHeight": 60.0,
+  "buttonWidth": 50.0,
+  "buttonHeight": 50.0,
   "borderColor": "Color(0x00000000)",      // Transparent
   "letterSpacing": 0.0,
   "blurAmount": 10.0,
@@ -207,7 +207,7 @@ Map<String, dynamic> spotifyPlay = {
   "isLoading": false,
   "fontFamily": "Roboto",
   "backgroundAlpha": 0.9,
-  "iconSize" : 36,
+  "iconSize" : 24,
 };
 
 Map<String, dynamic> appleMusic = {

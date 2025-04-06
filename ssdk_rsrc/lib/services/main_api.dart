@@ -28,8 +28,8 @@ class MainAPI {
 
    // Create Dio without a base URL for now.
   final Dio _dio = Dio(BaseOptions(
-    connectTimeout: Duration(milliseconds: 5000),
-    receiveTimeout: Duration(milliseconds: 10000),
+    connectTimeout: Duration(milliseconds: 20000),
+    receiveTimeout: Duration(milliseconds: 40000),
   ));
 
   // List of candidate base URLs.
@@ -211,6 +211,9 @@ class MainAPI {
       case MusicApp.YouTube:
         endpoint = 'youtube-music/playlists';
         break;
+      case MusicApp.Apple:
+        endpoint = 'apple-music/playlists';
+        break;
     }
 
     final response = await _dio.post(
@@ -218,21 +221,30 @@ class MainAPI {
       data: {
         "user_email": userId,
       },
+      options: Options(sendTimeout: Duration(milliseconds: 20000),
+      receiveTimeout: Duration(milliseconds: 60000),
+      ),
     );
 
-    if (response.statusCode == 200) {
-      List<dynamic> data;
+if (response.statusCode == 200) {
+    List<dynamic> data;
+    if (app == MusicApp.YouTube) {
       // For YouTube, assume the response JSON contains an "items" array.
-      if (app == MusicApp.YouTube) {
-        data = response.data["items"] ?? [];
-      } else {
-        data = response.data;
-      }
-      return data.map((json) => Playlist.fromJson(json, app)).toList();
+      data = response.data["items"] ?? [];
+    } else if (response.data is List) {
+      // If the response is directly a List.
+      data = response.data;
+    } else if (response.data is Map && response.data["data"] is List) {
+      // If the response is a Map with a "data" key holding the list.
+      data = response.data["data"];
     } else {
-      throw Exception('Failed to load playlists');
+      data = [];
     }
+    return data.map((json) => Playlist.fromJson(json, app)).toList();
+  } else {
+    throw Exception('Failed to load playlists');
   }
+}
 
   Future<List<Track>> fetchPlaylistTracks(String? userEmail, String? playlistId) async {
     const endpoint = 'youtube-music/playlist_tracks';
@@ -315,8 +327,11 @@ class MainAPI {
       if(app == MusicApp.Spotify) {
         endpoint = "spotify-micro-service/playlist_duration";
       }
-      else if(app == MusicApp.YouTube) {
+      if(app == MusicApp.YouTube) {
         endpoint = "youtube-music/playlist_duration";
+      }
+      if(app == MusicApp.Apple) {
+        endpoint = "apple-music/playlist_duration";
       }
       final response = await _dio.post(
         '${endpoint}',
@@ -324,7 +339,7 @@ class MainAPI {
           "playlist_id": "$playlistId",
           "user_id": "$userId"
         },
-        options: Options(sendTimeout: Duration(milliseconds: 10000),
+        options: Options(sendTimeout: Duration(milliseconds: 20000),
         receiveTimeout: Duration(milliseconds: 60000),
         ),
       );
@@ -604,7 +619,38 @@ class MainAPI {
       // Optionally show an error message to the user
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Could not launch the URL.'),
+          content: Text('Could not launch the URL.\n ${e.toString()}'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+    Future<void> openAppleLogin(BuildContext context) async {
+    try {
+      // Fetch user ID
+      final userId = await AuthService.getUserId();
+
+      // Debugging to ensure userId is valid
+      if (userId == null || userId.isEmpty) {
+        //print('Error: User ID is null or empty.');
+        throw 'User ID is null or empty.';
+      }
+
+      // Construct URL
+      final url = '${baseUrl}apple/login/$userId';
+      //print('Generated URL: $url');
+
+      // Check if the URL can be launched
+      await launch(url);
+      //print('URL launched successfully: $url');
+    } catch (e) {
+      // Log errors for debugging
+      //print('Error in openSpotifyLogin: $e');
+
+      // Optionally show an error message to the user
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Could not launch the URL.\n ${e.toString()}'),
           backgroundColor: Colors.red,
         ),
       );

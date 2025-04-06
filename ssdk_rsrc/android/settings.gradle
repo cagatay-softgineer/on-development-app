@@ -6,7 +6,7 @@ pluginManagement {
         assert flutterSdkPath != null, "flutter.sdk not set in local.properties"
         return flutterSdkPath
     }()
-
+    flutterSdkPath = "D:\\Downloads\\SDKs\\flutter_windows_3.29.2-stable\\flutter"
     includeBuild("$flutterSdkPath/packages/flutter_tools/gradle")
 
     repositories {

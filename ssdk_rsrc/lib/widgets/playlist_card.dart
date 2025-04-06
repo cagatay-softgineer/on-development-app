@@ -62,13 +62,13 @@ class PlaylistCard extends StatelessWidget {
                     borderRadius: BorderRadius.circular(12),
                     child: Image.network(
                       playlist.playlistImage,
-                      width: 100,
-                      height: 100,
+                      width: 75,
+                      height: 75,
                       fit: BoxFit.cover,
                       errorBuilder: (context, error, stackTrace) {
                         return Container(
-                          width: 100,
-                          height: 100,
+                          width: 75,
+                          height: 75,
                           color: Colors.grey.shade300,
                           child: const Icon(Icons.image, size: 40, color: Colors.white),
                         );
@@ -94,7 +94,7 @@ class PlaylistCard extends StatelessWidget {
                           children: [
                             Expanded(
                               child: Text(
-                                '${playlist.playlistOwner} • ${playlist.playlistTrackCount} tracks',
+                                '${playlist.playlistTrackCount} tracks',
                                 style: theme.textTheme.bodySmall?.copyWith(
                                   color: Colors.grey.shade600,
                                 ),
@@ -168,69 +168,80 @@ class PlaylistCard extends StatelessWidget {
                             ),
                           ],
                         ),
-                        const SizedBox(height: 8),
+                        //const SizedBox(height: 8),
                         // Owner or channel image using FutureBuilder with a refined placeholder.
-                        FutureBuilder<String>(
-                          future: getUserPic(playlist),
-                          builder: (context, snapshot) {
-                            if (snapshot.connectionState == ConnectionState.waiting) {
-                              return const SizedBox(
-                                width: 40,
-                                height: 40,
-                                child: CircularProgressIndicator(strokeWidth: 2),
-                              );
-                            } else if (snapshot.hasError || !snapshot.hasData || snapshot.data == null) {
-                              return CircleAvatar(
-                                radius: 20,
-                                backgroundColor: Colors.grey.shade300,
-                                child: const Icon(Icons.error, color: Colors.red, size: 20),
-                              );
-                            } else {
-                              return CircleAvatar(
-                                radius: 20,
-                                backgroundImage: NetworkImage(snapshot.data!),
-                                backgroundColor: Colors.grey.shade300,
-                              );
-                            }
-                          },
-                        ),
                       ],
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 16),
+              //const SizedBox(height: 16),
               // Second Row: Playback controls.
               Row(
                 children: [
-                  Expanded(
-                    child: Row(
-                      children: [
-                        Checkbox(
-                          value: shuffleState,
-                          onChanged: onShuffleChanged,
-                        ),
-                        const SizedBox(width: 4),
-                        const Text(
-                          "Shuffle",
-                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-                        ),
-                      ],
-                    ),
+                  //Expanded(
+                  //  child: Row(
+                  //    children: [
+                  //      Checkbox(
+                  //        value: shuffleState,
+                  //        onChanged: onShuffleChanged,
+                  //      ),
+                  //      const SizedBox(width: 4),
+                  //      const Text(
+                  //        "Shuffle",
+                  //        style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                  //      ),
+                  //    ],
+                  //  ),
+                  //),
+                  //Expanded(
+                  //  child: DropdownButtonHideUnderline(
+                  //    child: DropdownButton<String>(
+                  //      value: repeatState,
+                  //      items: const [
+                  //        DropdownMenuItem(value: "off", child: Text("Repeat Off")),
+                  //        DropdownMenuItem(value: "track", child: Text("Repeat Track")),
+                  //        DropdownMenuItem(value: "context", child: Text("Repeat Context")),
+                  //      ],
+                  //      onChanged: onRepeatChanged,
+                  //      style: const TextStyle(fontSize: 14, color: Colors.black),
+                  //      icon: const Icon(Icons.arrow_drop_down),
+                  //    ),
+                  //  ),
+                  //),
+                  FutureBuilder<String>(
+                    future: getUserPic(playlist),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const SizedBox(
+                          width: 40,
+                          height: 40,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        );
+                      } else if (snapshot.hasError || !snapshot.hasData || snapshot.data == null) {
+                        return CircleAvatar(
+                          radius: 20,
+                          backgroundColor: Colors.grey.shade300,
+                          child: const Icon(Icons.error, color: Colors.red, size: 20),
+                        );
+                      } else {
+                        return CircleAvatar(
+                          radius: 20,
+                          backgroundImage: NetworkImage(snapshot.data!),
+                          backgroundColor: Colors.grey.shade300,
+                        );
+                      }
+                    },
                   ),
+                  const SizedBox(width: 8),
                   Expanded(
-                    child: DropdownButtonHideUnderline(
-                      child: DropdownButton<String>(
-                        value: repeatState,
-                        items: const [
-                          DropdownMenuItem(value: "off", child: Text("Repeat Off")),
-                          DropdownMenuItem(value: "track", child: Text("Repeat Track")),
-                          DropdownMenuItem(value: "context", child: Text("Repeat Context")),
-                        ],
-                        onChanged: onRepeatChanged,
-                        style: const TextStyle(fontSize: 14, color: Colors.black),
-                        icon: const Icon(Icons.arrow_drop_down),
+                    child: Text(
+                      '${playlist.playlistOwner}',
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: Colors.grey.shade600,
                       ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                   Expanded(

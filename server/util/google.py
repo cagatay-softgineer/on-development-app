@@ -28,8 +28,8 @@ def get_current_user_profile_google(access_token: str, user_id: int | str) -> di
         # Retrieve tokens from your database; assumes result is a dict
         result = firebase_operations.get_userlinkedapps_access_refresh(user_id, 4)[0]
         access_token, refresh_token = result["access_token"], result["refresh_token"]
-        print(access_token)
-        print(refresh_token)
+        #print(access_token)
+        #print(refresh_token)
         new_access_token = refresh_access_token_and_update_db_for_Google(user_id, refresh_token)
         if new_access_token:
             return get_current_user_profile_google(new_access_token, user_id)

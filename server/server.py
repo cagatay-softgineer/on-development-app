@@ -13,6 +13,8 @@ try:
     from Blueprints.auth import auth_bp
     from Blueprints.apps import apps_bp
     from Blueprints.spotify import spotify_bp
+    from Blueprints.apple import apple_bp
+    from Blueprints.apple_music import appleMusic_bp
     from Blueprints.user_profile import profile_bp
     from Blueprints.google_api import google_bp
     from Blueprints.spotify_micro_service import SpotifyMicroService_bp
@@ -27,6 +29,8 @@ try:
     #from IPython.core.display import display  # This import may fail  # noqa: F401
 except Exception as e:
     log_error(e)  # Log the error
+
+print(settings.google_client_secret_file)
 
 check_log_folder()
 
@@ -205,6 +209,8 @@ app.register_blueprint(SpotifyMicroService_bp, url_prefix="/spotify-micro-servic
 app.register_blueprint(lyrics_bp, url_prefix="/lyrics")
 app.register_blueprint(google_bp, url_prefix="/google")
 app.register_blueprint(youtubeMusic_bp, url_prefix="/youtube-music")
+app.register_blueprint(apple_bp, url_prefix="/apple")
+app.register_blueprint(appleMusic_bp, url_prefix="/apple-music")
 app.register_blueprint(swaggerui_blueprint, url_prefix=app.config['SWAGGER_URL'])
 
 

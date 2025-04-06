@@ -10,9 +10,14 @@ class AppIcons {
   static const double spotifyIconSize = 24.0;
 
   // YouTube icon properties
-  static const IconData youtubeIcon = Icons.video_library;
+  static const IconData youtubeIcon = Icons.smart_display;
   static const Color youtubeIconColor = Colors.red;
   static const double youtubeIconSize = 24.0;
+
+  // Apple icon properties
+  static const IconData appleIcon = Icons.apple;
+  static const Color appleIconColor = Colors.black;
+  static const double appleIconSize = 24.0;
 
   /// Returns a default Icon widget based on the provided [app] type.
   static Icon getAppIcon(MusicApp app) {
@@ -21,6 +26,8 @@ class AppIcons {
         return const Icon(spotifyIcon, color: spotifyIconColor, size: spotifyIconSize);
       case MusicApp.YouTube:
         return const Icon(youtubeIcon, color: youtubeIconColor, size: youtubeIconSize);
+      case MusicApp.Apple:
+        return const Icon(appleIcon, color: appleIconColor, size: appleIconSize);
     }
   }
 }

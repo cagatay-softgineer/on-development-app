@@ -4,7 +4,7 @@ publish_to: 'none'
 version: 0.1.0
 
 environment:
-  sdk: ^3.6.0
+  sdk: ^3.7.2
 
 dependencies:
   flutter:
@@ -21,6 +21,7 @@ dependencies:
   hive: ^2.2.3
   hive_flutter: ^1.1.0
   youtube_player_flutter: ^9.1.1
+  
   
 dev_dependencies:
   flutter_test:

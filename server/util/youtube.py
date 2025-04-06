@@ -128,7 +128,7 @@ def playlist_items(access_token, playlist_id):
                 raise Exception("Failed to fetch tracks.")
 
             data = response.json()
-            print(data)
+            #print(data)
             for item in data.get("items", []):
                 snippet = item.get("snippet", {})
                 contentDetails = item.get("contentDetails", {})

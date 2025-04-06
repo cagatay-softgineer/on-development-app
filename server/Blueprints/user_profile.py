@@ -31,12 +31,12 @@ def view_profile():
     }
     """
     current_user = get_jwt_identity()
-    print(current_user)
+    #print(current_user)
 
     user_id = firebase_operations.get_user_id_by_email(current_user)
 
     rows = firebase_operations.get_user_profile(user_id)
-    print(rows)
+    #print(rows)
     if rows[0] != []:
         user = rows[0]
         return jsonify({

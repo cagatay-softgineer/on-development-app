@@ -98,6 +98,9 @@ class AppCard extends StatelessWidget {
                         } else if (appName == "YoutubeMusic") {
                           await mainAPI.openGoogleLogin(context);
                         }
+                        else if (appName == "AppleMusic") {
+                          await mainAPI.openAppleLogin(context);
+                        }
                       }
                       // Reinitialize the app binding state.
                       await onReinitializeApps();
