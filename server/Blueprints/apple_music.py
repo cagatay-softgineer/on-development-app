@@ -35,7 +35,8 @@ def get_albums():
     try:
         payload = request.get_json()
     except Exception as e:
-        return jsonify({"error": "Invalid JSON payload.", "details": str(e)}), 400
+        logger.error("Invalid JSON payload.: %s", e)
+        return jsonify({"error": "Invalid JSON payload."}), 400
 
     user_email = payload.get("user_email")
     if not user_email:
@@ -68,7 +69,6 @@ def get_albums():
         logger.error("Exception occurred while fetching albums: %s", e)
         return jsonify({
             "error": "An error occurred while fetching albums.",
-            "details": str(e)
         }), 500
 
 @appleMusic_bp.route('/playlists', methods=['POST'])
@@ -95,7 +95,8 @@ def get_playlists():
     try:
         payload = request.get_json()
     except Exception as e:
-        return jsonify({"error": "Invalid JSON payload.", "details": str(e)}), 400
+        logger.error("Invalid JSON payload.: %s", e)
+        return jsonify({"error": "Invalid JSON payload."}), 400
 
     user_email = payload.get("user_email")
     if not user_email:
@@ -179,7 +180,7 @@ def get_playlists():
 
     except Exception as e:
         logger.error("Exception occurred while fetching playlists: %s", e)
-        return jsonify({"error": "An error occurred while fetching playlists.", "details": str(e)}), 500
+        return jsonify({"error": "An error occurred while fetching playlists."}), 500
 
 @appleMusic_bp.route('/albums/<album_id>/tracks', methods=['POST'])
 @jwt_required()
@@ -202,7 +203,8 @@ def get_album_tracks(album_id):
     try:
         payload = request.get_json()
     except Exception as e:
-        return jsonify({"error": "Invalid JSON payload.", "details": str(e)}), 400
+        logger.error("Invalid JSON payload.: %s", e)
+        return jsonify({"error": "Invalid JSON payload."}), 400
 
     user_email = payload.get("user_email")
     if not user_email:
@@ -236,7 +238,6 @@ def get_album_tracks(album_id):
         logger.error("Exception occurred while fetching album tracks: %s", e)
         return jsonify({
             "error": "An error occurred while fetching album tracks.",
-            "details": str(e)
         }), 500
         
 #playlists
@@ -261,7 +262,8 @@ def playlist_duration():
     try:
         payload = request.get_json()
     except Exception as e:
-        return jsonify({"error": "Invalid JSON payload.", "details": str(e)}), 400
+        logger.error("Invalid JSON payload.: %s", e)
+        return jsonify({"error": "Invalid JSON payload."}), 400
 
     user_email = payload.get("user_id")
     playlist_id = payload.get("playlist_id")
@@ -322,5 +324,4 @@ def playlist_duration():
         logger.error("Exception occurred while calculating playlist duration: %s", e)
         return jsonify({
             "error": "An error occurred while calculating playlist duration.",
-            "details": str(e)
         }), 500
