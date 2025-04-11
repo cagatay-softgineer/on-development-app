@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from flask_jwt_extended import create_access_token, jwt_required  # noqa: F401
+from flask_jwt_extended import jwt_required
 from flask_limiter import Limiter
 from flask_cors import CORS
 from flask_limiter.util import get_remote_address
@@ -11,6 +11,7 @@ from util.utils import get_email_username
 import database.firebase_operations as firebase_operations
 from pydantic import ValidationError
 from config.config import settings
+from util.authlib import requires_scope
 
 apps_bp = Blueprint('apps', __name__)
 limiter = Limiter(key_func=get_remote_address)
@@ -22,6 +23,19 @@ GOOGLE_CLIENT_SECRETS_FILE = settings.google_client_secret
 CORS(apps_bp, resources={r"/*": {"origins": "*"}})
 
 logger = get_logger("logs/app_link.log", "Apps")
+
+
+@apps_bp.before_request
+def log_apps_requests():
+    logger.info("Apps blueprint request received.")
+    
+
+@apps_bp.route("/healthcheck", methods=["GET"])
+@requires_scope("apps")
+def apps_healthcheck():
+    logger.info("Apps Service healthcheck requested")
+    return jsonify({"status": "ok", "service": "Apps Service"}), 200
+
 
 APP_ALIAS_TO_ID = {
     "Spotify": 1,
@@ -72,6 +86,8 @@ def get_app_name_by_alias(app_id: int) -> str:
     raise ValueError(f"App ID '{app_id}' not found.")
 
 @apps_bp.route('/check_linked_app', methods=['POST'])
+@jwt_required()
+@requires_scope("apps")
 def check_linked_app():
     """
     This function checks if a user is linked to a specific application and retrieves the user's profile.
@@ -171,6 +187,8 @@ def check_linked_app():
 
 
 @apps_bp.route('/unlink_app', methods=['POST'])
+@jwt_required()
+@requires_scope("apps")
 def unlink_app():
     """
     Unlinks a user from a specific application.
@@ -209,6 +227,8 @@ def unlink_app():
 
 
 @apps_bp.route('/get_all_apps_binding', methods=['POST'])
+@jwt_required()
+@requires_scope("apps")
 def get_all_apps_binding():
     """
     Retrieves the binding state for all available applications for a given user.

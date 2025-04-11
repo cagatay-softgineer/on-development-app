@@ -40,7 +40,26 @@ class MainAPI {
 
   MainAPI() {
     // Set the active base URL when initializing.
-    initializeBaseUrl();
+    initializeBaseUrl().then((_) {
+      // Add an interceptor to automatically add the bearer token
+      _dio.interceptors.add(InterceptorsWrapper(
+        onRequest: (options, handler) async {
+          // Exclude endpoints where you don't need the auth token.
+          if (!(options.path.contains('auth/login') ||
+                options.path.contains('auth/register'))) {
+            String? token = await _secureStorage.read(key: 'access_token');
+            if (token != null && token.isNotEmpty) {
+              options.headers['Authorization'] = 'Bearer $token';
+            }
+          }
+          return handler.next(options);
+        },
+        onError: (DioException e, handler) async {
+          // You could handle token refresh here if needed.
+          return handler.next(e);
+        },
+      ));
+    });
   }
 
   // Asynchronously set the active base URL.
@@ -84,41 +103,37 @@ class MainAPI {
       print(_dio.options.baseUrl);
       final response = await _dio.post(
         'auth/login',
-        data: {
-          'email': email,
-          'password': password,
-        },
+        data: {'email': email, 'password': password},
         options: Options(
-          headers: {
-            'Content-Type': 'application/json',
-          },
+          headers: {'Content-Type': 'application/json'},
         ),
       );
 
-      //print('Response Data: ${response.data}');
-
       if (response.data is Map<String, dynamic>) {
-        // Check if the response contains access_token
+        // Check if the response contains access_token, and store it.
         if (response.data.containsKey('access_token')) {
-          // Store the token securely
           await _secureStorage.write(
             key: 'access_token',
             value: response.data['access_token'],
           );
-          //print('Access token stored securely.');
+          // Optionally store refresh token if provided:
+          if (response.data.containsKey('refresh_token')) {
+            await _secureStorage.write(
+              key: 'refresh_token',
+              value: response.data['refresh_token'],
+            );
+          }
         }
-
         return response.data;
       } else {
-        throw Exception(
-            'Unexpected response type: ${response.data.runtimeType}');
+        throw Exception('Unexpected response type: ${response.data.runtimeType}');
       }
     } on DioException catch (e) {
+      // Handle Dio exceptions as before...
       if (e.type == DioExceptionType.connectionTimeout) {
         return {
           'error': true,
-          'message':
-              'Connection timed out. Please check your internet connection.',
+          'message': 'Connection timed out. Please check your internet connection.',
         };
       } else if (e.type == DioExceptionType.receiveTimeout) {
         return {

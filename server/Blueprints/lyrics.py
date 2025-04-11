@@ -1,17 +1,33 @@
 from flask import Blueprint, request, jsonify
+from flask_jwt_extended import jwt_required
 import requests
 from config.config import settings
 from util.logit import get_logger
+from util.authlib import requires_scope
+
+lyrics_bp = Blueprint('lyrics', __name__, url_prefix='/lyrics')
 
 logger = get_logger("logs/lyrics.log", "MakroMusicService")
+
+@lyrics_bp.before_request
+def log_lyrics_requests():
+    logger.info("Lyrics blueprint request received.")
+    
+
+@lyrics_bp.route("/healthcheck", methods=["GET"])
+@requires_scope("lyrics")
+def lyrics_healthcheck():
+    logger.info("Lyrics Service healthcheck requested")
+    return jsonify({"status": "ok", "service": "Lyrics Service"}), 200
 
 DEBUG_MODE = settings.debug_mode
 if DEBUG_MODE == "True":
     DEBUG_MODE = True
 
-lyrics_bp = Blueprint('lyrics', __name__, url_prefix='/lyrics')
 
 @lyrics_bp.route('/get', methods=['GET'])
+@jwt_required()
+@requires_scope("lyrics")
 def get_lyrics():
     """
     Fetch lyrics for a given track and artist from the Musixmatch API.

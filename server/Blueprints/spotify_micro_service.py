@@ -1,4 +1,5 @@
 from flask import Blueprint, request, jsonify
+from flask_jwt_extended import jwt_required
 from util.spotify import calculate_playlist_duration
 from util.error_handling import log_error
 from config.config import settings
@@ -7,6 +8,7 @@ from pydantic import ValidationError
 from cmd_gui_kit import CmdGUI
 from util.logit import get_logger
 import sys
+from util.authlib import requires_scope
 
 # Initialize CmdGUI for visual feedback
 gui = CmdGUI()
@@ -15,6 +17,21 @@ logger = get_logger("logs/spotify_micro_service.log", "SpotifyMicroService")
 
 # Define the Blueprint
 SpotifyMicroService_bp = Blueprint('api', __name__)
+
+
+
+@SpotifyMicroService_bp.before_request
+def log_spotify_micro_service_requests():  # noqa: F811
+    logger.info("Spotify Micro Service blueprint request received.")
+    
+
+@SpotifyMicroService_bp.route("/healthcheck", methods=["GET"])
+@requires_scope("spotify")
+def spotify_micro_service_healthcheck():
+    gui.log("Spotify Micro Service healthcheck requested")
+    logger.info("Spotify Micro Service healthcheck requested")
+    return jsonify({"status": "ok", "service": "Spotify Micro Service"}), 200
+
 
 # Check if '--debug' is passed as a command-line argument
 DEBUG_MODE = '--debug' in sys.argv
@@ -31,6 +48,8 @@ playlist_cache = {}
 CACHE_DURATION = 3600  # Cache duration in seconds (1 hour)
 
 @SpotifyMicroService_bp.route("/playlist_duration", methods=["POST"])
+@jwt_required()
+@requires_scope("spotify")
 def get_playlist_duration_route():
     """
     API endpoint that returns the playlist duration and track count by using the calculate_playlist_duration method.

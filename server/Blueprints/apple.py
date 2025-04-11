@@ -1,11 +1,13 @@
 from flask import Blueprint, request, jsonify, render_template
 from flask_limiter import Limiter
+from flask_jwt_extended import jwt_required
 from flask_cors import CORS
 from flask_limiter.util import get_remote_address
 import secrets
 from config.config import settings
 from util.logit import get_logger
 import database.firebase_operations as firebase_operations
+from util.authlib import requires_scope
 
 apple_bp = Blueprint('apple', __name__)
 limiter = Limiter(key_func=get_remote_address)
@@ -27,6 +29,8 @@ def generate_random_state(length=16):
     return secrets.token_hex(length)
 
 @apple_bp.route('/login/<user_id>', methods=['GET'])
+@jwt_required()
+@requires_scope("apple")
 def login(user_id):
     """
     Initiates the Apple Music authentication process.
@@ -68,6 +72,8 @@ def callback():
     return render_template("apple.html", success=True, user_id=user_id), 200
 
 @apple_bp.route('/token', methods=['POST'])
+@jwt_required()
+@requires_scope("apple")
 def get_token():
     """
     Retrieves the stored Apple Music user token for a given user.
@@ -90,6 +96,8 @@ def get_token():
     return jsonify({"token": access_tokens}), 200
 
 @apple_bp.route('/library', methods=['POST'])
+@jwt_required()
+@requires_scope("apple")
 def get_library():
     """
     (Optional) Fetches the user's Apple Music library.

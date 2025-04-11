@@ -2,13 +2,27 @@ from flask import Blueprint, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from util.logit import get_logger
 import database.firebase_operations as firebase_operations
+from util.authlib import requires_scope
 
 profile_bp = Blueprint('profile', __name__)
 
 logger = get_logger("logs/profile.log", "Profile")
 
+
+@profile_bp.before_request
+def log_profile_requests():
+    logger.info("Profile blueprint request received.")
+    
+@profile_bp.route("/healthcheck", methods=["GET"])
+@requires_scope("me")
+def profile_healthcheck():
+    logger.info("Profile Service healthcheck requested")
+    return jsonify({"status": "ok", "service": "Profile Service"}), 200
+
+
 @profile_bp.route('/view', methods=['GET'])
 @jwt_required()
+@requires_scope("me")
 def view_profile():
     """
     This function retrieves and returns the user profile information.

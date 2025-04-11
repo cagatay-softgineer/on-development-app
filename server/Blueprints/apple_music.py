@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify
 from flask_limiter import Limiter
+from flask_jwt_extended import jwt_required
 from flask_cors import CORS
 from flask_limiter.util import get_remote_address
 from config.config import settings  # Ensure your settings include apple_developer_token
@@ -7,6 +8,8 @@ import requests
 import logging
 import database.firebase_operations as firebase_operations
 from util.utils import ms2FormattedDuration  # Utility to format milliseconds into human readable string
+from util.authlib import requires_scope
+
 
 appleMusic_bp = Blueprint('appleMusic', __name__)
 limiter = Limiter(key_func=get_remote_address)
@@ -15,6 +18,8 @@ CORS(appleMusic_bp, resources={r"/*": {"origins": "*"}})
 logger = logging.getLogger("logs/apple_music.log")
 
 @appleMusic_bp.route('/albums', methods=['POST'])
+@jwt_required()
+@requires_scope("apple")
 def get_albums():
     """
     Retrieve the current user's Apple Music library albums.
@@ -67,6 +72,8 @@ def get_albums():
         }), 500
 
 @appleMusic_bp.route('/playlists', methods=['POST'])
+@jwt_required()
+@requires_scope("apple")
 def get_playlists():
     """
     Retrieve the current user's Apple Music library playlists along with duration details.
@@ -175,6 +182,8 @@ def get_playlists():
         return jsonify({"error": "An error occurred while fetching playlists.", "details": str(e)}), 500
 
 @appleMusic_bp.route('/albums/<album_id>/tracks', methods=['POST'])
+@jwt_required()
+@requires_scope("apple")
 def get_album_tracks(album_id):
     """
     Retrieve tracks for a specific album from the user's Apple Music library.
@@ -233,6 +242,8 @@ def get_album_tracks(album_id):
 #playlists
 
 @appleMusic_bp.route('/playlist_duration', methods=['POST'])
+@jwt_required()
+@requires_scope("apple")
 def playlist_duration():
     """
     Retrieve the total duration of a user's Apple Music playlist.

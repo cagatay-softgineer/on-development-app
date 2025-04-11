@@ -1,5 +1,6 @@
+from datetime import timedelta
 from flask import Blueprint, request, jsonify
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import create_access_token, create_refresh_token, get_jwt_identity, jwt_required
 from flask_limiter import Limiter
 from flask_cors import CORS
 from flask_limiter.util import get_remote_address
@@ -8,6 +9,8 @@ import database.firebase_operations as firebase_operations
 from util.models import RegisterRequest, LoginRequest  # Import models
 from util.logit import get_logger
 from pydantic import ValidationError
+from util.authlib import default_user
+
 
 auth_bp = Blueprint('auth', __name__)
 limiter = Limiter(key_func=get_remote_address)
@@ -16,6 +19,20 @@ limiter = Limiter(key_func=get_remote_address)
 CORS(auth_bp, resources={r"/*": {"origins": "*"}})
  
 logger = get_logger("logs/auth.log","Auth")
+
+
+# Add /healthcheck to each blueprint
+@auth_bp.before_request
+def log_spotify_requests():
+    logger.info("Spotify blueprint request received.")
+    
+# Add /healthcheck to each blueprint
+@auth_bp.route("/healthcheck", methods=["GET"])
+def auth_healthcheck():
+    logger.info("Auth Service healthcheck requested")
+    return jsonify({"status": "ok", "service": "Auth Service"}), 200
+
+
 
 @auth_bp.route('/register', methods=['POST'])
 def register():
@@ -75,7 +92,20 @@ def login():
     if result:
         user_id, stored_hashed_password = result["email"], result["password"]
         if bcrypt.checkpw(payload.password.encode('utf-8'), stored_hashed_password.encode('utf-8')):
-            access_token = create_access_token(identity=payload.email)
-            return jsonify({"access_token": access_token, "user_id": user_id}), 200
+            additional_claims = {"scopes": default_user}
+            access_token = create_access_token(identity=payload.email,expires_delta=timedelta(days=7), additional_claims=additional_claims)
+            refresh_token = create_refresh_token(identity=payload.email,expires_delta=timedelta(days=30))
+            return jsonify({
+                "access_token": access_token,
+                "refresh_token": refresh_token,
+                "user_id": user_id
+            }), 200
 
     return jsonify({"error": "Invalid email or password"}), 401
+
+@auth_bp.route('/refresh', methods=['POST']) 
+@jwt_required(refresh=True) 
+def refresh(): 
+    identity = get_jwt_identity() 
+    new_access_token = create_access_token(identity=identity) 
+    return jsonify({ "access_token": new_access_token }), 200

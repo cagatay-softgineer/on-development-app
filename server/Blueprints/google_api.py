@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify, session, redirect, render_template
-from flask_jwt_extended import create_access_token, jwt_required  # noqa: F401
+from flask_jwt_extended import jwt_required
 from flask_limiter import Limiter
 from flask_cors import CORS
 from flask_limiter.util import get_remote_address
@@ -11,6 +11,7 @@ from util.google import get_current_user_profile_google
 from config.config import settings
 from util.logit import get_logger
 from google_auth_oauthlib.flow import Flow
+from util.authlib import requires_scope
 
 OAUTHLIB_INSECURE_TRANSPORT=1
 
@@ -21,12 +22,25 @@ CORS(google_bp, resources={r"/*": {"origins": "*"}})
 
 logger = get_logger("logs/google_bp.log", "Google")
 
+@google_bp.before_request
+def log_google_requests():
+    logger.info("Google blueprint request received.")
+    
+@google_bp.route("/healthcheck", methods=["GET"])
+@requires_scope("google")
+def google_healthcheck():
+    logger.info("Google Service healthcheck requested")
+    return jsonify({"status": "ok", "service": "Google Service"}), 200
+
+
 # Constants for Google OAuth
 GOOGLE_SCOPES = ["https://www.googleapis.com/auth/youtube.readonly","https://www.googleapis.com/auth/iam.test","https://www.googleapis.com/auth/youtube.download","https://www.googleapis.com/auth/userinfo.email","https://www.googleapis.com/auth/userinfo.profile","https://www.googleapis.com/auth/youtubepartner-channel-audit","https://www.googleapis.com/auth/youtubepartner","https://www.googleapis.com/auth/youtube.upload","https://www.googleapis.com/auth/youtube.third-party-link.creator","https://www.googleapis.com/auth/youtube.force-ssl","https://www.googleapis.com/auth/youtube.channel-memberships.creator","https://www.googleapis.com/auth/youtube","https://www.googleapis.com/auth/service.management.readonly","https://www.googleapis.com/auth/service.management","openid"] # Adjust scopes as needed
 GOOGLE_CLIENT_SECRETS_FILE = f"keys/{settings.google_client_secret_file}"  # Path to your downloaded client secrets file
 # Make sure to set a secret key for Flask session management in your app configuration
 
 @google_bp.route('/google_api_bind', methods=['GET'])
+@jwt_required()
+@requires_scope("google")
 def google_api_bind():
     """
     Initiate the OAuth 2.0 flow with Google by redirecting the user to the authorization URL.
@@ -66,6 +80,7 @@ def google_api_bind():
 
 
 @google_bp.route('/google_api_callback', methods=['GET'])
+@requires_scope("google")
 def google_api_callback():
     """
     Handle the OAuth 2.0 callback from Google. This endpoint exchanges the authorization code
@@ -157,6 +172,7 @@ def google_api_callback():
 
 
 @google_bp.route('/google_profile', methods=['POST'])
+@requires_scope("google")
 def google_profile():
     """
     Endpoint to retrieve the current user's Google profile information.

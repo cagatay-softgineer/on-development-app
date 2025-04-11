@@ -12,6 +12,7 @@ from pydantic import ValidationError
 import database.firebase_operations as firebase_operations
 from util.google import refresh_access_token_and_update_db_for_Google
 from util.models import PlaylistItemsRequest, UserEmailRequest
+from util.authlib import requires_scope
 
 OAUTHLIB_INSECURE_TRANSPORT = 1
 
@@ -20,6 +21,18 @@ limiter = Limiter(key_func=get_remote_address)
 CORS(youtubeMusic_bp, resources={r"/*": {"origins": "*"}})
 
 logger = get_logger("logs/youtube_music.log", "YoutubeMusic")
+
+
+@youtubeMusic_bp.before_request
+def log_youtube_music_requests():
+    logger.info("Youtube Music blueprint request received.")
+    
+@youtubeMusic_bp.route("/healthcheck", methods=["GET"])
+@requires_scope("youtube")
+def youtube_music_healthcheck():
+    logger.info("Youtube Music Service healthcheck requested")
+    return jsonify({"status": "ok", "service": "Youtube Music Service"}), 200
+
 
 # Constants for Google OAuth (for YouTube Music)
 GOOGLE_SCOPES = [
@@ -43,6 +56,8 @@ GOOGLE_CLIENT_SECRETS_FILE = f"keys/{settings.google_client_secret_file}"  # Pat
 # Ensure to set a secret key for Flask session management in your app configuration
 
 @youtubeMusic_bp.route('/playlists', methods=['POST'])
+@jwt_required()
+@requires_scope("youtube")
 def get_playlists():
     """
     Retrieve the current user's YouTube Music playlists along with each playlist's channel image.
@@ -172,6 +187,8 @@ def get_playlists():
         return jsonify({"error": "An error occurred while fetching playlists."}), 500
 
 @youtubeMusic_bp.route("/playlist_tracks", methods=["POST"])
+@jwt_required()
+@requires_scope("youtube")
 def playlist_tracks():
     """
     Fetches all video IDs and titles from a specified YouTube Music playlist.
@@ -222,6 +239,8 @@ def playlist_tracks():
 
 
 @youtubeMusic_bp.route("/playlist_duration", methods=["POST"])
+@jwt_required()
+@requires_scope("youtube")
 def get_playlist_duration():
     """
     Fetches all video IDs and titles from a specified YouTube Music playlist.
@@ -275,6 +294,8 @@ def get_playlist_duration():
     
 
 @youtubeMusic_bp.route("/fetch_first_video_id", methods=["POST"])
+@jwt_required()
+@requires_scope("youtube")
 def fetch_first_video_id():
     """
     Fetches the first video ID from a specified YouTube Music playlist.

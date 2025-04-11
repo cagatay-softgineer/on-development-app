@@ -1,4 +1,5 @@
 from flask import Blueprint, request, jsonify, redirect, render_template, escape
+from flask_jwt_extended import jwt_required
 from flask_limiter import Limiter
 from flask_cors import CORS
 from flask_limiter.util import get_remote_address
@@ -11,6 +12,7 @@ from config.config import settings
 from pydantic import ValidationError
 import secrets
 from util.logit import get_logger
+from util.authlib import requires_scope
 
 spotify_bp = Blueprint('spotify', __name__)
 limiter = Limiter(key_func=get_remote_address)
@@ -19,6 +21,19 @@ limiter = Limiter(key_func=get_remote_address)
 CORS(spotify_bp, resources={r"/*": {"origins": "*"}})
 
 logger = get_logger("logs/spotify_api.log", "Spotify API")
+
+
+@spotify_bp.before_request
+def log_spotify_requests():  # noqa: F811
+    logger.info("Spotify blueprint request received.")
+    
+
+@spotify_bp.route("/healthcheck", methods=["GET"])
+@requires_scope("spotify")
+def spotify_healthcheck():
+    logger.info("Spotify Service healthcheck requested")
+    return jsonify({"status": "ok", "service": "Spotify Service"}), 200
+
 
 # Load environment variables
 CLIENT_ID = settings.spotify_client_id
@@ -32,6 +47,8 @@ def generate_random_state(length=16):
     return secrets.token_hex(length)
 
 @spotify_bp.route('/login/<user_id>', methods=['GET'])
+@jwt_required()
+@requires_scope("spotify")
 def login(user_id):
     """
     This function handles the login process for a user using Spotify's authorization flow.
@@ -60,6 +77,8 @@ def login(user_id):
 
 
 @spotify_bp.route('/user_profile', methods=['POST'])
+@jwt_required()
+@requires_scope("spotify")
 def get_user():
     """
     Retrieves user profile information from Spotify.
@@ -105,6 +124,8 @@ def get_user():
 
 
 @spotify_bp.route('/playlists', methods=['POST'])
+@jwt_required()
+@requires_scope("spotify")
 def get_playlists():
     """
     This function retrieves and returns the playlists of a user from Spotify.
@@ -153,6 +174,8 @@ def get_playlists():
 
 
 @spotify_bp.route('/token', methods=['POST'])
+@jwt_required()
+@requires_scope("spotify")
 def get_token():
     """
     This function retrieves an access token for a given user from the database.

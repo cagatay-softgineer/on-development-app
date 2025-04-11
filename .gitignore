@@ -214,3 +214,4 @@ server/keys
 *.aar
 *.kt
 /ssdk_rsrc_backup
+/server/diagrams
