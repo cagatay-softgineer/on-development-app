@@ -1,4 +1,3 @@
-from server import create_app
 import sys
 import os
 import pytest
@@ -7,7 +6,7 @@ from flask_jwt_extended import JWTManager, create_access_token
 
 # Ensure repository root is in the Python path.
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
+from server import create_app
 
 #############################################
 # Fake Implementation for Testing

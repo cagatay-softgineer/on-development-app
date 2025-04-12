@@ -1,11 +1,10 @@
-from util.utils import ms2FormattedDuration, obfuscate
 import os
 import sys
 import pytest
 
 # Ensure repository root is in sys.path so that the 'util' module is importable.
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
+from util.utils import ms2FormattedDuration, obfuscate
 
 def test_ms2FormattedDuration():
     # 0 ms => "00:00:00"

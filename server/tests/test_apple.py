@@ -1,6 +1,5 @@
 # tests/test_apple.py
 
-from server import create_app  # Ensure that create_app is defined in server/__init__.py or server.py
 import sys
 import os
 import pytest
@@ -8,6 +7,7 @@ from flask_jwt_extended import create_access_token
 
 # Prepend the repository root so that "server" and "util" modules are importable.
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from server import create_app  # Ensure that create_app is defined in server/__init__.py or server.py
 
 
 @pytest.fixture

@@ -1,5 +1,4 @@
 from flask_jwt_extended import JWTManager, create_access_token
-from server import create_app
 import os
 import sys
 import pytest
@@ -7,7 +6,7 @@ from datetime import timedelta
 
 # Ensure repository root is in sys.path so that modules can be imported.
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
+from server import create_app
 
 #############################################
 # Fake Implementations for Monkeypatching

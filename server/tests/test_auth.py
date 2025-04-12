@@ -1,7 +1,6 @@
 # tests/test_auth.py
 
 import bcrypt
-from server import create_app  # Make sure your create_app() function is defined in server/__init__.py or server.py
 import sys
 import os
 import pytest
@@ -10,7 +9,7 @@ from flask_jwt_extended import JWTManager, create_access_token, create_refresh_t
 
 # Prepend the repository root so that imports for "server" and other modules work.
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
+from server import create_app  # Make sure your create_app() function is defined in server/__init__.py or server.py
 
 #########################################
 # Fake functions for Firebase simulation

@@ -1,7 +1,6 @@
 # tests/test_lyrics.py
 
 from flask_jwt_extended import JWTManager, create_access_token
-from server import create_app
 import sys
 import os
 import pytest
@@ -9,7 +8,7 @@ from datetime import timedelta
 
 # Prepend repository root so that "server" and other modules are importable.
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
+from server import create_app
 
 #############################################
 # Fixtures and Helper Functions
