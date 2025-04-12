@@ -18,7 +18,8 @@ CORS(apple_bp, resources={r"/*": {"origins": "*"}})
 logger = get_logger("logs/apple_api.log", "Apple Music API")
 
 # Load environment variables
-# DEVELOPER_TOKEN is generated on your server (via JWT, etc.) and used by MusicKit JS.
+# DEVELOPER_TOKEN is generated on your server (via JWT, etc.) and used by
+# MusicKit JS.
 DEVELOPER_TOKEN = settings.apple_developer_token
 # REDIRECT_URI = settings.apple_auth_redirect_uri  # if needed
 
@@ -70,7 +71,8 @@ def callback():
     user_id = firebase_operations.get_user_id_by_email(USER_ID_GLOBAL)
 
     # Store the Apple Music user token in your database.
-    # Here we assume app_id 2 represents Apple Music (distinct from Spotify's 1).
+    # Here we assume app_id 2 represents Apple Music (distinct from Spotify's
+    # 1).
     firebase_operations.if_not_exists_insert_userlinkedapps(
         user_id, 2, user_token, "", ""
     )

@@ -53,8 +53,10 @@ GOOGLE_SCOPES = [
     "https://www.googleapis.com/auth/service.management",
     "openid",
 ]  # Adjust scopes as needed
-GOOGLE_CLIENT_SECRETS_FILE = f"keys/{settings.google_client_secret_file}"  # Path to your downloaded client secrets file
-# Ensure to set a secret key for Flask session management in your app configuration
+# Path to your downloaded client secrets file
+GOOGLE_CLIENT_SECRETS_FILE = f"keys/{settings.google_client_secret_file}"
+# Ensure to set a secret key for Flask session management in your app
+# configuration
 
 
 @youtubeMusic_bp.route("/playlists", methods=["POST"])
@@ -133,7 +135,8 @@ def get_playlists():
         if response.status_code != 200:
             logger.error("Error fetching playlists: %s", response.text)
             return (
-                jsonify({"error": "Failed to fetch playlists from YouTube Music API."}),
+                jsonify(
+                    {"error": "Failed to fetch playlists from YouTube Music API."}),
                 response.status_code,
             )
 
@@ -168,7 +171,8 @@ def get_playlists():
                     thumbnails = snippet.get("thumbnails", {})
                     # Prefer high quality thumbnail if available
                     channel_image = ""
-                    if thumbnails.get("high") and thumbnails["high"].get("url"):
+                    if thumbnails.get(
+                            "high") and thumbnails["high"].get("url"):
                         channel_image = thumbnails["high"]["url"]
                     elif thumbnails.get("default") and thumbnails["default"].get("url"):
                         channel_image = thumbnails["default"]["url"]
@@ -199,7 +203,8 @@ def get_playlists():
                             playlist_id,
                             err,
                         )
-                        # Option 1: Set tracks to an empty list if there's an error.
+                        # Option 1: Set tracks to an empty list if there's an
+                        # error.
                         item["tracks"] = []
                     if cid in channel_map:
                         snippet["channelImage"] = channel_map[cid]
@@ -209,12 +214,15 @@ def get_playlists():
                 )
                 # Proceed without channel images if the channels API call fails
         # print(playlists_data)
-        logger.info("Successfully retrieved playlists for user: %s", user_email)
+        logger.info(
+            "Successfully retrieved playlists for user: %s",
+            user_email)
         return jsonify(playlists_data), 200
 
     except Exception as e:
         logger.error("Exception occurred while fetching playlists: %s", e)
-        return jsonify({"error": "An error occurred while fetching playlists."}), 500
+        return jsonify(
+            {"error": "An error occurred while fetching playlists."}), 500
 
 
 @youtubeMusic_bp.route("/playlist_tracks", methods=["POST"])
@@ -241,7 +249,8 @@ def playlist_tracks():
     user_id = payload.user_id
     playlist_id = payload.playlist_id
     if not user_id or not playlist_id:
-        return jsonify({"error": "Missing user_email or playlist_id parameter."}), 400
+        return jsonify(
+            {"error": "Missing user_email or playlist_id parameter."}), 400
 
     try:
         # Retrieve the user ID from Firebase based on the email
@@ -272,13 +281,15 @@ def playlist_tracks():
         access_token = new_access_token
 
     except Exception as e:
-        logger.error("Exception occurred while fetching playlist tracks: %s", e)
+        logger.error(
+            "Exception occurred while fetching playlist tracks: %s", e)
         return (
             jsonify({"error": "An error occurred while fetching playlist tracks."}),
             500,
         )
 
-    tracks, total_duration, total_tracks = playlist_items(access_token, playlist_id)
+    tracks, total_duration, total_tracks = playlist_items(
+        access_token, playlist_id)
     logger.info(
         "Successfully fetched %d tracks for playlist %s", total_tracks, playlist_id
     )
@@ -318,7 +329,8 @@ def get_playlist_duration():
     user_email = payload.user_id
     playlist_id = payload.playlist_id
     if not user_email or not playlist_id:
-        return jsonify({"error": "Missing user_email or playlist_id parameter."}), 400
+        return jsonify(
+            {"error": "Missing user_email or playlist_id parameter."}), 400
 
     try:
         # Retrieve the user ID from Firebase based on the email
@@ -349,7 +361,8 @@ def get_playlist_duration():
         access_token = new_access_token
 
     except Exception as e:
-        logger.error("Exception occurred while fetching playlist tracks: %s", e)
+        logger.error(
+            "Exception occurred while fetching playlist tracks: %s", e)
         return (
             jsonify({"error": "An error occurred while fetching playlist tracks."}),
             500,
@@ -431,7 +444,8 @@ def fetch_first_video_id():
 
     except Exception as e:
         logger.error("Exception occurred while fetching playlists: %s", e)
-        return jsonify({"error": "An error occurred while fetching playlists."}), 500
+        return jsonify(
+            {"error": "An error occurred while fetching playlists."}), 500
 
     if not playlist_id:
         return jsonify({"error": "Missing playlistId parameter"}), 400

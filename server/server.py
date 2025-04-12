@@ -88,13 +88,17 @@ app.register_blueprint(auth_bp, url_prefix="/auth")
 app.register_blueprint(apps_bp, url_prefix="/apps")
 app.register_blueprint(spotify_bp, url_prefix="/spotify")
 app.register_blueprint(profile_bp, url_prefix="/profile")
-app.register_blueprint(SpotifyMicroService_bp, url_prefix="/spotify-micro-service")
+app.register_blueprint(
+    SpotifyMicroService_bp,
+    url_prefix="/spotify-micro-service")
 app.register_blueprint(lyrics_bp, url_prefix="/lyrics")
 app.register_blueprint(google_bp, url_prefix="/google")
 app.register_blueprint(youtubeMusic_bp, url_prefix="/youtube-music")
 app.register_blueprint(apple_bp, url_prefix="/apple")
 app.register_blueprint(appleMusic_bp, url_prefix="/apple-music")
-app.register_blueprint(swaggerui_blueprint, url_prefix=app.config["SWAGGER_URL"])
+app.register_blueprint(
+    swaggerui_blueprint,
+    url_prefix=app.config["SWAGGER_URL"])
 
 app.register_blueprint(errors_bp, url_prefix="/")
 app.register_error_handler(400, bad_request)
@@ -109,7 +113,8 @@ app.register_error_handler(500, internal_server_error)
 app.register_blueprint(util_bp, url_prefix="/")
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Run Flask on a specific port.")
+    parser = argparse.ArgumentParser(
+        description="Run Flask on a specific port.")
     parser.add_argument(
         "--port", type=int, default=8080, help="Port to run the Flask app."
     )

@@ -112,7 +112,10 @@ def get_userlinkedapps_count_and_access_token(
     """
     col = get_collection("userlinkedapps", alias_map)
     filt_app = FieldFilter(field_path="app_id", op_string="==", value=app_id)
-    filt_user = FieldFilter(field_path="user_id", op_string="==", value=user_id)
+    filt_user = FieldFilter(
+        field_path="user_id",
+        op_string="==",
+        value=user_id)
     query = col.where(filter=filt_app).where(filter=filt_user)
     docs = list(query.stream())
     count = len(docs)
@@ -124,14 +127,18 @@ def get_userlinkedapps_count_and_access_token(
     return count, access_tokens
 
 
-def delete_userlinkedapps(user_id: int, app_id: int, alias_map: dict = alias_map):
+def delete_userlinkedapps(user_id: int, app_id: int,
+                          alias_map: dict = alias_map):
     """
     Emulates:
       DELETE FROM UserLinkedApps WHERE app_id = ? AND user_id = ?
     """
     col = get_collection("userlinkedapps", alias_map)
     filt_app = FieldFilter(field_path="app_id", op_string="==", value=app_id)
-    filt_user = FieldFilter(field_path="user_id", op_string="==", value=user_id)
+    filt_user = FieldFilter(
+        field_path="user_id",
+        op_string="==",
+        value=user_id)
     query = col.where(filter=filt_app).where(filter=filt_user)
     for doc in query.stream():
         doc.reference.delete()
@@ -169,7 +176,8 @@ def get_user_password_and_email(email: str, alias_map: dict = alias_map):
     results = []
     for doc in docs:
         data = doc.to_dict()
-        results.append({"email": data.get("email"), "password": data.get("password")})
+        results.append({"email": data.get("email"),
+                       "password": data.get("password")})
     return results
 
 
@@ -178,7 +186,8 @@ def get_user_password_and_email(email: str, alias_map: dict = alias_map):
 # ---------------------------
 
 
-def get_userlinkedapps_tokens(user_id: int, app_id: int, alias_map: dict = alias_map):
+def get_userlinkedapps_tokens(
+        user_id: int, app_id: int, alias_map: dict = alias_map):
     """
     Emulates:
       SELECT access_token, refresh_token, token_expires_at, scopes
@@ -186,7 +195,10 @@ def get_userlinkedapps_tokens(user_id: int, app_id: int, alias_map: dict = alias
       WHERE user_id = ? AND app_id = ?
     """
     col = get_collection("userlinkedapps", alias_map)
-    filt_user = FieldFilter(field_path="user_id", op_string="==", value=user_id)
+    filt_user = FieldFilter(
+        field_path="user_id",
+        op_string="==",
+        value=user_id)
     filt_app = FieldFilter(field_path="app_id", op_string="==", value=app_id)
     docs = col.where(filter=filt_user).where(filter=filt_app).stream()
     results = []
@@ -252,7 +264,10 @@ def if_not_exists_insert_userlinkedapps(
       END
     """
     col = get_collection("userlinkedapps", alias_map)
-    filt_user = FieldFilter(field_path="user_id", op_string="==", value=user_id)
+    filt_user = FieldFilter(
+        field_path="user_id",
+        op_string="==",
+        value=user_id)
     filt_app = FieldFilter(field_path="app_id", op_string="==", value=app_id)
     docs = col.where(filter=filt_user).where(filter=filt_app).stream()
     if not list(docs):
@@ -340,7 +355,10 @@ def get_userlinkedapps_access_refresh(
       WHERE user_id = ? AND app_id = ?
     """
     col = get_collection("userlinkedapps", alias_map)
-    filt_user = FieldFilter(field_path="user_id", op_string="==", value=user_id)
+    filt_user = FieldFilter(
+        field_path="user_id",
+        op_string="==",
+        value=user_id)
     filt_app = FieldFilter(field_path="app_id", op_string="==", value=app_id)
     docs = col.where(filter=filt_user).where(filter=filt_app).stream()
     results = []
@@ -385,7 +403,10 @@ def update_userlinkedapps_tokens(
     - None. The function updates the tokens in the Firestore collection directly.
     """
     col = get_collection("userlinkedapps", alias_map)
-    filt_user = FieldFilter(field_path="user_id", op_string="==", value=user_id)
+    filt_user = FieldFilter(
+        field_path="user_id",
+        op_string="==",
+        value=user_id)
     filt_app = FieldFilter(field_path="app_id", op_string="==", value=app_id)
     docs = col.where(filter=filt_user).where(filter=filt_app).stream()
     new_expires = datetime.datetime.utcnow() + datetime.timedelta(

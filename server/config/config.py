@@ -13,7 +13,8 @@ class Settings(BaseSettings):
     musixmatch_API_KEY: str = Field(..., env="MUSIXMATCH_API_KEY")
     google_client_id: str = Field(..., env="GOOGLE_CLIENT_ID")
     google_client_secret: str = Field(..., env="GOOGLE_CLIENT_SECRET")
-    google_client_secret_file: str = Field(..., env="GOOGLE_CLIENT_SECRET_FILE")
+    google_client_secret_file: str = Field(...,
+                                           env="GOOGLE_CLIENT_SECRET_FILE")
     SECRET_KEY: str = Field(default_factory=lambda: secrets.token_hex(16))
     apple_developer_token: str = Field(..., env="APPLE_DEVELOPER_TOKEN")
 
@@ -30,7 +31,8 @@ class FirebaseConfig(BaseSettings):
     auth_domain: str = Field(..., env="FIREBASECONFIG_AUTHDOMAIN")
     project_id: str = Field(..., env="FIREBASECONFIG_PROJECTID")
     storage_bucket: str = Field(..., env="FIREBASECONFIG_STORAGEBUCKET")
-    messaging_sender_id: str = Field(..., env="FIREBASECONFIG_MESSAGINGSENDERID")
+    messaging_sender_id: str = Field(...,
+                                     env="FIREBASECONFIG_MESSAGINGSENDERID")
     app_id: str = Field(..., env="FIREBASECONFIG_APPID")
     measurement_id: str = Field(..., env="FIREBASECONFIG_MEASUREMENTID")
 

@@ -211,7 +211,7 @@ def get_token():
 
     user_id = firebase_operations.get_user_id_by_email(user_email)
 
-    token, _ = get_access_token_from_db(user_id, 1)
+    token = get_access_token_from_db(user_id, 1)[0]
     return jsonify({"token": token}), 200
 
 

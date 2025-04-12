@@ -50,7 +50,10 @@ def forbidden(e):
     log_error(e)
     logger.error(f"403 Forbidden: {e}")
     return (
-        render_template("error.html", error_message="Forbidden.", error_code=403),
+        render_template(
+            "error.html",
+            error_message="Forbidden.",
+            error_code=403),
         403,
     )
 
@@ -138,7 +141,8 @@ def show_error_stats():
 def init_app(app):
     # Register the blueprint for error routes
     app.register_blueprint(errors_bp, url_prefix="/")
-    # Register global error handlers so they catch errors outside the blueprint as well
+    # Register global error handlers so they catch errors outside the
+    # blueprint as well
     app.register_error_handler(400, bad_request)
     app.register_error_handler(401, unauthorized)
     app.register_error_handler(403, forbidden)

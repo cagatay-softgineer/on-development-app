@@ -76,7 +76,8 @@ def get_lyrics():
     # Parse the JSON response
     data = response.json()
 
-    # Navigate through the response structure as per Musixmatch API documentation
+    # Navigate through the response structure as per Musixmatch API
+    # documentation
     message = data.get("message", {})
     body = message.get("body", {})
     lyrics = body.get("lyrics", {})

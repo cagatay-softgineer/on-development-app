@@ -15,7 +15,8 @@ def requires_scope(required_scope):
             # Verify that the JWT exists in the request
             verify_jwt_in_request()
             claims = get_jwt()
-            # Assume that the scopes are stored as a list in the "scopes" claim.
+            # Assume that the scopes are stored as a list in the "scopes"
+            # claim.
             token_scopes = claims.get("scopes", [])
             # If scopes were added as a space-delimited string, split it:
             if isinstance(token_scopes, str):
@@ -38,5 +39,19 @@ def requires_scope(required_scope):
 
 
 # All Scopes
-all_scopes = ["me", "apps", "spotify", "apple", "google", "lyrics", "youtube", "admin"]
-default_user = ["me", "apps", "spotify", "apple", "google", "youtube"]
+all_scopes = [
+    "me",
+    "apps",
+    "spotify",
+    "apple",
+    "google",
+    "lyrics",
+    "youtube",
+    "admin"]
+default_user = [
+    "me",
+    "apps",
+    "spotify",
+    "apple",
+    "google",
+    "youtube"]

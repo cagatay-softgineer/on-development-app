@@ -98,7 +98,8 @@ def logs_trend_chart():
         )  # Ensure timestamp is in datetime format
         df.set_index("timestamp", inplace=True)
         grouped = (
-            df.groupby([pd.Grouper(freq="1H"), "log_type"]).size().unstack(fill_value=0)
+            df.groupby([pd.Grouper(freq="1H"), "log_type"]
+                       ).size().unstack(fill_value=0)
         )
 
         # Create a Plotly figure
@@ -157,7 +158,8 @@ def list_endpoints():
                 "rule": str(rule),
                 "endpoint": rule.endpoint,
                 "methods": sorted(rule.methods),
-                "arguments": list(rule.arguments),  # Dynamic segments like <username>
+                # Dynamic segments like <username>
+                "arguments": list(rule.arguments),
                 "description": route_descriptions.get(
                     str(rule), "No description available."
                 ),
@@ -168,7 +170,8 @@ def list_endpoints():
     method_filter = request.args.get("method")
     keyword_filter = request.args.get("keyword")
     if method_filter:
-        endpoints = [e for e in endpoints if method_filter.upper() in e["methods"]]
+        endpoints = [e for e in endpoints if method_filter.upper()
+                     in e["methods"]]
     if keyword_filter:
         endpoints = [e for e in endpoints if keyword_filter in e["rule"]]
 

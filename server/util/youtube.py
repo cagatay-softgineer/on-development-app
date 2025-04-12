@@ -88,7 +88,9 @@ def playlist_items(access_token, playlist_id):
 
             response = requests.get(url, headers=headers, params=params)
             if response.status_code != 200:
-                logger.error("Error fetching playlist items: %s", response.text)
+                logger.error(
+                    "Error fetching playlist items: %s",
+                    response.text)
                 return (
                     jsonify({"error": "Failed to fetch playlist items."}),
                     response.status_code,
@@ -108,7 +110,8 @@ def playlist_items(access_token, playlist_id):
         # Reset nextPageToken for the second API call (if pagination is needed)
         nextPageToken = None
 
-        # Second loop: Retrieve track details (duration, title, etc.) using the video IDs
+        # Second loop: Retrieve track details (duration, title, etc.) using the
+        # video IDs
         while True:
             print("Playlist fetching...")
             url = "https://www.googleapis.com/youtube/v3/videos"

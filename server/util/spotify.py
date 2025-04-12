@@ -19,7 +19,8 @@ SPOTIFY_CLIENT_SECRET = settings.spotify_client_secret
 
 
 # Global cache for playlist durations
-# Each key is a playlist_id and the value is a tuple: (result_data, expiration_time)
+# Each key is a playlist_id and the value is a tuple: (result_data,
+# expiration_time)
 playlist_cache = {}
 CACHE_DURATION = 3600  # Cache duration in seconds (1 hour)
 
@@ -61,7 +62,8 @@ def get_access_token_for_request():
             f"Failed to obtain token. Status code: {response.status_code}",
             status="error",
         )
-        logger.error(f"Failed to obtain token. Status code: {response.status_code}")
+        logger.error(
+            f"Failed to obtain token. Status code: {response.status_code}")
         # Optionally raise an exception or return None
         raise log_error(Exception("Could not obtain Spotify access token"))
 
@@ -306,7 +308,7 @@ def calculate_playlist_duration(
         if access_token is None and refresh_token is None:
             user_id = firebase_operations.get_user_id_by_email(user_email)
             # Get the access token (and ignore the refresh token here)
-            access_token, _ = get_access_token_from_db(user_id, app_id=1)
+            access_token = get_access_token_from_db(user_id, app_id=1)[0]
 
         response = make_request(url, access_token=access_token)
 
@@ -477,7 +479,8 @@ def get_access_token_from_db(user_id, app_id):
     Returns:
     tuple: A tuple containing the access token and refresh token. If the access token is not found, returns None.
     """
-    result = firebase_operations.get_userlinkedapps_access_refresh(user_id, app_id)[0]
+    result = firebase_operations.get_userlinkedapps_access_refresh(user_id, app_id)[
+        0]
     # print(result)
     if not result:
         logger.error(f"Access token not found for user_id: {user_id}")

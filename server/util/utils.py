@@ -26,7 +26,8 @@ def obfuscate(column_name: str) -> str:
     str: The obfuscated column name, consisting of the first 12 characters of the hashed value in uppercase.
     """
     salt = settings.salt  # Replace with your own secret salt value.
-    hash_value = hashlib.sha256((salt + column_name).encode("utf-8")).hexdigest()
+    hash_value = hashlib.sha256(
+        (salt + column_name).encode("utf-8")).hexdigest()
     return f"{hash_value[:12].upper()}"
 
 
@@ -176,7 +177,8 @@ def parse_logs_to_dataframe(folder_path: str) -> pd.DataFrame:
                         )  # Convert to uppercase for consistency
                         # Validate log type
                         if log_type in ACCEPTED_LOG_TYPES:
-                            data.append({"timestamp": timestamp, "log_type": log_type})
+                            data.append(
+                                {"timestamp": timestamp, "log_type": log_type})
                     except (IndexError, ValueError):
                         continue
     # Create a DataFrame from the parsed data

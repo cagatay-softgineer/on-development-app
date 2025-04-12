@@ -3,7 +3,8 @@ from flask_limiter import Limiter
 from flask_jwt_extended import jwt_required
 from flask_cors import CORS
 from flask_limiter.util import get_remote_address
-from config.config import settings  # Ensure your settings include apple_developer_token
+# Ensure your settings include apple_developer_token
+from config.config import settings
 import requests
 import logging
 import database.firebase_operations as firebase_operations
@@ -44,7 +45,8 @@ def get_albums():
     user_email = payload.get("user_email")
     if not user_email:
         return jsonify({"error": "Missing user_email parameter."}), 400
-    developer_token = settings.apple_developer_token  # Your configured developer token
+    # Your configured developer token
+    developer_token = settings.apple_developer_token
     user_id = firebase_operations.get_user_id_by_email(user_email)
     response = firebase_operations.get_userlinkedapps_tokens(user_id, 2)
 
@@ -116,7 +118,8 @@ def get_playlists():
     if not user_email:
         return jsonify({"error": "Missing user_email parameter."}), 400
 
-    developer_token = settings.apple_developer_token  # Your configured developer token
+    # Your configured developer token
+    developer_token = settings.apple_developer_token
     user_id = firebase_operations.get_user_id_by_email(user_email)
     response_tokens = firebase_operations.get_userlinkedapps_tokens(user_id, 2)
     access_token = response_tokens[0]["access_token"]
@@ -157,15 +160,18 @@ def get_playlists():
                 tracks_response = requests.get(tracks_url, headers=headers)
                 if tracks_response.status_code == 200:
                     tracks_data = tracks_response.json()
-                    # Extract the list of tracks; this response is assumed to be structured with a "data" key.
-                    if "data" in tracks_data and isinstance(tracks_data["data"], list):
+                    # Extract the list of tracks; this response is assumed to
+                    # be structured with a "data" key.
+                    if "data" in tracks_data and isinstance(
+                            tracks_data["data"], list):
                         tracks = tracks_data["data"]
                     else:
                         tracks = []
 
                     total_duration = 0
                     for track in tracks:
-                        # Each track is expected to include a duration under attributes['durationInMillis'].
+                        # Each track is expected to include a duration under
+                        # attributes['durationInMillis'].
                         duration = track.get("attributes", {}).get(
                             "durationInMillis", 0
                         )
@@ -202,12 +208,15 @@ def get_playlists():
                 playlist["total_tracks"] = 0
                 playlist["playlist_id"] = playlist_id
 
-        logger.info("Successfully processed playlists for user: %s", user_email)
+        logger.info(
+            "Successfully processed playlists for user: %s",
+            user_email)
         return jsonify(playlists_data), 200
 
     except Exception as e:
         logger.error("Exception occurred while fetching playlists: %s", e)
-        return jsonify({"error": "An error occurred while fetching playlists."}), 500
+        return jsonify(
+            {"error": "An error occurred while fetching playlists."}), 500
 
 
 @appleMusic_bp.route("/albums/<album_id>/tracks", methods=["POST"])
@@ -312,7 +321,8 @@ def playlist_duration():
     user_email = payload.get("user_id")
     playlist_id = payload.get("playlist_id")
     if not user_email or not playlist_id:
-        return jsonify({"error": "Missing user_id or playlist_id parameter."}), 400
+        return jsonify(
+            {"error": "Missing user_id or playlist_id parameter."}), 400
 
     developer_token = settings.apple_developer_token
     user_id = firebase_operations.get_user_id_by_email(user_email)
@@ -349,11 +359,13 @@ def playlist_duration():
             tracks = tracks_data["data"]["data"]
         else:
             logger.error("Unexpected tracks response format: %s", tracks_data)
-            return jsonify({"error": "Unexpected tracks response format."}), 500
+            return jsonify(
+                {"error": "Unexpected tracks response format."}), 500
 
         total_duration = 0
         for track in tracks:
-            # Assume each track's duration is in 'durationInMillis' under attributes
+            # Assume each track's duration is in 'durationInMillis' under
+            # attributes
             duration = track.get("attributes", {}).get("durationInMillis", 0)
             try:
                 total_duration += int(duration)
@@ -379,7 +391,8 @@ def playlist_duration():
         )
 
     except Exception as e:
-        logger.error("Exception occurred while calculating playlist duration: %s", e)
+        logger.error(
+            "Exception occurred while calculating playlist duration: %s", e)
         return (
             jsonify(
                 {

@@ -98,7 +98,8 @@ def login():
     if result:
         user_id, stored_hashed_password = result["email"], result["password"]
         if bcrypt.checkpw(
-            payload.password.encode("utf-8"), stored_hashed_password.encode("utf-8")
+            payload.password.encode(
+                "utf-8"), stored_hashed_password.encode("utf-8")
         ):
             additional_claims = {"scopes": default_user}
             access_token = create_access_token(

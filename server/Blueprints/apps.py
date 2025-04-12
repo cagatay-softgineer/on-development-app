@@ -154,8 +154,10 @@ def check_linked_app():
 
             if linked_app == "Spotify":
 
-                user_profile = get_current_user_profile(access_token, user_id, app_id)
-                return jsonify({"user_linked": True, "user_profile": user_profile}), 200
+                user_profile = get_current_user_profile(
+                    access_token, user_id, app_id)
+                return jsonify(
+                    {"user_linked": True, "user_profile": user_profile}), 200
 
             elif linked_app == "AppleMusic":
                 return (
@@ -169,7 +171,8 @@ def check_linked_app():
                 )
             elif linked_app == "YoutubeMusic":
                 user_profile = get_google_profile(user_email)
-                return jsonify({"user_linked": True, "user_profile": user_profile}), 200
+                return jsonify(
+                    {"user_linked": True, "user_profile": user_profile}), 200
             elif linked_app == "Google API":
                 return (
                     jsonify(
@@ -294,13 +297,15 @@ def get_all_apps_binding():
     apps_status = []
     # Iterate over all configured applications
     for app_name, app_id in APP_ALIAS_TO_ID.items():
-        response = firebase_operations.get_userlinkedapps_tokens(user_id, app_id)
+        response = firebase_operations.get_userlinkedapps_tokens(
+            user_id, app_id)
         # Check if the response exists and contains access tokens
         if response and response[0].get("access_token"):
             tokens = response[0]["access_token"]
             # Depending on the application, retrieve the user profile if linked
             if app_name == "Spotify":
-                user_profile = get_current_user_profile(tokens[0], user_id, app_id)
+                user_profile = get_current_user_profile(
+                    tokens[0], user_id, app_id)
             elif app_name == "AppleMusic":
                 user_profile = {"name": get_email_username(user_email)}
             elif app_name == "YoutubeMusic":

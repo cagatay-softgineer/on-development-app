@@ -29,7 +29,8 @@ def get_current_user_profile_google(
         return response.json()
     elif response.status_code == 401:
         # Retrieve tokens from your database; assumes result is a dict
-        result = firebase_operations.get_userlinkedapps_access_refresh(user_id, 4)[0]
+        result = firebase_operations.get_userlinkedapps_access_refresh(user_id, 4)[
+            0]
         access_token, refresh_token = result["access_token"], result["refresh_token"]
         # print(access_token)
         # print(refresh_token)

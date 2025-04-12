@@ -26,7 +26,8 @@ def log_error(e):
     # Build up module_name.method_name for each frame
     method_names = []
     for frame in tb:
-        # frame.filename is the absolute or relative path (e.g. /path/to/my_script.py)
+        # frame.filename is the absolute or relative path (e.g.
+        # /path/to/my_script.py)
         base_name = os.path.basename(frame.filename)  # e.g. "my_script.py"
         module_name = os.path.splitext(base_name)[0]  # e.g. "my_script"
 

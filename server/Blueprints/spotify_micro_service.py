@@ -42,7 +42,8 @@ if DEBUG_MODE == "True":
     DEBUG_MODE = True
 
 # Global cache for playlist durations
-# Each key is a playlist_id and the value is a tuple: (result_data, expiration_time)
+# Each key is a playlist_id and the value is a tuple: (result_data,
+# expiration_time)
 playlist_cache = {}
 CACHE_DURATION = 3600  # Cache duration in seconds (1 hour)
 
@@ -67,5 +68,6 @@ def get_playlist_duration_route():
         return jsonify(result_data), 200
     except Exception as e:
         log_error(e)
-        logger.error(f"Error occurred while fetching playlist duration: {str(e)}")
+        logger.error(
+            f"Error occurred while fetching playlist duration: {str(e)}")
         return jsonify({"error": "An internal error occurred"}), 500

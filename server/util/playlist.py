@@ -249,7 +249,8 @@ def test_all_rich() -> None:
         count_L = res["sequence"].count("L")
         total_work = sum(res["work_sessions"])
         total_short = res["short_break"] * count_S
-        total_long = res["long_break"] * count_L if res["long_break"] is not None else 0
+        total_long = res["long_break"] * \
+            count_L if res["long_break"] is not None else 0
         total_session_time = total_work + total_short + total_long
 
         results.append(
