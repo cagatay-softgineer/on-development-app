@@ -16,7 +16,7 @@ from util.authlib import requires_scope
 util_bp = Blueprint("util", __name__)
 logger = get_logger("logs/app_util.log", "App Utils")
 
-### ### REMOVE ON PRODUCTION ### ###
+# REMOVE ON PRODUCTION
 
 
 # Route for visualizing logs with filtering and pagination
@@ -218,8 +218,8 @@ def list_endpoints():
         return text_output, 200, {"Content-Type": "text/plain"}
 
 
-# ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ #
-### ### REMOVE ON PRODUCTION ### ###
+# ^^^^^^^^^^^^^^^^^^^^
+# REMOVE ON PRODUCTION 
 
 
 @util_bp.route("/healthcheck", methods=["POST", "GET"])

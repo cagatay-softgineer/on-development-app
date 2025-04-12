@@ -70,7 +70,20 @@ def login(user_id):
     USER_EMAIL = user_id
 
     state = generate_random_state()
-    scope = "app-remote-control streaming user-read-recently-played user-read-private user-read-email playlist-read-private playlist-read-collaborative user-library-read user-top-read user-read-playback-state user-modify-playback-state user-read-currently-playing"
+    scope = (
+        "app-remote-control"
+        "streaming"
+        "user-read-recently-played "
+        "user-read-private"
+        "user-read-email"
+        "playlist-read-private "
+        "playlist-read-collaborative"
+        "user-library-read"
+        "user-top-read "
+        "user-read-playback-state"
+        "user-modify-playback-state "
+        "user-read-currently-playing"
+    )
 
     auth_url = (
         f"https://accounts.spotify.com/authorize?"
