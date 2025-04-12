@@ -66,6 +66,7 @@ jobs:
       # 7. Run tests
       - name: Run tests from repository root
         run: |
+          pip install pytest coverage
           export PYTHONPATH=${{ github.workspace }}/server
           pytest --maxfail=1 --disable-warnings -q
 
