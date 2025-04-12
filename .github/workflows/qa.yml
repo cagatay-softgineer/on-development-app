@@ -1,0 +1,78 @@
+name: QA Automation
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Checkout the repository
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      # 2. Set up Python environment
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.9'
+
+      # 3. Cache pip dependencies
+      - name: Cache pip
+        uses: actions/cache@v2
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      # 4. Recreate critical secret files from GitHub Secrets
+      - name: Set up secret files
+        run: |
+          # Create directories if they don't exist
+          mkdir -p server/keys
+          mkdir -p server/database
+          
+          # Write the secret files
+          echo "${{ secrets.APPLE }}" > server/keys/apple.txt
+          echo "${{ secrets.CERT_PEM }}" > server/keys/cert.pem
+          echo "${{ secrets.CLIENT_SECRET_JSON }}" > server/keys/client_secret.json
+          echo "${{ secrets.ENV }}" > server/.env
+          echo "${{ secrets.FB_CC_JSON }}" > server/database/fb-cc.json
+          echo "${{ secrets.KEY_PEM }}" > server/keys/key.pem
+
+      # 5. Install project dependencies
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      # 6. Lint the code
+      - name: Lint Code
+        run: |
+          pip install flake8
+          flake8 .
+
+      # 7. Run tests
+      - name: Run Tests
+        run: |
+          pip install pytest coverage
+          pytest --maxfail=1 --disable-warnings -q
+
+      # 8. Generate a code coverage report
+      - name: Generate Coverage Report
+        run: |
+          coverage run -m pytest
+          coverage report
+          coverage xml
+
+      # 9. Upload the coverage report as an artifact
+      - name: Upload Coverage Report
+        uses: actions/upload-artifact@v2
+        with:
+          name: coverage-report
+          path: coverage.xml
