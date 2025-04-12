@@ -48,10 +48,4 @@ all_scopes = [
     "lyrics",
     "youtube",
     "admin"]
-default_user = [
-    "me",
-    "apps",
-    "spotify",
-    "apple",
-    "google",
-    "youtube"]
+default_user = ["me", "apps", "spotify", "apple", "google", "youtube"]

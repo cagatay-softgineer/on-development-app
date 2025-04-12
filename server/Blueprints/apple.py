@@ -96,7 +96,8 @@ def get_token():
         user_email = data.get("user_email")
         if not user_email:
             raise ValueError("user_email is required")
-    except Exception as _:
+    except Exception as e:
+        logger.error("An internal error occurred: %s", e)
         return jsonify({"error": "An internal error occurred."}), 400
 
     user_id = firebase_operations.get_user_id_by_email(user_email)
@@ -121,7 +122,8 @@ def get_library():
         user_email = data.get("user_email")
         if not user_email:
             raise ValueError("user_email is required")
-    except Exception as _:
+    except Exception as e:
+        logger.error("An internal error occurred: %s", e)
         return jsonify({"error": "An internal error occurred."}), 400
 
     user_id = firebase_operations.get_user_id_by_email(user_email)
