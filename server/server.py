@@ -1,3 +1,7 @@
+from util.logit import check_log_folder
+
+check_log_folder()
+
 try:
     # Code that may trigger the error
     from util.error_handling import log_error
@@ -7,7 +11,7 @@ try:
     from flask_swagger_ui import get_swaggerui_blueprint
     from cmd_gui_kit import CmdGUI
     from flask_cors import CORS
-    from util.logit import get_logger, check_log_folder
+    from util.logit import get_logger
     from Blueprints.auth import auth_bp
     from Blueprints.error import (
         errors_bp,
@@ -35,10 +39,8 @@ try:
 
     # from IPython.core.display import display  # This import may fail  # noqa: F401
 except Exception as e:
-    check_log_folder()
     log_error(e)  # Log the error
 
-check_log_folder()
 gui = CmdGUI()
 
 
