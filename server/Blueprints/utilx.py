@@ -219,7 +219,7 @@ def list_endpoints():
 
 
 # ^^^^^^^^^^^^^^^^^^^^
-# REMOVE ON PRODUCTION 
+# REMOVE ON PRODUCTION
 
 
 @util_bp.route("/healthcheck", methods=["POST", "GET"])
