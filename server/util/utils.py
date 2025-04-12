@@ -6,14 +6,13 @@ import pandas as pd
 from config.config import settings
 from util.logit import get_logger
 
-OAUTHLIB_INSECURE_TRANSPORT=1
+OAUTHLIB_INSECURE_TRANSPORT = 1
 
 # Initialize CmdGUI for visual feedback
 gui = CmdGUI()
 
 # Logging setup
 logger = get_logger("logs/utils.log", "Utils")
-
 
 
 def obfuscate(column_name: str) -> str:
@@ -27,7 +26,7 @@ def obfuscate(column_name: str) -> str:
     str: The obfuscated column name, consisting of the first 12 characters of the hashed value in uppercase.
     """
     salt = settings.salt  # Replace with your own secret salt value.
-    hash_value = hashlib.sha256((salt + column_name).encode('utf-8')).hexdigest()
+    hash_value = hashlib.sha256((salt + column_name).encode("utf-8")).hexdigest()
     return f"{hash_value[:12].upper()}"
 
 
@@ -47,7 +46,6 @@ def get_email_username(email: str) -> str | None:
         return None
 
 
-    
 route_descriptions = {
     "/.well-known/assetlinks.json": "Provides asset links for verifying app association with a domain.",
     "/api/docs/": "Swagger UI documentation root for API endpoints.",
@@ -71,8 +69,9 @@ route_descriptions = {
     "/spotify/login/<user_id>": "Logs in a specific Spotify user by their user ID.",
     "/spotify/playlists": "Retrieves playlists associated with the logged-in Spotify user.",
     "/spotify/token": "Handles token requests for Spotify API authentication.",
-    "/spotify/user_profile": "Retrieves profile information of the logged-in Spotify user."
+    "/spotify/user_profile": "Retrieves profile information of the logged-in Spotify user.",
 }
+
 
 def ms2FormattedDuration(total_duration_ms: int) -> str:
     """
@@ -90,6 +89,7 @@ def ms2FormattedDuration(total_duration_ms: int) -> str:
     seconds = total_seconds % 60
     formatted_duration = f"{hours:02}:{minutes:02}:{seconds:02}"
     return formatted_duration
+
 
 def parse_logs_from_folder(folder_path: str) -> list[dict] | None:
     """
@@ -111,8 +111,10 @@ def parse_logs_from_folder(folder_path: str) -> list[dict] | None:
     logs = []
     for filename in os.listdir(folder_path):
         file_path = os.path.join(folder_path, filename)
-        if os.path.isfile(file_path) and filename.endswith('.log'):  # Assuming log files are .txt
-            with open(file_path, 'r') as file:
+        if os.path.isfile(file_path) and filename.endswith(
+            ".log"
+        ):  # Assuming log files are .txt
+            with open(file_path, "r") as file:
                 for line in file:
                     try:
                         parts = line.split(" - ")
@@ -121,20 +123,26 @@ def parse_logs_from_folder(folder_path: str) -> list[dict] | None:
                         message = " - ".join(parts[3:]).strip()
 
                         # Append parsed log data
-                        logs.append({
-                            "filename": filename,
-                            "timestamp": datetime.strptime(timestamp, '%Y-%m-%d %H:%M:%S,%f'),  # Parse timestamp
-                            "log_type": log_type,
-                            "message": message
-                        })
+                        logs.append(
+                            {
+                                "filename": filename,
+                                "timestamp": datetime.strptime(
+                                    timestamp, "%Y-%m-%d %H:%M:%S,%f"
+                                ),  # Parse timestamp
+                                "log_type": log_type,
+                                "message": message,
+                            }
+                        )
                     except (IndexError, ValueError):
                         continue
 
     # Sort logs by timestamp (descending order)
-    logs.sort(key=lambda log: log['timestamp'], reverse=True)
+    logs.sort(key=lambda log: log["timestamp"], reverse=True)
     return logs
 
+
 ACCEPTED_LOG_TYPES = {"INFO", "DEBUG", "WARN", "ERROR"}
+
 
 # Helper function to parse logs and return a DataFrame
 def parse_logs_to_dataframe(folder_path: str) -> pd.DataFrame:
@@ -155,16 +163,20 @@ def parse_logs_to_dataframe(folder_path: str) -> pd.DataFrame:
     data = []
     for filename in os.listdir(folder_path):
         file_path = os.path.join(folder_path, filename)
-        if os.path.isfile(file_path) and filename.endswith('.log'):
-            with open(file_path, 'r') as file:
+        if os.path.isfile(file_path) and filename.endswith(".log"):
+            with open(file_path, "r") as file:
                 for line in file:
                     try:
                         parts = line.split(" - ")
-                        timestamp = datetime.strptime(parts[0].strip(), '%Y-%m-%d %H:%M:%S,%f')
-                        log_type = parts[2].strip().upper()  # Convert to uppercase for consistency
+                        timestamp = datetime.strptime(
+                            parts[0].strip(), "%Y-%m-%d %H:%M:%S,%f"
+                        )
+                        log_type = (
+                            parts[2].strip().upper()
+                        )  # Convert to uppercase for consistency
                         # Validate log type
                         if log_type in ACCEPTED_LOG_TYPES:
-                            data.append({'timestamp': timestamp, 'log_type': log_type})
+                            data.append({"timestamp": timestamp, "log_type": log_type})
                     except (IndexError, ValueError):
                         continue
     # Create a DataFrame from the parsed data

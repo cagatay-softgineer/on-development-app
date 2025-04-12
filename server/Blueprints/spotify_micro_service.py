@@ -16,14 +16,13 @@ gui = CmdGUI()
 logger = get_logger("logs/spotify_micro_service.log", "SpotifyMicroService")
 
 # Define the Blueprint
-SpotifyMicroService_bp = Blueprint('api', __name__)
-
+SpotifyMicroService_bp = Blueprint("api", __name__)
 
 
 @SpotifyMicroService_bp.before_request
 def log_spotify_micro_service_requests():  # noqa: F811
     logger.info("Spotify Micro Service blueprint request received.")
-    
+
 
 @SpotifyMicroService_bp.route("/healthcheck", methods=["GET"])
 @requires_scope("spotify")
@@ -34,9 +33,9 @@ def spotify_micro_service_healthcheck():
 
 
 # Check if '--debug' is passed as a command-line argument
-DEBUG_MODE = '--debug' in sys.argv
-WARNING_MODE = '--warning' in sys.argv
-ERROR_MODE = '--error' in sys.argv
+DEBUG_MODE = "--debug" in sys.argv
+WARNING_MODE = "--warning" in sys.argv
+ERROR_MODE = "--error" in sys.argv
 
 DEBUG_MODE = settings.debug_mode
 if DEBUG_MODE == "True":
@@ -46,6 +45,7 @@ if DEBUG_MODE == "True":
 # Each key is a playlist_id and the value is a tuple: (result_data, expiration_time)
 playlist_cache = {}
 CACHE_DURATION = 3600  # Cache duration in seconds (1 hour)
+
 
 @SpotifyMicroService_bp.route("/playlist_duration", methods=["POST"])
 @jwt_required()

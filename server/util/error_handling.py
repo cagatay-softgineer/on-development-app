@@ -8,6 +8,7 @@ gui = CmdGUI()
 
 logger = get_logger("logs/error.log", "Error")
 
+
 def log_error(e):
     """
     Logs an error in the custom format:
@@ -26,8 +27,8 @@ def log_error(e):
     method_names = []
     for frame in tb:
         # frame.filename is the absolute or relative path (e.g. /path/to/my_script.py)
-        base_name = os.path.basename(frame.filename)    # e.g. "my_script.py"
-        module_name = os.path.splitext(base_name)[0]    # e.g. "my_script"
+        base_name = os.path.basename(frame.filename)  # e.g. "my_script.py"
+        module_name = os.path.splitext(base_name)[0]  # e.g. "my_script"
 
         # Combine module and function/method name
         method_names.append(f"{module_name}.{frame.name}")
@@ -38,5 +39,5 @@ def log_error(e):
     # Append the error type and message
     # e.g. "module.func <--- | Error : RuntimeError: Something went wrong!"
     chain += f"\n{type(e).__name__}: {str(e)}"
-    gui.log(chain,level="error")
+    gui.log(chain, level="error")
     logger.error(chain)

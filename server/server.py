@@ -9,7 +9,17 @@ try:
     from flask_cors import CORS
     from util.logit import get_logger, check_log_folder
     from Blueprints.auth import auth_bp
-    from Blueprints.error import errors_bp, bad_request, unauthorized, forbidden, page_not_found, method_not_allowed, request_timeout, too_many_requests, internal_server_error
+    from Blueprints.error import (
+        errors_bp,
+        bad_request,
+        unauthorized,
+        forbidden,
+        page_not_found,
+        method_not_allowed,
+        request_timeout,
+        too_many_requests,
+        internal_server_error,
+    )
     from Blueprints.utilx import util_bp
     from Blueprints.apps import apps_bp
     from Blueprints.spotify import spotify_bp
@@ -22,7 +32,8 @@ try:
     from Blueprints.youtube_music import youtubeMusic_bp
     import argparse
     from config.config import settings
-    #from IPython.core.display import display  # This import may fail  # noqa: F401
+
+    # from IPython.core.display import display  # This import may fail  # noqa: F401
 except Exception as e:
     log_error(e)  # Log the error
 
@@ -32,11 +43,11 @@ gui = CmdGUI()
 
 app = Flask(__name__)
 
-app.config['JWT_SECRET_KEY'] = settings.jwt_secret_key
-app.config['SWAGGER_URL'] = '/api/docs'
-app.config['API_URL'] = '/static/swagger.json'
-app.config['SECRET_KEY'] = settings.SECRET_KEY
-app.config['PREFERRED_URL_SCHEME'] = 'https'
+app.config["JWT_SECRET_KEY"] = settings.jwt_secret_key
+app.config["SWAGGER_URL"] = "/api/docs"
+app.config["API_URL"] = "/static/swagger.json"
+app.config["SECRET_KEY"] = settings.SECRET_KEY
+app.config["PREFERRED_URL_SCHEME"] = "https"
 
 jwt = JWTManager(app)
 limiter = Limiter(app)
@@ -44,7 +55,8 @@ limiter = Limiter(app)
 CORS(app, resources={r"/*": {"origins": "*"}})
 
 # Add logging to the root logger
-logger = get_logger("logs/service.log","Service")
+logger = get_logger("logs/service.log", "Service")
+
 
 # Middleware to log all requests
 def log_request():
@@ -62,14 +74,15 @@ def log_request():
     """
     logger.info(f"Request received: {request.method} {request.url}")
 
+
 app.before_request(log_request)
 
 # Swagger documentation setup
 swaggerui_blueprint = get_swaggerui_blueprint(
-    app.config['SWAGGER_URL'],
-    app.config['API_URL'],
-    config={'app_name': "Micro Service"}
-)   
+    app.config["SWAGGER_URL"],
+    app.config["API_URL"],
+    config={"app_name": "Micro Service"},
+)
 
 app.register_blueprint(auth_bp, url_prefix="/auth")
 app.register_blueprint(apps_bp, url_prefix="/apps")
@@ -81,7 +94,7 @@ app.register_blueprint(google_bp, url_prefix="/google")
 app.register_blueprint(youtubeMusic_bp, url_prefix="/youtube-music")
 app.register_blueprint(apple_bp, url_prefix="/apple")
 app.register_blueprint(appleMusic_bp, url_prefix="/apple-music")
-app.register_blueprint(swaggerui_blueprint, url_prefix=app.config['SWAGGER_URL'])
+app.register_blueprint(swaggerui_blueprint, url_prefix=app.config["SWAGGER_URL"])
 
 app.register_blueprint(errors_bp, url_prefix="/")
 app.register_error_handler(400, bad_request)
@@ -97,7 +110,11 @@ app.register_blueprint(util_bp, url_prefix="/")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Run Flask on a specific port.")
-    parser.add_argument("--port", type=int, default=8080, help="Port to run the Flask app.")
+    parser.add_argument(
+        "--port", type=int, default=8080, help="Port to run the Flask app."
+    )
     args = parser.parse_args()
 
-    app.run(host="0.0.0.0", port=args.port, ssl_context=('keys/cert.pem', 'keys/key.pem'))
+    app.run(
+        host="0.0.0.0", port=args.port, ssl_context=("keys/cert.pem", "keys/key.pem")
+    )

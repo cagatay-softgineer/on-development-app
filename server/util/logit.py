@@ -1,5 +1,6 @@
 import logging
 
+
 def check_log_folder(LOG_DIR: str = "logs") -> None:
     """
     This function checks if the logs directory exists. If it does not exist, it creates the directory.
@@ -12,6 +13,7 @@ def check_log_folder(LOG_DIR: str = "logs") -> None:
     """
     try:
         import os
+
         # Ensure the logs directory exists; if not, create it
         if not os.path.exists(LOG_DIR):
             os.makedirs(LOG_DIR)
@@ -19,7 +21,7 @@ def check_log_folder(LOG_DIR: str = "logs") -> None:
         print("Unable to create logs directory")
 
 
-def get_logger(LOG_DIR: str, logger_name: str) -> logging.Logger: 
+def get_logger(LOG_DIR: str, logger_name: str) -> logging.Logger:
     """
     This function creates and configures a logger with file and console handlers.
 
@@ -43,7 +45,9 @@ def get_logger(LOG_DIR: str, logger_name: str) -> logging.Logger:
     console_handler.setLevel(logging.INFO)
 
     # Create formatter and add it to the handlers
-    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    formatter = logging.Formatter(
+        "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    )
     file_handler.setFormatter(formatter)
 
     # Add handlers to the logger

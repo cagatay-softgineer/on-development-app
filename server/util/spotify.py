@@ -37,7 +37,9 @@ def get_access_token_for_request():
          Raises an exception if the request fails.
     """
 
-    client_creds_b64 = base64.b64encode(f"{SPOTIFY_CLIENT_ID}:{SPOTIFY_CLIENT_SECRET}".encode()).decode()
+    client_creds_b64 = base64.b64encode(
+        f"{SPOTIFY_CLIENT_ID}:{SPOTIFY_CLIENT_SECRET}".encode()
+    ).decode()
 
     token_url = "https://accounts.spotify.com/api/token"
     token_data = {"grant_type": "client_credentials"}
@@ -59,19 +61,12 @@ def get_access_token_for_request():
             f"Failed to obtain token. Status code: {response.status_code}",
             status="error",
         )
-        logger.error(
-            f"Failed to obtain token. Status code: {response.status_code}"
-        )
+        logger.error(f"Failed to obtain token. Status code: {response.status_code}")
         # Optionally raise an exception or return None
         raise log_error(Exception("Could not obtain Spotify access token"))
 
-    
 
-def make_request(
-    url,
-    max_retries=5,
-    access_token=None
-):
+def make_request(url, max_retries=5, access_token=None):
     """
     Makes a GET request to a specified URL with retry logic for rate limiting.
     Uses a single Spotify credential for all requests.
@@ -123,12 +118,11 @@ def make_request(
             # For other 4xx/5xx errors, raise an exception or handle
             response.raise_for_status()
 
-
     gui.status("Failed to fetch data after retries.", status="error")
     logger.error("Failed to fetch data after retries.")
     return None
 
-            
+
 def get_access_token():  # noqa: F811
     """
     Requests a new access token for the Spotify client ID.
@@ -146,7 +140,9 @@ def get_access_token():  # noqa: F811
            If the request fails due to rate limit exceeded, the status code will be 429.
            If the request fails due to other HTTP errors, the status code will be 404.
     """
-    client_creds_b64 = base64.b64encode(f"{SPOTIFY_CLIENT_ID}:{SPOTIFY_CLIENT_SECRET}".encode()).decode()
+    client_creds_b64 = base64.b64encode(
+        f"{SPOTIFY_CLIENT_ID}:{SPOTIFY_CLIENT_SECRET}".encode()
+    ).decode()
     token_url = "https://accounts.spotify.com/api/token"
     token_data = {"grant_type": "client_credentials"}
     token_headers = {
@@ -168,7 +164,6 @@ def get_access_token():  # noqa: F811
         return "", 404
 
 
-
 def test_token(access_token):
     url = "https://api.spotify.com/v1/me"
     headers = {"Authorization": f"Bearer {access_token}"}
@@ -176,13 +171,14 @@ def test_token(access_token):
 
     return response.status_code
 
+
 # Function to fetch playlists of the user
 def fetch_user_playlists(user_id, app_id):
     # Query to get the access token for the user
     access_token, refresh_token = get_access_token_from_db(user_id, app_id)
-    #print(get_current_user_profile(access_token))
-    #print(access_token)
-    #print(refresh_token)
+    # print(get_current_user_profile(access_token))
+    # print(access_token)
+    # print(refresh_token)
 
     # Spotify API endpoint for user playlists
     url_template = "https://api.spotify.com/v1/me/playlists?limit=50&offset={offset}"
@@ -197,16 +193,16 @@ def fetch_user_playlists(user_id, app_id):
 
         if response.status_code == 200:
             playlists_data = response.json()
-            items = playlists_data.get('items', [])
+            items = playlists_data.get("items", [])
             if not items:
                 print("Not Found Any Item")
                 break
             for item in playlists_data.get("items", []):
                 # Fetch track details for each playlist
-                #tracks_url = item["tracks"]["href"]
-                #tracks_response = requests.get(tracks_url, headers=headers)
+                # tracks_url = item["tracks"]["href"]
+                # tracks_response = requests.get(tracks_url, headers=headers)
                 #
-                #if tracks_response.status_code == 200:
+                # if tracks_response.status_code == 200:
                 #    tracks_data = tracks_response.json()
                 #    print(tracks_data)
                 #    tracks = [
@@ -222,40 +218,46 @@ def fetch_user_playlists(user_id, app_id):
                 #        }
                 #        for track in tracks_data.get("items", [])
                 #    ]
-                #else:
+                # else:
                 #    logger.error(f"Failed to fetch tracks for playlist {item['id']}.")
                 #    tracks = []
 
                 formatted_playlist = {
                     "order": order,
-                    "offset": offset, 
+                    "offset": offset,
                     "playlist_name": item["name"],
                     "playlist_id": item["id"],
-                    "playlist_image": item["images"][0]["url"] if item["images"] else "",
+                    "playlist_image": (
+                        item["images"][0]["url"] if item["images"] else ""
+                    ),
                     "playlist_owner": item["owner"]["display_name"],
                     "playlist_owner_id": item["owner"]["id"],
                     "playlist_track_count": item["tracks"]["total"],
                     "playlist_duration": "Loading..",
-                    #"playlist_duration": calculate_playlist_duration(user_id, item["id"], access_token, refresh_token)["formatted_duration"],
+                    # "playlist_duration": calculate_playlist_duration(user_id, item["id"], access_token, refresh_token)["formatted_duration"],
                     "tracks": [],
                 }
-                if formatted_playlist["playlist_track_count"] < 100:    
+                if formatted_playlist["playlist_track_count"] < 100:
                     order += 1
                     formatted_playlists.append(formatted_playlist)
-                    
-                    is_playlist_count_exceeded_to_limit = len(formatted_playlists) >= playlist_count_limit
+
+                    is_playlist_count_exceeded_to_limit = (
+                        len(formatted_playlists) >= playlist_count_limit
+                    )
                     if is_playlist_count_exceeded_to_limit:
                         break
             if is_playlist_count_exceeded_to_limit:
-                        break        
+                break
             offset += 50
-        
+
         elif response.status_code == 401:
             refresh_access_token_and_update_db(user_id, refresh_token, app_id)
             formatted_playlists.clear()
             return fetch_user_playlists(user_id, app_id)
         else:
-            logger.error(f"Failed to fetch playlists: {response.status_code} - {response.text}")
+            logger.error(
+                f"Failed to fetch playlists: {response.status_code} - {response.text}"
+            )
             return None
     logger.info("Successfully fetched and formatted playlists.")
     return formatted_playlists
@@ -265,20 +267,20 @@ def calculate_playlist_duration(
     user_email: str,
     playlist_id: str,
     access_token: str | None = None,
-    refresh_token: str | None = None
+    refresh_token: str | None = None,
 ) -> dict:
     """
     Calculates and returns the playlist duration and track count for a given Spotify playlist.
-    
+
     Parameters:
       user_email (str): The user's email.
       playlist_id (str): The Spotify playlist ID.
       access_token (str | None): The access token (optional). If None, it will be retrieved.
       refresh_token (str | None): The refresh token (optional).
-      
+
     Returns:
       dict: A dictionary containing playlist_id, total_duration_ms, formatted_duration, and total_track_count.
-    
+
     Raises:
       Exception: If fetching the playlist tracks fails.
     """
@@ -305,25 +307,29 @@ def calculate_playlist_duration(
             user_id = firebase_operations.get_user_id_by_email(user_email)
             # Get the access token (and ignore the refresh token here)
             access_token, _ = get_access_token_from_db(user_id, app_id=1)
-        
+
         response = make_request(url, access_token=access_token)
-        
+
         if not response or response.status_code != 200:
-            raise Exception(f"Failed to fetch playlist tracks. Response: {response.text if response else 'None'}")
-        
+            raise Exception(
+                f"Failed to fetch playlist tracks. Response: {response.text if response else 'None'}"
+            )
+
         if response.status_code == 401:
-           access_token = refresh_access_token_and_update_db(user_id,refresh_token,app_id=1)
-           calculate_playlist_duration(user_id, access_token)
-        
+            access_token = refresh_access_token_and_update_db(
+                user_id, refresh_token, app_id=1
+            )
+            calculate_playlist_duration(user_id, access_token)
+
         data = response.json()
-        items = data.get('items', [])
+        items = data.get("items", [])
         if not items:
             break
 
         for item in items:
-            track = item.get('track')
-            if track and 'duration_ms' in track:
-                total_duration_ms += track['duration_ms']
+            track = item.get("track")
+            if track and "duration_ms" in track:
+                total_duration_ms += track["duration_ms"]
                 total_track_count += 1
 
         offset += 50
@@ -334,12 +340,13 @@ def calculate_playlist_duration(
         "playlist_id": playlist_id,
         "total_duration_ms": total_duration_ms,
         "formatted_duration": formatted_duration,
-        "total_track_count": total_track_count
+        "total_track_count": total_track_count,
     }
 
     # Store the result in the cache with a 1-hour expiration
     playlist_cache[playlist_id] = (result_data, time.time() + CACHE_DURATION)
     return result_data
+
 
 # Function to refresh access token
 def refresh_access_token_and_update_db(user_id, refresh_token, app_id):
@@ -356,30 +363,37 @@ def refresh_access_token_and_update_db(user_id, refresh_token, app_id):
          None: If the refresh fails.
     """
     url = "https://accounts.spotify.com/api/token"
-    auth_header = base64.b64encode(f"{SPOTIFY_CLIENT_ID}:{SPOTIFY_CLIENT_SECRET}".encode()).decode()
+    auth_header = base64.b64encode(
+        f"{SPOTIFY_CLIENT_ID}:{SPOTIFY_CLIENT_SECRET}".encode()
+    ).decode()
 
     headers = {
         "Authorization": f"Basic {auth_header}",
-        "Content-Type": "application/x-www-form-urlencoded"
+        "Content-Type": "application/x-www-form-urlencoded",
     }
-    data = {
-        "grant_type": "refresh_token",
-        "refresh_token": refresh_token
-    }
+    data = {"grant_type": "refresh_token", "refresh_token": refresh_token}
 
     response = requests.post(url, headers=headers, data=data)
 
     if response.status_code == 200:
         token_info = response.json()
         new_access_token = token_info.get("access_token")
-        new_refresh_token = token_info.get("refresh_token", refresh_token)  # Use the new refresh token if provided, otherwise keep the old one
-        expires_in = token_info.get("expires_in", 3600)  # Default to 1 hour if not provided
+        new_refresh_token = token_info.get(
+            "refresh_token", refresh_token
+        )  # Use the new refresh token if provided, otherwise keep the old one
+        expires_in = token_info.get(
+            "expires_in", 3600
+        )  # Default to 1 hour if not provided
 
         logger.info("Successfully refreshed access token.")
-        firebase_operations.update_userlinkedapps_tokens(new_access_token, new_refresh_token, expires_in, user_id, app_id)
+        firebase_operations.update_userlinkedapps_tokens(
+            new_access_token, new_refresh_token, expires_in, user_id, app_id
+        )
         return new_access_token
     else:
-        logger.error(f"Failed to refresh access token: {response.status_code} - {response.text}")
+        logger.error(
+            f"Failed to refresh access token: {response.status_code} - {response.text}"
+        )
         return None
 
 
@@ -403,20 +417,23 @@ def get_current_user_profile(access_token, user_id, app_id):
     response = requests.get(url, headers=headers)
 
     if response.status_code == 200:
-        #user = response.json()
-        #print(user["id"])
+        # user = response.json()
+        # print(user["id"])
         return response.json()
     elif response.status_code == 401:
-        result = firebase_operations.get_userlinkedapps_access_refresh(user_id, app_id)[0]
+        result = firebase_operations.get_userlinkedapps_access_refresh(user_id, app_id)[
+            0
+        ]
         access_token, refresh_token = result["access_token"], result["refresh_token"]
         refresh_access_token_and_update_db(user_id, refresh_token, app_id)
         return get_current_user_profile(access_token, user_id, app_id)
     else:
-        logger.error(f"Failed to fetch user profile: {response.status_code} - {response.text}")
+        logger.error(
+            f"Failed to fetch user profile: {response.status_code} - {response.text}"
+        )
         return None
 
-    
-    
+
 def get_user_profile(user_id):
     """
     Retrieves the user profile from the Spotify API using the provided user ID.
@@ -435,17 +452,18 @@ def get_user_profile(user_id):
         response = requests.get(url, headers=headers)
 
         if response.status_code == 200:
-            #user = response.json()
-            #print(user["id"])
+            # user = response.json()
+            # print(user["id"])
             return response.json()
         else:
-            logger.error(f"Failed to fetch user profile: {response.status_code} - {response.text}")
+            logger.error(
+                f"Failed to fetch user profile: {response.status_code} - {response.text}"
+            )
             return None
     else:
         logger.error(f"Failed to fetch user's access token: {status_code}")
         return None
 
-    
 
 def get_access_token_from_db(user_id, app_id):
     """
@@ -460,7 +478,7 @@ def get_access_token_from_db(user_id, app_id):
     tuple: A tuple containing the access token and refresh token. If the access token is not found, returns None.
     """
     result = firebase_operations.get_userlinkedapps_access_refresh(user_id, app_id)[0]
-    #print(result)
+    # print(result)
     if not result:
         logger.error(f"Access token not found for user_id: {user_id}")
         return None

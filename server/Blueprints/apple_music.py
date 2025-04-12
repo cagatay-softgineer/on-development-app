@@ -7,17 +7,20 @@ from config.config import settings  # Ensure your settings include apple_develop
 import requests
 import logging
 import database.firebase_operations as firebase_operations
-from util.utils import ms2FormattedDuration  # Utility to format milliseconds into human readable string
+from util.utils import (
+    ms2FormattedDuration,
+)  # Utility to format milliseconds into human readable string
 from util.authlib import requires_scope
 
 
-appleMusic_bp = Blueprint('appleMusic', __name__)
+appleMusic_bp = Blueprint("appleMusic", __name__)
 limiter = Limiter(key_func=get_remote_address)
 CORS(appleMusic_bp, resources={r"/*": {"origins": "*"}})
 
 logger = logging.getLogger("logs/apple_music.log")
 
-@appleMusic_bp.route('/albums', methods=['POST'])
+
+@appleMusic_bp.route("/albums", methods=["POST"])
 @jwt_required()
 @requires_scope("apple")
 def get_albums():
@@ -48,7 +51,7 @@ def get_albums():
     access_tokens = response[0]["access_token"]
     headers = {
         "Authorization": f"Bearer {developer_token}",
-        "Music-User-Token": access_tokens
+        "Music-User-Token": access_tokens,
     }
 
     url = "https://api.music.apple.com/v1/me/library/albums"
@@ -56,10 +59,15 @@ def get_albums():
         response = requests.get(url, headers=headers)
         if response.status_code != 200:
             logger.error("Error fetching albums: %s", response.text)
-            return jsonify({
-                "error": "Failed to fetch albums from Apple Music API.",
-                "details": response.json()
-            }), response.status_code
+            return (
+                jsonify(
+                    {
+                        "error": "Failed to fetch albums from Apple Music API.",
+                        "details": response.json(),
+                    }
+                ),
+                response.status_code,
+            )
 
         albums_data = response.json()
         logger.info("Successfully retrieved albums.")
@@ -67,28 +75,34 @@ def get_albums():
 
     except Exception as e:
         logger.error("Exception occurred while fetching albums: %s", e)
-        return jsonify({
-            "error": "An error occurred while fetching albums.",
-        }), 500
+        return (
+            jsonify(
+                {
+                    "error": "An error occurred while fetching albums.",
+                }
+            ),
+            500,
+        )
 
-@appleMusic_bp.route('/playlists', methods=['POST'])
+
+@appleMusic_bp.route("/playlists", methods=["POST"])
 @jwt_required()
 @requires_scope("apple")
 def get_playlists():
     """
     Retrieve the current user's Apple Music library playlists along with duration details.
-    
+
     Expects a JSON payload:
         {
             "user_email": "USER_EMAIL"
         }
-    
+
     For each playlist, the response will include:
         - total_duration: Total duration in milliseconds of all tracks.
         - formatted_duration: Human-readable duration string.
         - total_tracks: Number of tracks.
         - playlist_id: The Apple Music playlist identifier.
-    
+
     Returns:
         A JSON response containing the user's library playlists with the added duration details.
     """
@@ -109,7 +123,7 @@ def get_playlists():
 
     headers = {
         "Authorization": f"Bearer {developer_token}",
-        "Music-User-Token": access_token
+        "Music-User-Token": access_token,
     }
 
     url = "https://api.music.apple.com/v1/me/library/playlists"
@@ -117,15 +131,20 @@ def get_playlists():
         response = requests.get(url, headers=headers)
         if response.status_code != 200:
             logger.error("Error fetching playlists: %s", response.text)
-            return jsonify({
-                "error": "Failed to fetch playlists from Apple Music API.",
-                "details": response.json()
-            }), response.status_code
+            return (
+                jsonify(
+                    {
+                        "error": "Failed to fetch playlists from Apple Music API.",
+                        "details": response.json(),
+                    }
+                ),
+                response.status_code,
+            )
 
         playlists_data = response.json()
         # Assume the playlists are in the "data" key.
         playlists = playlists_data.get("data", [])
-        
+
         # Process each playlist to add duration and track count info.
         for playlist in playlists:
             playlist_id = playlist.get("id")
@@ -143,11 +162,13 @@ def get_playlists():
                         tracks = tracks_data["data"]
                     else:
                         tracks = []
-                    
+
                     total_duration = 0
                     for track in tracks:
                         # Each track is expected to include a duration under attributes['durationInMillis'].
-                        duration = track.get("attributes", {}).get("durationInMillis", 0)
+                        duration = track.get("attributes", {}).get(
+                            "durationInMillis", 0
+                        )
                         try:
                             total_duration += int(duration)
                         except (ValueError, TypeError):
@@ -155,21 +176,27 @@ def get_playlists():
 
                     formatted_duration = ms2FormattedDuration(total_duration)
                     total_tracks = len(tracks)
-                    
+
                     # Add additional keys to the playlist data.
                     playlist["total_duration"] = total_duration
                     playlist["formatted_duration"] = formatted_duration
                     playlist["total_tracks"] = total_tracks
                     playlist["playlist_id"] = playlist_id
                 else:
-                    logger.error("Error fetching tracks for playlist %s: %s", playlist_id, tracks_response.text)
+                    logger.error(
+                        "Error fetching tracks for playlist %s: %s",
+                        playlist_id,
+                        tracks_response.text,
+                    )
                     # Set default values on error.
                     playlist["total_duration"] = 0
                     playlist["formatted_duration"] = ms2FormattedDuration(0)
                     playlist["total_tracks"] = 0
                     playlist["playlist_id"] = playlist_id
             except Exception as inner_e:
-                logger.error("Exception processing playlist %s: %s", playlist_id, inner_e)
+                logger.error(
+                    "Exception processing playlist %s: %s", playlist_id, inner_e
+                )
                 playlist["total_duration"] = 0
                 playlist["formatted_duration"] = ms2FormattedDuration(0)
                 playlist["total_tracks"] = 0
@@ -182,7 +209,8 @@ def get_playlists():
         logger.error("Exception occurred while fetching playlists: %s", e)
         return jsonify({"error": "An error occurred while fetching playlists."}), 500
 
-@appleMusic_bp.route('/albums/<album_id>/tracks', methods=['POST'])
+
+@appleMusic_bp.route("/albums/<album_id>/tracks", methods=["POST"])
 @jwt_required()
 @requires_scope("apple")
 def get_album_tracks(album_id):
@@ -210,25 +238,34 @@ def get_album_tracks(album_id):
     if not user_email:
         return jsonify({"error": "Missing user_email parameter."}), 400
 
-    developer_token = settings.apple_developer_token  # Ensure this is set in your configuration
+    developer_token = (
+        settings.apple_developer_token
+    )  # Ensure this is set in your configuration
     user_id = firebase_operations.get_user_id_by_email(user_email)
     response = firebase_operations.get_userlinkedapps_tokens(user_id, 2)
 
     access_tokens = response[0]["access_token"]
     headers = {
         "Authorization": f"Bearer {developer_token}",
-        "Music-User-Token": access_tokens
+        "Music-User-Token": access_tokens,
     }
 
     url = f"https://api.music.apple.com/v1/me/library/albums/{album_id}/tracks"
     try:
         response = requests.get(url, headers=headers)
         if response.status_code != 200:
-            logger.error("Error fetching tracks for album %s: %s", album_id, response.text)
-            return jsonify({
-                "error": "Failed to fetch album tracks from Apple Music API.",
-                "details": response.json()
-            }), response.status_code
+            logger.error(
+                "Error fetching tracks for album %s: %s", album_id, response.text
+            )
+            return (
+                jsonify(
+                    {
+                        "error": "Failed to fetch album tracks from Apple Music API.",
+                        "details": response.json(),
+                    }
+                ),
+                response.status_code,
+            )
 
         tracks_data = response.json()
         logger.info("Successfully retrieved tracks for album %s.", album_id)
@@ -236,13 +273,20 @@ def get_album_tracks(album_id):
 
     except Exception as e:
         logger.error("Exception occurred while fetching album tracks: %s", e)
-        return jsonify({
-            "error": "An error occurred while fetching album tracks.",
-        }), 500
-        
-#playlists
+        return (
+            jsonify(
+                {
+                    "error": "An error occurred while fetching album tracks.",
+                }
+            ),
+            500,
+        )
 
-@appleMusic_bp.route('/playlist_duration', methods=['POST'])
+
+# playlists
+
+
+@appleMusic_bp.route("/playlist_duration", methods=["POST"])
 @jwt_required()
 @requires_scope("apple")
 def playlist_duration():
@@ -277,18 +321,25 @@ def playlist_duration():
     access_tokens = response[0]["access_token"]
     headers = {
         "Authorization": f"Bearer {developer_token}",
-        "Music-User-Token": access_tokens
+        "Music-User-Token": access_tokens,
     }
 
     url = f"https://api.music.apple.com/v1/me/library/playlists/{playlist_id}/tracks"
     try:
         response = requests.get(url, headers=headers)
         if response.status_code != 200:
-            logger.error("Error fetching tracks for playlist %s: %s", playlist_id, response.text)
-            return jsonify({
-                "error": "Failed to fetch playlist tracks from Apple Music API.",
-                "details": response.json()
-            }), response.status_code
+            logger.error(
+                "Error fetching tracks for playlist %s: %s", playlist_id, response.text
+            )
+            return (
+                jsonify(
+                    {
+                        "error": "Failed to fetch playlist tracks from Apple Music API.",
+                        "details": response.json(),
+                    }
+                ),
+                response.status_code,
+            )
 
         tracks_data = response.json()
         # Extract tracks from possible response structures
@@ -312,16 +363,28 @@ def playlist_duration():
         formatted_duration = ms2FormattedDuration(total_duration)
         total_tracks = len(tracks)
 
-        logger.info("Successfully calculated playlist duration for playlist %s.", playlist_id)
-        return jsonify({
-            "total_duration": total_duration,
-            "formatted_duration": formatted_duration,
-            "total_tracks": total_tracks,
-            "playlist_id": playlist_id
-        }), 200
+        logger.info(
+            "Successfully calculated playlist duration for playlist %s.", playlist_id
+        )
+        return (
+            jsonify(
+                {
+                    "total_duration": total_duration,
+                    "formatted_duration": formatted_duration,
+                    "total_tracks": total_tracks,
+                    "playlist_id": playlist_id,
+                }
+            ),
+            200,
+        )
 
     except Exception as e:
         logger.error("Exception occurred while calculating playlist duration: %s", e)
-        return jsonify({
-            "error": "An error occurred while calculating playlist duration.",
-        }), 500
+        return (
+            jsonify(
+                {
+                    "error": "An error occurred while calculating playlist duration.",
+                }
+            ),
+            500,
+        )

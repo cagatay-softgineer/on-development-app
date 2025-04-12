@@ -14,13 +14,13 @@ CACHE_DURATION = 3600  # Cache duration in seconds (1 hour)
 def iso_duration_to_milliseconds(iso_duration: str) -> int:
     """
     Convert an ISO 8601 duration string to milliseconds.
-    
+
     For durations that include years or months, approximate conversions are used:
       - 1 year = 365 days
       - 1 month = 30 days
     """
     duration = isodate.parse_duration(iso_duration)
-    
+
     # If the duration is a datetime.timedelta, perform a direct conversion.
     if isinstance(duration, datetime.timedelta):
         ms = int(duration.total_seconds() * 1000)
@@ -28,10 +28,10 @@ def iso_duration_to_milliseconds(iso_duration: str) -> int:
         # Handle isodate.Duration which may include years and months.
         # Approximate years and months to days.
         total_seconds = (
-            (duration.years * 365 * 24 * 3600 if duration.years else 0) +
-            (duration.months * 30 * 24 * 3600 if duration.months else 0) +
-            (duration.days * 24 * 3600 if duration.days else 0) +
-            (duration.tdelta.total_seconds() if duration.tdelta else 0)
+            (duration.years * 365 * 24 * 3600 if duration.years else 0)
+            + (duration.months * 30 * 24 * 3600 if duration.months else 0)
+            + (duration.days * 24 * 3600 if duration.days else 0)
+            + (duration.tdelta.total_seconds() if duration.tdelta else 0)
         )
         ms = int(total_seconds * 1000)
     return ms
@@ -51,7 +51,7 @@ def playlist_items(access_token, playlist_id):
           - tracks (list): A list of dictionaries with video_id, duration, and title.
           - total_duration (int): The sum of all video durations in milliseconds.
           - total_tracks (int): The total number of tracks.
-      
+
     Raises:
       Exception: If fetching playlist items or track details fails.
     """
@@ -67,9 +67,7 @@ def playlist_items(access_token, playlist_id):
 
     # Now, fetch all playlist items from YouTube
     url = "https://www.googleapis.com/youtube/v3/playlistItems"
-    headers = {
-        "Authorization": f"Bearer {access_token}"
-    }
+    headers = {"Authorization": f"Bearer {access_token}"}
     tracks = []
     playlist_items_ids = []  # To store video IDs
     total_duration = 0
@@ -83,7 +81,7 @@ def playlist_items(access_token, playlist_id):
                 "part": "snippet,contentDetails,id,status",
                 "playlistId": playlist_id,
                 "maxResults": 50,
-                "client_id": settings.google_client_id
+                "client_id": settings.google_client_id,
             }
             if nextPageToken:
                 params["pageToken"] = nextPageToken
@@ -91,7 +89,10 @@ def playlist_items(access_token, playlist_id):
             response = requests.get(url, headers=headers, params=params)
             if response.status_code != 200:
                 logger.error("Error fetching playlist items: %s", response.text)
-                return jsonify({"error": "Failed to fetch playlist items."}), response.status_code
+                return (
+                    jsonify({"error": "Failed to fetch playlist items."}),
+                    response.status_code,
+                )
 
             data = response.json()
             for item in data.get("items", []):
@@ -111,13 +112,11 @@ def playlist_items(access_token, playlist_id):
         while True:
             print("Playlist fetching...")
             url = "https://www.googleapis.com/youtube/v3/videos"
-            headers = {
-                "Authorization": f"Bearer {access_token}"
-            }
+            headers = {"Authorization": f"Bearer {access_token}"}
             params = {
                 "part": "snippet,contentDetails",
-                "id": ','.join(map(str, playlist_items_ids)),
-                "client_id": settings.google_client_id
+                "id": ",".join(map(str, playlist_items_ids)),
+                "client_id": settings.google_client_id,
             }
             if nextPageToken:
                 params["pageToken"] = nextPageToken
@@ -128,11 +127,11 @@ def playlist_items(access_token, playlist_id):
                 raise Exception("Failed to fetch tracks.")
 
             data = response.json()
-            #print(data)
+            # print(data)
             for item in data.get("items", []):
                 snippet = item.get("snippet", {})
                 contentDetails = item.get("contentDetails", {})
-                
+
                 video_id = item.get("id")
                 title = snippet.get("title")
                 channelTitle = snippet.get("channelTitle")
@@ -144,7 +143,15 @@ def playlist_items(access_token, playlist_id):
                 total_duration += duration_ms
                 total_tracks += 1
                 if video_id:
-                    tracks.append({"video_id": video_id, "duration": duration_ms, "title": title, "thumbnail_url": thumbnail_url, "channelTitle": channelTitle})
+                    tracks.append(
+                        {
+                            "video_id": video_id,
+                            "duration": duration_ms,
+                            "title": title,
+                            "thumbnail_url": thumbnail_url,
+                            "channelTitle": channelTitle,
+                        }
+                    )
 
             nextPageToken = data.get("nextPageToken")
             if not nextPageToken:

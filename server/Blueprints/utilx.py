@@ -2,20 +2,25 @@ from flask import Blueprint, render_template, jsonify, request
 from util.logit import get_logger
 from util.error_handling import log_error
 import flask
-from util.utils import route_descriptions, parse_logs_from_folder, parse_logs_to_dataframe
+from util.utils import (
+    route_descriptions,
+    parse_logs_from_folder,
+    parse_logs_to_dataframe,
+)
 import pandas as pd
 import json
 import plotly.graph_objects as go
 from plotly.utils import PlotlyJSONEncoder
 from util.authlib import requires_scope
 
-util_bp = Blueprint('util', __name__)
+util_bp = Blueprint("util", __name__)
 logger = get_logger("logs/app_util.log", "App Utils")
 
 ### ### REMOVE ON PRODUCTION ### ###
 
+
 # Route for visualizing logs with filtering and pagination
-@util_bp.route('/logs', methods=['GET'])
+@util_bp.route("/logs", methods=["GET"])
 @requires_scope("admin")
 def visualize_logs():
     """
@@ -29,20 +34,24 @@ def visualize_logs():
     render_template: A rendered template with the paginated logs, page number, per page count,
     total logs, log type filter, and filename filter.
     """
-    logs_folder_path = 'logs'
+    logs_folder_path = "logs"
     logs = parse_logs_from_folder(logs_folder_path)
 
     # Get query parameters
-    log_type_filter = request.args.get('log_type', None)
-    filename_filter = request.args.get('filename', None)
-    page = int(request.args.get('page', 1))
-    per_page = int(request.args.get('per_page', 10))
+    log_type_filter = request.args.get("log_type", None)
+    filename_filter = request.args.get("filename", None)
+    page = int(request.args.get("page", 1))
+    per_page = int(request.args.get("per_page", 10))
 
     # Apply filtering
     if log_type_filter:
-        logs = [log for log in logs if log_type_filter.lower() in log['log_type'].lower()]
+        logs = [
+            log for log in logs if log_type_filter.lower() in log["log_type"].lower()
+        ]
     if filename_filter:
-        logs = [log for log in logs if filename_filter.lower() in log['filename'].lower()]
+        logs = [
+            log for log in logs if filename_filter.lower() in log["filename"].lower()
+        ]
 
     # Apply pagination
     total_logs = len(logs)
@@ -58,12 +67,12 @@ def visualize_logs():
         per_page=per_page,
         total_logs=total_logs,
         log_type_filter=log_type_filter,
-        filename_filter=filename_filter
+        filename_filter=filename_filter,
     )
 
-    
+
 # Endpoint to display the trend chart
-@util_bp.route('/logs/trend', methods=['GET'])
+@util_bp.route("/logs/trend", methods=["GET"])
 @requires_scope("admin")
 def logs_trend_chart():
     """
@@ -77,27 +86,33 @@ def logs_trend_chart():
     or a JSON response with an error message and a status code of 404 if no valid logs are available.
     """
     try:
-        logs_folder_path = 'logs'  # Replace with your actual folder path
+        logs_folder_path = "logs"  # Replace with your actual folder path
         df = parse_logs_to_dataframe(logs_folder_path)
 
         if df.empty:
             return "No valid logs available to display.", 404
 
         # Group by time intervals and log type, then count occurrences
-        df['timestamp'] = pd.to_datetime(df['timestamp'])  # Ensure timestamp is in datetime format
-        df.set_index('timestamp', inplace=True)
-        grouped = df.groupby([pd.Grouper(freq='1H'), 'log_type']).size().unstack(fill_value=0)
+        df["timestamp"] = pd.to_datetime(
+            df["timestamp"]
+        )  # Ensure timestamp is in datetime format
+        df.set_index("timestamp", inplace=True)
+        grouped = (
+            df.groupby([pd.Grouper(freq="1H"), "log_type"]).size().unstack(fill_value=0)
+        )
 
         # Create a Plotly figure
         fig = go.Figure()
 
         for log_type in grouped.columns:
-            fig.add_trace(go.Scatter(
-                x=grouped.index,
-                y=grouped[log_type],
-                mode='lines+markers',
-                name=log_type
-            ))
+            fig.add_trace(
+                go.Scatter(
+                    x=grouped.index,
+                    y=grouped[log_type],
+                    mode="lines+markers",
+                    name=log_type,
+                )
+            )
 
         # Add chart details
         fig.update_layout(
@@ -106,7 +121,7 @@ def logs_trend_chart():
             yaxis_title="Count",
             legend_title="Log Type",
             template="plotly_white",
-            hovermode="x unified"
+            hovermode="x unified",
         )
         # Convert the Plotly figure to JSON
         graph_json = json.dumps(fig, cls=PlotlyJSONEncoder)
@@ -117,8 +132,7 @@ def logs_trend_chart():
         return render_template("plotly_chart.html", graph_json=graph_json)
 
 
-
-@util_bp.route('/endpoints')
+@util_bp.route("/endpoints")
 @requires_scope("admin")
 def list_endpoints():
     """
@@ -134,15 +148,21 @@ def list_endpoints():
     # Collect and organize endpoints
     endpoints = []
     for rule in util_bp.url_map.iter_rules():
-        if rule.endpoint.startswith('__') or rule.endpoint == 'static':  # Skip internal/static routes
+        if (
+            rule.endpoint.startswith("__") or rule.endpoint == "static"
+        ):  # Skip internal/static routes
             continue
-        endpoints.append({
-            "rule": str(rule),
-            "endpoint": rule.endpoint,
-            "methods": sorted(rule.methods),
-            "arguments": list(rule.arguments),  # Dynamic segments like <username>
-            "description": route_descriptions.get(str(rule), "No description available.")
-        })
+        endpoints.append(
+            {
+                "rule": str(rule),
+                "endpoint": rule.endpoint,
+                "methods": sorted(rule.methods),
+                "arguments": list(rule.arguments),  # Dynamic segments like <username>
+                "description": route_descriptions.get(
+                    str(rule), "No description available."
+                ),
+            }
+        )
 
     # Apply optional filters from query parameters
     method_filter = request.args.get("method")
@@ -169,15 +189,22 @@ def list_endpoints():
         "current_page": page,
         "per_page": per_page,
         "flask_version": flask.__version__,
-        "debug": util_bp.debug
+        "debug": util_bp.debug,
     }
 
     # Return format based on `Accept` header or query parameter
     output_format = request.args.get("format", "json").lower()
-    if output_format == "json" or "application/json" in request.headers.get("Accept", ""):
+    if output_format == "json" or "application/json" in request.headers.get(
+        "Accept", ""
+    ):
         return jsonify(metadata=metadata, endpoints=paginated_endpoints), 200
     elif output_format == "html":
-        return render_template("endpoint.html", metadata=metadata, endpoints=paginated_endpoints), 200
+        return (
+            render_template(
+                "endpoint.html", metadata=metadata, endpoints=paginated_endpoints
+            ),
+            200,
+        )
     else:  # Plain text fallback
         text_output = "Available Endpoints:\n"
         for e in paginated_endpoints:
@@ -186,19 +213,21 @@ def list_endpoints():
                 f"Args: {', '.join(e['arguments'])}, Description: {e['description']})\n"
             )
         return text_output, 200, {"Content-Type": "text/plain"}
+
+
 # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ #
 ### ### REMOVE ON PRODUCTION ### ###
 
 
-
-@util_bp.route("/healthcheck", methods=['POST', 'GET'])
+@util_bp.route("/healthcheck", methods=["POST", "GET"])
 @requires_scope("admin")
 def app_healthcheck():
-    #gui.log("App healthcheck requested")
+    # gui.log("App healthcheck requested")
     logger.info("App healthcheck requested")
     return jsonify({"status": "ok", "service": "App Service"}), 200
 
-@util_bp.route("/.well-known/assetlinks.json", methods=['POST','GET'])
+
+@util_bp.route("/.well-known/assetlinks.json", methods=["POST", "GET"])
 def appmanifest():
     """
     This function returns a JSON response containing asset links for Android app manifest.
@@ -210,16 +239,17 @@ def appmanifest():
     dict: A JSON response containing asset links for the Android app manifest. The response includes
     the relation type and target details, such as the namespace, package name, and SHA-256 cert fingerprints.
     """
-    return jsonify([
+    return jsonify(
+        [
             {
-            "relation": ["delegate_permission/common.handle_all_urls"],
-            "target": {
-              "namespace": "android_app",
-              "package_name": "com.example.ssdk_rsrc",
-              "sha256_cert_fingerprints": [
-                "49:B0:67:2F:35:2D:6C:16:87:D9:5F:E2:4F:6A:BF:45:CA:67:41:09:11:74:54:F8:0F:56:FF:CB:C4:3F:2F:A4"
-                ]
-            }
+                "relation": ["delegate_permission/common.handle_all_urls"],
+                "target": {
+                    "namespace": "android_app",
+                    "package_name": "com.example.ssdk_rsrc",
+                    "sha256_cert_fingerprints": [
+                        "49:B0:67:2F:35:2D:6C:16:87:D9:5F:E2:4F:6A:BF:45:CA:67:41:09:11:74:54:F8:0F:56:FF:CB:C4:3F:2F:A4"
+                    ],
+                },
             }
         ]
     )

@@ -4,7 +4,7 @@ from util.logit import get_logger
 import database.firebase_operations as firebase_operations
 from util.authlib import requires_scope
 
-profile_bp = Blueprint('profile', __name__)
+profile_bp = Blueprint("profile", __name__)
 
 logger = get_logger("logs/profile.log", "Profile")
 
@@ -12,7 +12,8 @@ logger = get_logger("logs/profile.log", "Profile")
 @profile_bp.before_request
 def log_profile_requests():
     logger.info("Profile blueprint request received.")
-    
+
+
 @profile_bp.route("/healthcheck", methods=["GET"])
 @requires_scope("me")
 def profile_healthcheck():
@@ -20,7 +21,7 @@ def profile_healthcheck():
     return jsonify({"status": "ok", "service": "Profile Service"}), 200
 
 
-@profile_bp.route('/view', methods=['GET'])
+@profile_bp.route("/view", methods=["GET"])
 @jwt_required()
 @requires_scope("me")
 def view_profile():
@@ -45,19 +46,23 @@ def view_profile():
     }
     """
     current_user = get_jwt_identity()
-    #print(current_user)
+    # print(current_user)
 
     user_id = firebase_operations.get_user_id_by_email(current_user)
 
     rows = firebase_operations.get_user_profile(user_id)
-    #print(rows)
+    # print(rows)
     if rows[0] != []:
         user = rows[0]
-        return jsonify({
-            "first_name": user["first_name"],
-            "last_name": user["last_name"],
-            "avatar_url": user["avatar_url"],
-            "bio" : user["bio"],
-        }), 200
+        return (
+            jsonify(
+                {
+                    "first_name": user["first_name"],
+                    "last_name": user["last_name"],
+                    "avatar_url": user["avatar_url"],
+                    "bio": user["bio"],
+                }
+            ),
+            200,
+        )
     return jsonify({"error": "User not found"}), 404
-

@@ -5,7 +5,10 @@ import database.firebase_operations as firebase_operations
 
 logger = get_logger("logs/google_utils.log", "GoogleUtils")
 
-def get_current_user_profile_google(access_token: str, user_id: int | str) -> dict | None:
+
+def get_current_user_profile_google(
+    access_token: str, user_id: int | str
+) -> dict | None:
     """
     Fetches the Google user profile using the provided access token.
     If the token is expired (HTTP 401), refreshes the token and retries.
@@ -28,15 +31,19 @@ def get_current_user_profile_google(access_token: str, user_id: int | str) -> di
         # Retrieve tokens from your database; assumes result is a dict
         result = firebase_operations.get_userlinkedapps_access_refresh(user_id, 4)[0]
         access_token, refresh_token = result["access_token"], result["refresh_token"]
-        #print(access_token)
-        #print(refresh_token)
-        new_access_token = refresh_access_token_and_update_db_for_Google(user_id, refresh_token)
+        # print(access_token)
+        # print(refresh_token)
+        new_access_token = refresh_access_token_and_update_db_for_Google(
+            user_id, refresh_token
+        )
         if new_access_token:
             return get_current_user_profile_google(new_access_token, user_id)
         else:
             return None
     else:
-        logger.error(f"Failed to fetch Google user profile: {response.status_code} - {response.text}")
+        logger.error(
+            f"Failed to fetch Google user profile: {response.status_code} - {response.text}"
+        )
         return None
 
 
@@ -56,7 +63,7 @@ def refresh_access_token_and_update_db_for_Google(user_id, refresh_token):
         "client_id": settings.google_client_id,
         "client_secret": settings.google_client_secret,
         "refresh_token": refresh_token,
-        "grant_type": "refresh_token"
+        "grant_type": "refresh_token",
     }
     headers = {"Content-Type": "application/x-www-form-urlencoded"}
     response = requests.post(url, headers=headers, data=data)
@@ -68,9 +75,15 @@ def refresh_access_token_and_update_db_for_Google(user_id, refresh_token):
         new_refresh_token = token_info.get("refresh_token", refresh_token)
 
         logger.info("Successfully refreshed Google access token.")
-        firebase_operations.update_userlinkedapps_tokens(new_access_token, new_refresh_token, expires_in, user_id, 3)
-        firebase_operations.update_userlinkedapps_tokens(new_access_token, new_refresh_token, expires_in, user_id, 4)
+        firebase_operations.update_userlinkedapps_tokens(
+            new_access_token, new_refresh_token, expires_in, user_id, 3
+        )
+        firebase_operations.update_userlinkedapps_tokens(
+            new_access_token, new_refresh_token, expires_in, user_id, 4
+        )
         return new_access_token
     else:
-        logger.error(f"Failed to refresh Google access token: {response.status_code} - {response.text}")
+        logger.error(
+            f"Failed to refresh Google access token: {response.status_code} - {response.text}"
+        )
         return None
