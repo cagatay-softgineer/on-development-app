@@ -67,7 +67,7 @@ jobs:
       - name: Run Tests
         run: |
           pip install pytest coverage
-          pytest --maxfail=1 --disable-warnings -q
+          pytest --maxfail=1 --disable-warnings
 
       # 8. Generate a code coverage report
       - name: Generate Coverage Report

@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify, redirect, render_template, escape
-from flask_jwt_extended import jwt_required
+from flask_jwt_extended import get_jwt_identity, jwt_required
 from flask_limiter import Limiter
 from flask_cors import CORS
 from flask_limiter.util import get_remote_address
@@ -11,12 +11,13 @@ from util.spotify import (
 )
 from util.utils import get_email_username
 import database.firebase_operations as firebase_operations
-from util.models import UserIdRequest
+from util.models import UserEmailRequest
 from config.config import settings
 from pydantic import ValidationError
 import secrets
 from util.logit import get_logger
 from util.authlib import requires_scope
+from util.models import UserIdRequest
 
 spotify_bp = Blueprint("spotify", __name__)
 limiter = Limiter(key_func=get_remote_address)
@@ -33,7 +34,6 @@ def log_spotify_requests():  # noqa: F811
 
 
 @spotify_bp.route("/healthcheck", methods=["GET"])
-@requires_scope("spotify")
 def spotify_healthcheck():
     logger.info("Spotify Service healthcheck requested")
     return jsonify({"status": "ok", "service": "Spotify Service"}), 200
@@ -43,9 +43,6 @@ def spotify_healthcheck():
 CLIENT_ID = settings.spotify_client_id
 CLIENT_SECRET = settings.spotify_client_secret
 REDIRECT_URI = settings.auth_redirect_uri
-
-USER_EMAIL = ""
-
 
 # Function to generate random state
 def generate_random_state(length=16):
@@ -66,8 +63,6 @@ def login(user_id):
     Returns:
     - A Flask redirect response to Spotify's authorization URL.
     """
-    global USER_EMAIL
-    USER_EMAIL = user_id
 
     state = generate_random_state()
     scope = (
@@ -138,7 +133,7 @@ def get_user():
         payload = UserIdRequest.parse_obj(request.get_json())
     except ValidationError as ve:
         return jsonify({"error": ve.errors()}), 400
-
+    print(payload.user_id)
     return get_user_profile(escape(payload.user_id))
 
 
@@ -178,16 +173,13 @@ def get_playlists():
       }
     """
     try:
-        data = request.get_json()
-        # For this endpoint we expect a user_email
-        user_email = data.get("user_email")
-        if not user_email:
-            raise ValueError("user_email is required")
+        payload = UserEmailRequest.parse_obj(request.get_json())
+    except ValidationError as ve:
+        return jsonify({"error": ve.errors()}), 400
     except Exception as e:
         logger.error("An internal error occurred: %s", e)
         return jsonify({"error": "An internal error occurred."}), 400
-
-    user_id = firebase_operations.get_user_id_by_email(user_email)
+    user_id = firebase_operations.get_user_id_by_email(payload.user_email)
 
     playlists_json = fetch_user_playlists(user_id, app_id=1)
     return jsonify(playlists_json), 200
@@ -216,15 +208,15 @@ def get_token():
       }
     """
     try:
-        data = request.get_json()
-        user_email = data.get("user_email")
-        if not user_email:
-            raise ValueError("user_email is required")
+        try:
+            payload = UserEmailRequest.parse_obj(request.get_json())
+        except ValidationError as ve:
+            return jsonify({"error": ve.errors()}), 400
     except Exception as e:
         logger.error("An internal error occurred: %s", e)
         return jsonify({"error": "An internal error occurred."}), 400
 
-    user_id = firebase_operations.get_user_id_by_email(user_email)
+    user_id = firebase_operations.get_user_id_by_email(payload.user_email)
 
     token = get_access_token_from_db(user_id, 1)[0]
     return jsonify({"token": token}), 200
@@ -270,16 +262,15 @@ def callback():
         # token_type = token_info.get("token_type")
 
         logger.info("Successfully obtained access token.")
-
-        user_id = firebase_operations.get_user_id_by_email(USER_EMAIL)
-
+        user_email = get_jwt_identity()
+        user_id = firebase_operations.get_user_id_by_email(user_email)
         firebase_operations.if_not_exists_insert_userlinkedapps(
             user_id, 1, access_token, refresh_token, scopes
         )
 
         return (
             render_template(
-                "spotify.html", success=True, user_id=get_email_username(USER_EMAIL)
+                "spotify.html", success=True, user_id=get_email_username(user_email)
             ),
             200,
         )

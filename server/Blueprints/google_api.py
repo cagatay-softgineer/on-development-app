@@ -29,7 +29,6 @@ def log_google_requests():
 
 
 @google_bp.route("/healthcheck", methods=["GET"])
-@requires_scope("google")
 def google_healthcheck():
     logger.info("Google Service healthcheck requested")
     return jsonify({"status": "ok", "service": "Google Service"}), 200
@@ -76,9 +75,11 @@ def google_api_bind():
           If any exception occurs during the process, logs the error, and returns a jsonify object with an error message and a 500 status code.
     """
     try:
-        user_email = request.args.get("user_email")
-        if not user_email:
-            return jsonify({"error": "Missing user_email parameter."}), 400
+        try:
+            payload = UserEmailRequest.parse_obj(request.get_json())
+        except ValidationError as ve:
+            return jsonify({"error": ve.errors()}), 400
+        user_email = payload.user_email
         # Store user_email in the session
         session["user_email"] = user_email
         flow = Flow.from_client_secrets_file(

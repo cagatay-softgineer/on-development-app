@@ -3,6 +3,7 @@ from flask_limiter import Limiter
 from flask_jwt_extended import jwt_required
 from flask_cors import CORS
 from flask_limiter.util import get_remote_address
+from pydantic import ValidationError
 
 # Ensure your settings include apple_developer_token
 from config.config import settings
@@ -13,6 +14,7 @@ from util.utils import (
     ms2FormattedDuration,
 )  # Utility to format milliseconds into human readable string
 from util.authlib import requires_scope
+from util.models import PlaylistItemsRequest, UserEmailRequest
 
 
 appleMusic_bp = Blueprint("appleMusic", __name__)
@@ -38,14 +40,10 @@ def get_albums():
         A JSON response containing the user's library albums or an error message.
     """
     try:
-        payload = request.get_json()
-    except Exception as e:
-        logger.error("Invalid JSON payload.: %s", e)
-        return jsonify({"error": "Invalid JSON payload."}), 400
-
-    user_email = payload.get("user_email")
-    if not user_email:
-        return jsonify({"error": "Missing user_email parameter."}), 400
+        payload = UserEmailRequest.parse_obj(request.get_json())
+    except ValidationError as ve:
+        return jsonify({"error": ve.errors()}), 400
+    user_email = payload.user_email
     # Your configured developer token
     developer_token = settings.apple_developer_token
     user_id = firebase_operations.get_user_id_by_email(user_email)
@@ -110,14 +108,10 @@ def get_playlists():
         A JSON response containing the user's library playlists with the added duration details.
     """
     try:
-        payload = request.get_json()
-    except Exception as e:
-        logger.error("Invalid JSON payload.: %s", e)
-        return jsonify({"error": "Invalid JSON payload."}), 400
-
-    user_email = payload.get("user_email")
-    if not user_email:
-        return jsonify({"error": "Missing user_email parameter."}), 400
+        payload = UserEmailRequest.parse_obj(request.get_json())
+    except ValidationError as ve:
+        return jsonify({"error": ve.errors()}), 400
+    user_email = payload.user_email
 
     # Your configured developer token
     developer_token = settings.apple_developer_token
@@ -229,7 +223,7 @@ def get_album_tracks(album_id):
 
     Expects a JSON payload:
         {
-            "user_token": "USER_APPLE_MUSIC_TOKEN"
+            "user_email": "USER_EMAIL"
         }
 
     Parameters:
@@ -239,14 +233,10 @@ def get_album_tracks(album_id):
         A JSON response containing the album's tracks or an error message.
     """
     try:
-        payload = request.get_json()
-    except Exception as e:
-        logger.error("Invalid JSON payload.: %s", e)
-        return jsonify({"error": "Invalid JSON payload."}), 400
-
-    user_email = payload.get("user_email")
-    if not user_email:
-        return jsonify({"error": "Missing user_email parameter."}), 400
+        payload = UserEmailRequest.parse_obj(request.get_json())
+    except ValidationError as ve:
+        return jsonify({"error": ve.errors()}), 400
+    user_email = payload.user_email
 
     developer_token = (
         settings.apple_developer_token
@@ -305,7 +295,7 @@ def playlist_duration():
 
     Expects a JSON payload:
         {
-            "user_token": "USER_APPLE_MUSIC_TOKEN",
+            "user_email": "USER_EMAIL",
             "playlist_id": "APPLE_MUSIC_PLAYLIST_ID"
         }
 
@@ -314,13 +304,12 @@ def playlist_duration():
         a formatted duration string, and the total number of tracks.
     """
     try:
-        payload = request.get_json()
-    except Exception as e:
-        logger.error("Invalid JSON payload.: %s", e)
-        return jsonify({"error": "Invalid JSON payload."}), 400
-
-    user_email = payload.get("user_id")
-    playlist_id = payload.get("playlist_id")
+        payload = PlaylistItemsRequest.parse_obj(request.get_json())
+    except ValidationError as ve:
+        return jsonify({"error": ve.errors()}), 400
+    user_email = payload.user_email
+    playlist_id = payload.playlist_id
+    
     if not user_email or not playlist_id:
         return jsonify(
             {"error": "Missing user_id or playlist_id parameter."}), 400

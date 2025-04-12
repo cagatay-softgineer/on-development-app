@@ -266,7 +266,7 @@ if (response.statusCode == 200) {
     final response = await _dio.post(
       endpoint,
       data: {
-        "user_id": userEmail,
+        "user_email": userEmail,
         "playlist_id": playlistId,
       },
     );
@@ -285,7 +285,7 @@ if (response.statusCode == 200) {
     try {
       final response = await _dio.post(
         "/youtube-music/fetch_first_video_id",
-        data: {"playlist_id": playlistId, "user_id": userId},
+        data: {"playlist_id": playlistId, "user_email": userId},
         options: Options(
         contentType: "application/json", // Sets "application/json"
         ),
@@ -352,7 +352,7 @@ if (response.statusCode == 200) {
         '${endpoint}',
         data: {
           "playlist_id": "$playlistId",
-          "user_id": "$userId"
+          "user_email": "$userId"
         },
         options: Options(sendTimeout: Duration(milliseconds: 20000),
         receiveTimeout: Duration(milliseconds: 60000),

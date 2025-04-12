@@ -15,7 +15,6 @@ def log_profile_requests():
 
 
 @profile_bp.route("/healthcheck", methods=["GET"])
-@requires_scope("me")
 def profile_healthcheck():
     logger.info("Profile Service healthcheck requested")
     return jsonify({"status": "ok", "service": "Profile Service"}), 200

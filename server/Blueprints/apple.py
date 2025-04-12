@@ -4,10 +4,13 @@ from flask_jwt_extended import jwt_required
 from flask_cors import CORS
 from flask_limiter.util import get_remote_address
 import secrets
+
+from pydantic import ValidationError
 from config.config import settings
 from util.logit import get_logger
 import database.firebase_operations as firebase_operations
 from util.authlib import requires_scope
+from util.models import UserEmailRequest
 
 apple_bp = Blueprint("apple", __name__)
 limiter = Limiter(key_func=get_remote_address)
@@ -30,6 +33,10 @@ USER_ID_GLOBAL = ""
 def generate_random_state(length=16):
     return secrets.token_hex(length)
 
+@apple_bp.route("/healthcheck", methods=["GET"])
+def apple_healthcheck():
+    logger.info("Apple Service healthcheck requested")
+    return jsonify({"status": "ok", "service": "Apple Service"}), 200
 
 @apple_bp.route("/login/<user_id>", methods=["GET"])
 @jwt_required()
@@ -92,13 +99,10 @@ def get_token():
     Returns the user token in JSON format.
     """
     try:
-        data = request.get_json()
-        user_email = data.get("user_email")
-        if not user_email:
-            raise ValueError("user_email is required")
-    except Exception as e:
-        logger.error("An internal error occurred: %s", e)
-        return jsonify({"error": "An internal error occurred."}), 400
+        payload = UserEmailRequest.parse_obj(request.get_json())
+    except ValidationError as ve:
+        return jsonify({"error": ve.errors()}), 400
+    user_email = payload.user_email
 
     user_id = firebase_operations.get_user_id_by_email(user_email)
     response = firebase_operations.get_userlinkedapps_tokens(user_id, 2)
@@ -118,13 +122,10 @@ def get_library():
     (You will need to implement fetch_user_library according to your application’s needs.)
     """
     try:
-        data = request.get_json()
-        user_email = data.get("user_email")
-        if not user_email:
-            raise ValueError("user_email is required")
-    except Exception as e:
-        logger.error("An internal error occurred: %s", e)
-        return jsonify({"error": "An internal error occurred."}), 400
+        payload = UserEmailRequest.parse_obj(request.get_json())
+    except ValidationError as ve:
+        return jsonify({"error": ve.errors()}), 400
+    user_email = payload.user_email
 
     user_id = firebase_operations.get_user_id_by_email(user_email)
     response = firebase_operations.get_userlinkedapps_tokens(user_id, 2)

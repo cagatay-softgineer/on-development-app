@@ -16,7 +16,6 @@ def log_lyrics_requests():
 
 
 @lyrics_bp.route("/healthcheck", methods=["GET"])
-@requires_scope("lyrics")
 def lyrics_healthcheck():
     logger.info("Lyrics Service healthcheck requested")
     return jsonify({"status": "ok", "service": "Lyrics Service"}), 200

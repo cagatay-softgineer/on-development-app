@@ -5,7 +5,7 @@ from flask_cors import CORS
 from flask_limiter.util import get_remote_address
 from util.spotify import get_current_user_profile
 from Blueprints.google_api import get_google_profile
-from util.models import LinkedAppRequest  # Import the model
+from util.models import LinkedAppRequest, UserEmailRequest  # Import the model
 from util.logit import get_logger
 from util.utils import get_email_username
 import database.firebase_operations as firebase_operations
@@ -31,7 +31,6 @@ def log_apps_requests():
 
 
 @apps_bp.route("/healthcheck", methods=["GET"])
-@requires_scope("apps")
 def apps_healthcheck():
     logger.info("Apps Service healthcheck requested")
     return jsonify({"status": "ok", "service": "Apps Service"}), 200
@@ -281,13 +280,10 @@ def get_all_apps_binding():
     }
     """
     try:
-        # Validate and extract the JSON payload
-        data = request.get_json()
-        user_email = data.get("user_email")
-        if not user_email:
-            return jsonify({"error": "User email is required."}), 400
-    except Exception:
-        return jsonify({"error": "Invalid JSON payload."}), 400
+        payload = UserEmailRequest.parse_obj(request.get_json())
+    except ValidationError as ve:
+        return jsonify({"error": ve.errors()}), 400
+    user_email = payload.user_email
 
     # Retrieve user ID using Firebase operations
     user_id = firebase_operations.get_user_id_by_email(user_email)

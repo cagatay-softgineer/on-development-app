@@ -11,8 +11,9 @@ import requests
 from pydantic import ValidationError
 import database.firebase_operations as firebase_operations
 from util.google import refresh_access_token_and_update_db_for_Google
-from util.models import PlaylistItemsRequest, UserEmailRequest
+from util.models import PlaylistItemsRequest
 from util.authlib import requires_scope
+from util.models import UserEmailRequest
 
 OAUTHLIB_INSECURE_TRANSPORT = 1
 
@@ -29,7 +30,6 @@ def log_youtube_music_requests():
 
 
 @youtubeMusic_bp.route("/healthcheck", methods=["GET"])
-@requires_scope("youtube")
 def youtube_music_healthcheck():
     logger.info("Youtube Music Service healthcheck requested")
     return jsonify({"status": "ok", "service": "Youtube Music Service"}), 200
@@ -81,8 +81,6 @@ def get_playlists():
         return jsonify({"error": ve.errors()}), 400
 
     user_email = payload.user_email
-    if not user_email:
-        return jsonify({"error": "Missing user_email parameter."}), 400
 
     playlist_count_limit = 2
 
@@ -246,15 +244,12 @@ def playlist_tracks():
     except ValidationError as ve:
         return jsonify({"error": ve.errors()}), 400
 
-    user_id = payload.user_id
+    user_email = payload.user_email
     playlist_id = payload.playlist_id
-    if not user_id or not playlist_id:
-        return jsonify(
-            {"error": "Missing user_email or playlist_id parameter."}), 400
 
     try:
         # Retrieve the user ID from Firebase based on the email
-        user_id = firebase_operations.get_user_id_by_email(user_id)
+        user_id = firebase_operations.get_user_id_by_email(user_email)
         if not user_id:
             return jsonify({"error": "User not found."}), 404
 
@@ -326,7 +321,7 @@ def get_playlist_duration():
     except ValidationError as ve:
         return jsonify({"error": ve.errors()}), 400
 
-    user_email = payload.user_id
+    user_email = payload.user_email
     playlist_id = payload.playlist_id
     if not user_email or not playlist_id:
         return jsonify(
@@ -403,8 +398,6 @@ def fetch_first_video_id():
 
     user_email = payload.user_email
     playlist_id = payload.playlist_id
-    if not user_email:
-        return jsonify({"error": "Missing user_email parameter."}), 400
 
     try:
         # Retrieve the user ID from Firebase based on the email

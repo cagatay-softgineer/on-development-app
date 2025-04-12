@@ -25,7 +25,6 @@ def log_spotify_micro_service_requests():  # noqa: F811
 
 
 @SpotifyMicroService_bp.route("/healthcheck", methods=["GET"])
-@requires_scope("spotify")
 def spotify_micro_service_healthcheck():
     gui.log("Spotify Micro Service healthcheck requested")
     logger.info("Spotify Micro Service healthcheck requested")
@@ -60,7 +59,7 @@ def get_playlist_duration_route():
     except ValidationError as ve:
         return jsonify({"error": ve.errors()}), 400
 
-    user_email = payload.user_id
+    user_email = payload.user_email
     playlist_id = payload.playlist_id
 
     try:

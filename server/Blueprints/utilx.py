@@ -1,7 +1,6 @@
-from flask import Blueprint, render_template, jsonify, request
+from flask import Blueprint, render_template, jsonify, request, current_app
 from util.logit import get_logger
 from util.error_handling import log_error
-import flask
 from util.utils import (
     route_descriptions,
     parse_logs_from_folder,
@@ -98,7 +97,7 @@ def logs_trend_chart():
         )  # Ensure timestamp is in datetime format
         df.set_index("timestamp", inplace=True)
         grouped = (
-            df.groupby([pd.Grouper(freq="1H"), "log_type"]
+            df.groupby([pd.Grouper(freq="1h"), "log_type"]
                        ).size().unstack(fill_value=0)
         )
 
@@ -140,38 +139,26 @@ def list_endpoints():
     This function lists all available endpoints in the Flask application.
     It supports optional filtering based on HTTP methods and keywords.
     The endpoints are paginated and can be returned in JSON or HTML format.
-
-    Returns:
-    JSON/HTML: A JSON response or an HTML page containing the list of endpoints,
-    along with metadata such as the total number of endpoints, the current page,
-    and the number of endpoints per page.
     """
-    # Collect and organize endpoints
     endpoints = []
-    for rule in util_bp.url_map.iter_rules():
-        if (
-            rule.endpoint.startswith("__") or rule.endpoint == "static"
-        ):  # Skip internal/static routes
+    # Use current_app.url_map instead of util_bp.url_map to fetch all endpoints.
+    for rule in current_app.url_map.iter_rules():
+        # Skip internal and static endpoints
+        if rule.endpoint.startswith("__") or rule.endpoint == "static":
             continue
-        endpoints.append(
-            {
-                "rule": str(rule),
-                "endpoint": rule.endpoint,
-                "methods": sorted(rule.methods),
-                # Dynamic segments like <username>
-                "arguments": list(rule.arguments),
-                "description": route_descriptions.get(
-                    str(rule), "No description available."
-                ),
-            }
-        )
+        endpoints.append({
+            "rule": str(rule),
+            "endpoint": rule.endpoint,
+            "methods": sorted(rule.methods),
+            "arguments": list(rule.arguments),
+            "description": route_descriptions.get(str(rule), "No description available.")
+        })
 
     # Apply optional filters from query parameters
     method_filter = request.args.get("method")
     keyword_filter = request.args.get("keyword")
     if method_filter:
-        endpoints = [e for e in endpoints if method_filter.upper()
-                     in e["methods"]]
+        endpoints = [e for e in endpoints if method_filter.upper() in e["methods"]]
     if keyword_filter:
         endpoints = [e for e in endpoints if keyword_filter in e["rule"]]
 
@@ -186,29 +173,20 @@ def list_endpoints():
     end = start + per_page
     paginated_endpoints = endpoints[start:end]
 
-    # Include environment details
     metadata = {
         "total_endpoints": total,
         "current_page": page,
         "per_page": per_page,
-        "flask_version": flask.__version__,
-        "debug": util_bp.debug,
+        "flask_version": current_app.config.get("FLASK_VERSION", "Unknown"),
+        "debug": current_app.debug,
     }
 
-    # Return format based on `Accept` header or query parameter
     output_format = request.args.get("format", "json").lower()
-    if output_format == "json" or "application/json" in request.headers.get(
-        "Accept", ""
-    ):
+    if output_format == "json" or "application/json" in request.headers.get("Accept", ""):
         return jsonify(metadata=metadata, endpoints=paginated_endpoints), 200
     elif output_format == "html":
-        return (
-            render_template(
-                "endpoint.html", metadata=metadata, endpoints=paginated_endpoints
-            ),
-            200,
-        )
-    else:  # Plain text fallback
+        return render_template("endpoint.html", metadata=metadata, endpoints=paginated_endpoints), 200
+    else:
         text_output = "Available Endpoints:\n"
         for e in paginated_endpoints:
             text_output += (
@@ -223,7 +201,6 @@ def list_endpoints():
 
 
 @util_bp.route("/healthcheck", methods=["POST", "GET"])
-@requires_scope("admin")
 def app_healthcheck():
     # gui.log("App healthcheck requested")
     logger.info("App healthcheck requested")

@@ -40,78 +40,80 @@ except Exception as e:
 check_log_folder()
 
 gui = CmdGUI()
+def create_app(testing=False):
+    app = Flask(__name__)
 
-app = Flask(__name__)
+    jwt = JWTManager(app)  # noqa: F841
+    limiter = Limiter(app)  # noqa: F841
+    
+    app.config["JWT_SECRET_KEY"] = settings.jwt_secret_key
+    app.config["SWAGGER_URL"] = "/api/docs"
+    app.config["API_URL"] = "/static/swagger.json"
+    app.config["SECRET_KEY"] = settings.SECRET_KEY
+    app.config["PREFERRED_URL_SCHEME"] = "https"
+    app.config["TESTING"] = testing
 
-app.config["JWT_SECRET_KEY"] = settings.jwt_secret_key
-app.config["SWAGGER_URL"] = "/api/docs"
-app.config["API_URL"] = "/static/swagger.json"
-app.config["SECRET_KEY"] = settings.SECRET_KEY
-app.config["PREFERRED_URL_SCHEME"] = "https"
+    CORS(app, resources={r"/*": {"origins": "*"}})
 
-jwt = JWTManager(app)
-limiter = Limiter(app)
-
-CORS(app, resources={r"/*": {"origins": "*"}})
-
-# Add logging to the root logger
-logger = get_logger("logs/service.log", "Service")
-
-
-# Middleware to log all requests
-def log_request():
-    """
-    Logs the incoming HTTP request.
-
-    This function logs the HTTP method and URL of the incoming request using the Flask's `request` object.
-    The log message is formatted as "Request received: <HTTP_METHOD> <REQUEST_URL>".
-
-    Parameters:
-    None
-
-    Returns:
-    None
-    """
-    logger.info(f"Request received: {request.method} {request.url}")
+    # Add logging to the root logger
+    logger = get_logger("logs/service.log", "Service")
 
 
-app.before_request(log_request)
+    # Middleware to log all requests
+    def log_request():
+        """
+        Logs the incoming HTTP request.
 
-# Swagger documentation setup
-swaggerui_blueprint = get_swaggerui_blueprint(
-    app.config["SWAGGER_URL"],
-    app.config["API_URL"],
-    config={"app_name": "Micro Service"},
-)
+        This function logs the HTTP method and URL of the incoming request using the Flask's `request` object.
+        The log message is formatted as "Request received: <HTTP_METHOD> <REQUEST_URL>".
 
-app.register_blueprint(auth_bp, url_prefix="/auth")
-app.register_blueprint(apps_bp, url_prefix="/apps")
-app.register_blueprint(spotify_bp, url_prefix="/spotify")
-app.register_blueprint(profile_bp, url_prefix="/profile")
-app.register_blueprint(
-    SpotifyMicroService_bp,
-    url_prefix="/spotify-micro-service")
-app.register_blueprint(lyrics_bp, url_prefix="/lyrics")
-app.register_blueprint(google_bp, url_prefix="/google")
-app.register_blueprint(youtubeMusic_bp, url_prefix="/youtube-music")
-app.register_blueprint(apple_bp, url_prefix="/apple")
-app.register_blueprint(appleMusic_bp, url_prefix="/apple-music")
-app.register_blueprint(
-    swaggerui_blueprint,
-    url_prefix=app.config["SWAGGER_URL"])
+        Parameters:
+        None
 
-app.register_blueprint(errors_bp, url_prefix="/")
-app.register_error_handler(400, bad_request)
-app.register_error_handler(401, unauthorized)
-app.register_error_handler(403, forbidden)
-app.register_error_handler(404, page_not_found)
-app.register_error_handler(405, method_not_allowed)
-app.register_error_handler(408, request_timeout)
-app.register_error_handler(429, too_many_requests)
-app.register_error_handler(500, internal_server_error)
+        Returns:
+        None
+        """
+        logger.info(f"Request received: {request.method} {request.url}")
 
-app.register_blueprint(util_bp, url_prefix="/")
 
+    app.before_request(log_request)
+
+    # Swagger documentation setup
+    swaggerui_blueprint = get_swaggerui_blueprint(
+        app.config["SWAGGER_URL"],
+        app.config["API_URL"],
+        config={"app_name": "Micro Service"},
+    )
+
+    app.register_blueprint(auth_bp, url_prefix="/auth")
+    app.register_blueprint(apps_bp, url_prefix="/apps")
+    app.register_blueprint(spotify_bp, url_prefix="/spotify")
+    app.register_blueprint(profile_bp, url_prefix="/profile")
+    app.register_blueprint(
+        SpotifyMicroService_bp,
+        url_prefix="/spotify-micro-service")
+    app.register_blueprint(lyrics_bp, url_prefix="/lyrics")
+    app.register_blueprint(google_bp, url_prefix="/google")
+    app.register_blueprint(youtubeMusic_bp, url_prefix="/youtube-music")
+    app.register_blueprint(apple_bp, url_prefix="/apple")
+    app.register_blueprint(appleMusic_bp, url_prefix="/apple-music")
+    app.register_blueprint(
+        swaggerui_blueprint,
+        url_prefix=app.config["SWAGGER_URL"])
+
+    app.register_blueprint(errors_bp, url_prefix="/")
+    app.register_error_handler(400, bad_request)
+    app.register_error_handler(401, unauthorized)
+    app.register_error_handler(403, forbidden)
+    app.register_error_handler(404, page_not_found)
+    app.register_error_handler(405, method_not_allowed)
+    app.register_error_handler(408, request_timeout)
+    app.register_error_handler(429, too_many_requests)
+    app.register_error_handler(500, internal_server_error)
+
+    app.register_blueprint(util_bp, url_prefix="/")
+    
+    return app
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Run Flask on a specific port.")
@@ -119,7 +121,7 @@ if __name__ == "__main__":
         "--port", type=int, default=8080, help="Port to run the Flask app."
     )
     args = parser.parse_args()
-
+    app = create_app()
     app.run(
         host="0.0.0.0", port=args.port, ssl_context=("keys/cert.pem", "keys/key.pem")
     )
