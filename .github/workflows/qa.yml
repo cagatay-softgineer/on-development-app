@@ -64,10 +64,10 @@ jobs:
           flake8 .
 
       # 7. Run tests
-      - name: Run Tests
+      - name: Run tests from repository root
         run: |
-          pip install pytest coverage
-          pytest --maxfail=1 --disable-warnings
+          export PYTHONPATH=${{ github.workspace }}/server
+          pytest --maxfail=1 --disable-warnings -q
 
       # 8. Generate a code coverage report
       - name: Generate Coverage Report
