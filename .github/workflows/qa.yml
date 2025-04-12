@@ -23,7 +23,7 @@ jobs:
 
       # 3. Cache pip dependencies
       - name: Cache pip
-        uses: actions/cache@v2
+        uses: actions/cache@v4.2.3
         with:
           path: ~/.cache/pip
           key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
