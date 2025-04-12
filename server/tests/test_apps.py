@@ -1,6 +1,5 @@
 # tests/test_apps.py
 
-
 import sys
 import os
 import pytest
@@ -9,6 +8,7 @@ from flask_jwt_extended import JWTManager, create_access_token
 # Prepend repository root so imports for 'server' and 'util' work correctly.
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from server import create_app  # Ensure your app factory is defined here
+
 
 @pytest.fixture
 def app():

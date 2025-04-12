@@ -6,6 +6,7 @@ import pytest
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from util.utils import ms2FormattedDuration, obfuscate
 
+
 def test_ms2FormattedDuration():
     # 0 ms => "00:00:00"
     assert ms2FormattedDuration(0) == "00:00:00"

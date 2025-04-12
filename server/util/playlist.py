@@ -75,9 +75,9 @@ def compute_schedule_for_pattern(
     l_count = pattern["l"]
 
     base_total = (
-        w_count * work_default
-        + s_count * short_break_default
-        + l_count * long_break_default
+        w_count * work_default +
+        s_count * short_break_default +
+        l_count * long_break_default
     )
     scaling = T / base_total
 

@@ -28,10 +28,10 @@ def iso_duration_to_milliseconds(iso_duration: str) -> int:
         # Handle isodate.Duration which may include years and months.
         # Approximate years and months to days.
         total_seconds = (
-            (duration.years * 365 * 24 * 3600 if duration.years else 0)
-            + (duration.months * 30 * 24 * 3600 if duration.months else 0)
-            + (duration.days * 24 * 3600 if duration.days else 0)
-            + (duration.tdelta.total_seconds() if duration.tdelta else 0)
+            (duration.years * 365 * 24 * 3600 if duration.years else 0) +
+            (duration.months * 30 * 24 * 3600 if duration.months else 0) +
+            (duration.days * 24 * 3600 if duration.days else 0) +
+            (duration.tdelta.total_seconds() if duration.tdelta else 0)
         )
         ms = int(total_seconds * 1000)
     return ms
