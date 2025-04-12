@@ -149,32 +149,56 @@ C4Container
 Below is a sample directory structure for the project: 
 
 ``` 
-/pomodro-backend/ 
-├── README.md 
-├── requirements.txt 
-├── config/ 
-│   └── config.py            # Environment and configuration variables 
-├── database/ 
-│   └── firebase_operations.py 
-├── Blueprints/ 
-│   ├── auth.py 
-│   ├── user_profile.py 
-│   ├── spotify.py 
-│   ├── apple.py 
-│   ├── google_api.py 
-│   ├── apps.py 
-│   ├── lyrics.py 
-│   ├── apple_music.py 
-│   ├── youtube_music.py 
-│   └── spotify_micro_service.py 
-├── util/ 
-│   ├── authlib.py 
-│   ├── logit.py 
-│   ├── utils.py 
-│   ├── error_handling.py 
-│   ├── google.py 
-│   └── models.py 
-└── app.py                   # Application entry point 
+server/
+├── Dockerfile
+├── requirements.txt
+├── run_on_waitress.py
+├── run_server.bat
+└── server.py
+| 
+├───Blueprints/
+│   ├── .env
+│   ├── apple.py
+│   ├── apple_music.py
+│   ├── apps.py
+│   ├── auth.py
+│   ├── error.py
+│   ├── google_api.py
+│   ├── lyrics.py
+│   ├── spotify.py
+│   ├── spotify_micro_service.py
+│   ├── user_profile.py
+│   ├── utilx.py
+│   └── youtube_music.py
+│
+├───config/
+│   └── config.py
+│
+├───database/
+│   └── firebase_operations.py
+|
+├───templates/
+│   ├── apple.html
+│   ├── apple_login.html
+│   ├── endpoint.html
+│   ├── error.html
+│   ├── google.html
+│   ├── index.html
+│   ├── log.html
+│   ├── plotly_chart.html
+│   └── spotify.html
+│
+└───util/
+    ├── authlib.py
+    ├── error_handling.py
+    ├── google.py
+    ├── logit.py
+    ├── models.py
+    ├── playlist.py
+    ├── spotify.py
+    ├── utils.py
+    └── youtube.py
+
 ``` 
 
 ## Setup & Installation 
@@ -182,7 +206,7 @@ Below is a sample directory structure for the project:
 1. **Clone the Repository:** 
 
    ```bash 
-   git clone https://github.com/your-username/pomodro-backend.git 
+   git clone https://github.com/cagatay-softgineer/SpotifySDK-Research.git 
    cd pomodro-backend 
    ``` 
 
