@@ -35,10 +35,10 @@ try:
 
     # from IPython.core.display import display  # This import may fail  # noqa: F401
 except Exception as e:
+    check_log_folder()
     log_error(e)  # Log the error
 
 check_log_folder()
-
 gui = CmdGUI()
 
 
