@@ -1,4 +1,5 @@
-from flask import Blueprint, request, jsonify, redirect, render_template, escape
+from flask import Blueprint, request, jsonify, redirect, render_template
+from markupsafe import escape
 from flask_jwt_extended import get_jwt_identity, jwt_required
 from flask_limiter import Limiter
 from flask_cors import CORS
@@ -45,6 +46,8 @@ CLIENT_SECRET = settings.spotify_client_secret
 REDIRECT_URI = settings.auth_redirect_uri
 
 # Function to generate random state
+
+
 def generate_random_state(length=16):
     return secrets.token_hex(length)
 

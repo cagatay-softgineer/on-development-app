@@ -33,10 +33,12 @@ USER_ID_GLOBAL = ""
 def generate_random_state(length=16):
     return secrets.token_hex(length)
 
+
 @apple_bp.route("/healthcheck", methods=["GET"])
 def apple_healthcheck():
     logger.info("Apple Service healthcheck requested")
     return jsonify({"status": "ok", "service": "Apple Service"}), 200
+
 
 @apple_bp.route("/login/<user_id>", methods=["GET"])
 @jwt_required()

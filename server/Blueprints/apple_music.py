@@ -309,7 +309,7 @@ def playlist_duration():
         return jsonify({"error": ve.errors()}), 400
     user_email = payload.user_email
     playlist_id = payload.playlist_id
-    
+
     if not user_email or not playlist_id:
         return jsonify(
             {"error": "Missing user_id or playlist_id parameter."}), 400

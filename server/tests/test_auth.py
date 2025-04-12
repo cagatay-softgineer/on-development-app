@@ -1,5 +1,7 @@
 # tests/test_auth.py
 
+import bcrypt
+from server import create_app  # Make sure your create_app() function is defined in server/__init__.py or server.py
 import sys
 import os
 import pytest
@@ -9,16 +11,16 @@ from flask_jwt_extended import JWTManager, create_access_token, create_refresh_t
 # Prepend the repository root so that imports for "server" and other modules work.
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from server import create_app  # Make sure your create_app() function is defined in server/__init__.py or server.py
-import bcrypt
 
 #########################################
 # Fake functions for Firebase simulation
 #########################################
 
+
 def fake_insert_user(email, password):
     # Simply simulate a successful insertion (do nothing)
     pass
+
 
 def fake_get_user_password_and_email(email):
     # Return a fake record with email as user_id and a bcrypt-hashed password.
@@ -32,6 +34,7 @@ def fake_get_user_password_and_email(email):
 # Application and Test Client Fixtures
 #########################################
 
+
 @pytest.fixture
 def app():
     """
@@ -42,6 +45,7 @@ def app():
     app.config["JWT_SECRET_KEY"] = "test-secret"
     JWTManager(app)
     return app
+
 
 @pytest.fixture
 def client(app):
@@ -56,10 +60,11 @@ def client(app):
 # Helper to Generate Auth Headers
 #########################################
 
+
 def get_auth_headers(app, scopes=None, refresh=False):
     """
     Generate an Authorization header containing a JWT token.
-    
+
     :param scopes: List of scopes to include in the token.
     :param refresh: If True, generate a refresh token instead.
     :return: Dictionary with the "Authorization" header.
@@ -82,6 +87,7 @@ def get_auth_headers(app, scopes=None, refresh=False):
 # Tests for Auth Blueprint Endpoints
 #########################################
 
+
 def test_auth_healthcheck(client):
     """
     Test the /auth/healthcheck endpoint.
@@ -100,10 +106,10 @@ def test_register_valid_payload(client, monkeypatch):
     Monkeypatch firebase_operations.insert_user to simulate successful insertion.
     """
     monkeypatch.setattr("database.firebase_operations.insert_user", fake_insert_user)
-    
+
     payload = {"email": "test@example.com", "password": "test123"}
     response = client.post("/auth/register", json=payload)
-    
+
     assert response.status_code == 201, "Expected 201 Created for valid registration"
     data = response.get_json()
     assert data["message"] == "User registered successfully"
@@ -126,10 +132,10 @@ def test_login_valid_credentials(client, monkeypatch):
     Monkeypatch firebase_operations.get_user_password_and_email to return a fake user record.
     """
     monkeypatch.setattr("database.firebase_operations.get_user_password_and_email", fake_get_user_password_and_email)
-    
+
     payload = {"email": "test@example.com", "password": "test123"}
     response = client.post("/auth/login", json=payload)
-    
+
     assert response.status_code == 200, "Expected 200 OK for valid login"
     data = response.get_json()
     assert "access_token" in data, "Expected an access token in the response"
@@ -143,10 +149,10 @@ def test_login_invalid_credentials(client, monkeypatch):
     Monkeypatch firebase_operations.get_user_password_and_email to return a fake record but use a wrong password.
     """
     monkeypatch.setattr("database.firebase_operations.get_user_password_and_email", fake_get_user_password_and_email)
-    
+
     payload = {"email": "test@example.com", "password": "wrongpassword"}
     response = client.post("/auth/login", json=payload)
-    
+
     assert response.status_code == 401, "Expected 401 Unauthorized for invalid credentials"
     data = response.get_json()
     assert "error" in data, "Expected an error message in the response"

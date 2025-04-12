@@ -1,5 +1,7 @@
 # tests/test_lyrics.py
 
+from flask_jwt_extended import JWTManager, create_access_token
+from server import create_app
 import sys
 import os
 import pytest
@@ -8,12 +10,11 @@ from datetime import timedelta
 # Prepend repository root so that "server" and other modules are importable.
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from server import create_app
-from flask_jwt_extended import JWTManager, create_access_token
 
 #############################################
 # Fixtures and Helper Functions
 #############################################
+
 
 @pytest.fixture
 def app():
@@ -26,6 +27,7 @@ def app():
     JWTManager(app)
     return app
 
+
 @pytest.fixture
 def client(app):
     """
@@ -35,11 +37,12 @@ def client(app):
         with app.app_context():
             yield client
 
+
 def get_auth_headers(app, scopes=None):
     """
     Helper function to generate Authorization headers containing a JWT token.
     The token will include the provided scopes.
-    
+
     :param scopes: List of scopes (default is ["lyrics"])
     :return: A dictionary with the Authorization header.
     """
@@ -56,6 +59,7 @@ def get_auth_headers(app, scopes=None):
 # Fake Response for Monkeypatching
 #############################################
 
+
 class FakeResponse:
     def __init__(self, json_data, status_code):
         self._json = json_data
@@ -67,6 +71,7 @@ class FakeResponse:
 #############################################
 # Tests for the Lyrics Blueprint
 #############################################
+
 
 def test_lyrics_healthcheck(client):
     """

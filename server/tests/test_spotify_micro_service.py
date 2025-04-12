@@ -1,3 +1,4 @@
+from server import create_app
 import sys
 import os
 import pytest
@@ -7,11 +8,11 @@ from flask_jwt_extended import JWTManager, create_access_token
 # Ensure repository root is in the Python path.
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from server import create_app
 
 #############################################
 # Fake Implementation for Testing
 #############################################
+
 
 def fake_calculate_playlist_duration(user_email, playlist_id):
     """
@@ -29,6 +30,7 @@ def fake_calculate_playlist_duration(user_email, playlist_id):
 # Fixtures
 #############################################
 
+
 @pytest.fixture
 def app():
     """
@@ -39,6 +41,7 @@ def app():
     app.config["JWT_SECRET_KEY"] = "test-secret"
     JWTManager(app)
     return app
+
 
 @pytest.fixture
 def client(app):
@@ -52,6 +55,7 @@ def client(app):
 #############################################
 # Helper Function for Authorization Headers
 #############################################
+
 
 def get_spotify_auth_headers(app, scopes=None):
     """
@@ -70,9 +74,10 @@ def get_spotify_auth_headers(app, scopes=None):
 # Tests
 #############################################
 
+
 def test_spotify_micro_service_healthcheck(client):
     """
-    Verify that the /spotify-micro-service/healthcheck endpoint returns a JSON 
+    Verify that the /spotify-micro-service/healthcheck endpoint returns a JSON
     response with status 'ok' and a service description including "Spotify Micro Service".
     """
     response = client.get("/spotify-micro-service/healthcheck")
@@ -81,6 +86,7 @@ def test_spotify_micro_service_healthcheck(client):
     assert data is not None, "Expected a JSON response"
     assert data.get("status") == "ok", "Expected status to be 'ok'"
     assert "Spotify Micro Service" in data.get("service", ""), "Expected service description to include 'Spotify Micro Service'"
+
 
 def test_playlist_duration_success(monkeypatch, client, app):
     """
@@ -91,7 +97,7 @@ def test_playlist_duration_success(monkeypatch, client, app):
     # Patch the calculate_playlist_duration function in the spotify_micro_service namespace.
     # Adjust the patch target below to match your actual module path.
     monkeypatch.setattr("Blueprints.spotify_micro_service.calculate_playlist_duration", fake_calculate_playlist_duration)
-    
+
     headers = get_spotify_auth_headers(app, scopes=["spotify"])
     payload = {
         "user_email": "test@example.com",  # This is used as the user identifier.
@@ -105,6 +111,7 @@ def test_playlist_duration_success(monkeypatch, client, app):
     assert data.get("formatted_duration") == "01:00:00", "Expected formatted duration '01:00:00'"
     assert data.get("total_track_count") == 10, "Expected total track count to be 10"
 
+
 def test_playlist_duration_invalid_payload(client, app):
     """
     Test the /playlist_duration endpoint with an invalid payload (e.g., missing required fields).
@@ -114,6 +121,7 @@ def test_playlist_duration_invalid_payload(client, app):
     response = client.post("/spotify-micro-service/playlist_duration", json={}, headers=headers)
     assert response.status_code == 400, "Expected 400 error for missing required fields in payload"
 
+
 def test_playlist_duration_exception(monkeypatch, client, app):
     """
     Test that if calculate_playlist_duration raises an exception, the endpoint returns a 500 error.
@@ -122,7 +130,7 @@ def test_playlist_duration_exception(monkeypatch, client, app):
         raise Exception("Simulated error")
 
     monkeypatch.setattr("Blueprints.spotify_micro_service.calculate_playlist_duration", fake_exception)
-    
+
     headers = get_spotify_auth_headers(app, scopes=["spotify"])
     payload = {"user_email": "test@example.com", "playlist_id": "error_playlist"}
     response = client.post("/spotify-micro-service/playlist_duration", json=payload, headers=headers)
@@ -133,6 +141,7 @@ def test_playlist_duration_exception(monkeypatch, client, app):
 #############################################
 # End of tests/test_spotify_micro_service.py
 #############################################
+
 
 if __name__ == "__main__":
     pytest.main()

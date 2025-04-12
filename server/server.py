@@ -40,12 +40,14 @@ except Exception as e:
 check_log_folder()
 
 gui = CmdGUI()
+
+
 def create_app(testing=False):
     app = Flask(__name__)
 
     jwt = JWTManager(app)  # noqa: F841
     limiter = Limiter(app)  # noqa: F841
-    
+
     app.config["JWT_SECRET_KEY"] = settings.jwt_secret_key
     app.config["SWAGGER_URL"] = "/api/docs"
     app.config["API_URL"] = "/static/swagger.json"
@@ -58,8 +60,8 @@ def create_app(testing=False):
     # Add logging to the root logger
     logger = get_logger("logs/service.log", "Service")
 
-
     # Middleware to log all requests
+
     def log_request():
         """
         Logs the incoming HTTP request.
@@ -74,7 +76,6 @@ def create_app(testing=False):
         None
         """
         logger.info(f"Request received: {request.method} {request.url}")
-
 
     app.before_request(log_request)
 
@@ -112,8 +113,10 @@ def create_app(testing=False):
     app.register_error_handler(500, internal_server_error)
 
     app.register_blueprint(util_bp, url_prefix="/")
-    
+
     return app
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Run Flask on a specific port.")

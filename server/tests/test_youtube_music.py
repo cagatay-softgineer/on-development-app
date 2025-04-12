@@ -1,3 +1,5 @@
+from flask_jwt_extended import JWTManager, create_access_token
+from server import create_app
 import os
 import sys
 import pytest
@@ -6,24 +8,26 @@ from datetime import timedelta
 # Ensure repository root is in sys.path so that modules can be imported.
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from server import create_app
-from flask_jwt_extended import JWTManager, create_access_token
 
 #############################################
 # Fake Implementations for Monkeypatching
 #############################################
 
+
 def fake_get_user_id_by_email(email):
     """Return a fake user ID for testing."""
     return "fake_user_id"
+
 
 def fake_get_userlinkedapps_access_refresh(user_id, app_id):
     """Return a fake token dictionary with both access and refresh tokens."""
     return [{"access_token": ["fake_youtube_access_token"], "refresh_token": "fake_youtube_refresh_token"}]
 
+
 def fake_refresh_access_token_and_update_db_for_Google(user_id, refresh_token):
     """Return a fake list with a new access token to simulate a successful token refresh."""
     return ["fake_youtube_access_token"]
+
 
 def fake_playlist_items(access_token, playlist_id):
     """
@@ -33,14 +37,17 @@ def fake_playlist_items(access_token, playlist_id):
     """
     return (["fake_track1", "fake_track2"], 7200000, 2)
 
+
 class FakeResponse:
     """A fake response object simulating requests.Response."""
+
     def __init__(self, json_data, status_code):
         self._json = json_data
         self.status_code = status_code
 
     def json(self):
         return self._json
+
 
 def fake_requests_get_success(url, headers=None, params=None):
     """
@@ -90,6 +97,7 @@ def fake_requests_get_success(url, headers=None, params=None):
 # Fixtures and Helper Functions
 #############################################
 
+
 @pytest.fixture
 def app():
     """
@@ -101,6 +109,7 @@ def app():
     JWTManager(app)
     return app
 
+
 @pytest.fixture
 def client(app):
     """
@@ -109,6 +118,7 @@ def client(app):
     with app.test_client() as client:
         with app.app_context():
             yield client
+
 
 def get_youtube_auth_headers(app, scopes=None):
     """
@@ -128,12 +138,14 @@ def get_youtube_auth_headers(app, scopes=None):
 # Tests for YouTube Music Blueprint Endpoints
 #############################################
 
+
 def test_youtube_music_healthcheck(client):
     response = client.get("/youtube-music/healthcheck")
     assert response.status_code == 200, "Expected 200 OK for healthcheck endpoint"
     data = response.get_json()
     assert data.get("status") == "ok", "Expected status to be 'ok'"
     assert "Youtube Music Service" in data.get("service", ""), "Expected service description to include 'Youtube Music Service'"
+
 
 def test_youtube_playlists(monkeypatch, client, app):
 
@@ -155,6 +167,7 @@ def test_youtube_playlists(monkeypatch, client, app):
     assert len(items) >= 1, "Expected at least one playlist in the response"
     assert any(item.get("id") == "playlist1" for item in items), "Expected fake playlist 'playlist1' in response"
 
+
 def test_fetch_first_video_id(monkeypatch, client, app):
 
     monkeypatch.setattr("database.firebase_operations.get_user_id_by_email", fake_get_user_id_by_email)
@@ -170,6 +183,7 @@ def test_fetch_first_video_id(monkeypatch, client, app):
     data = response.get_json()
     assert "videoId" in data, "Expected videoId in response"
     assert data["videoId"] == "fake_video_id", "Expected fake_video_id to be returned"
+
 
 def test_playlist_duration_endpoint(monkeypatch, client, app):
 
@@ -192,6 +206,7 @@ def test_playlist_duration_endpoint(monkeypatch, client, app):
 #############################################
 # End of tests/test_youtube_music.py
 #############################################
+
 
 if __name__ == "__main__":
     pytest.main()

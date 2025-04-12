@@ -1,5 +1,6 @@
 # tests/test_endpoints.py
 
+from server import create_app
 import sys
 import os
 import pytest
@@ -8,11 +9,11 @@ from flask_jwt_extended import JWTManager, create_access_token
 # Prepend repository root so that "server" and "util" modules are importable.
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from server import create_app
 
 ############################################
 # Fixtures and helper functions
 ############################################
+
 
 @pytest.fixture
 def app():
@@ -25,6 +26,7 @@ def app():
     JWTManager(app)
     return app
 
+
 @pytest.fixture
 def client(app):
     """
@@ -33,6 +35,7 @@ def client(app):
     with app.test_client() as client:
         with app.app_context():
             yield client
+
 
 def get_admin_auth_headers(app):
     """
@@ -47,6 +50,7 @@ def get_admin_auth_headers(app):
 ############################################
 # Tests for Endpoints (Util Blueprint)
 ############################################
+
 
 def test_app_healthcheck(client):
     """
@@ -83,10 +87,10 @@ def test_visualize_logs_with_auth(monkeypatch, client, app):
         {"filename": "app.log", "timestamp": "2023-01-01 12:00:00,000", "log_type": "INFO", "message": "Test log 1"},
         {"filename": "app.log", "timestamp": "2023-01-01 13:00:00,000", "log_type": "ERROR", "message": "Test log 2"},
     ]
-    
+
     # Monkeypatch the parse_logs_from_folder function in utilx module to return fake logs.
     monkeypatch.setattr("util.utils.parse_logs_from_folder", lambda folder: fake_logs)
-    
+
     headers = get_admin_auth_headers(app)
     response = client.get("/logs", headers=headers, query_string={"page": "1", "per_page": "1"})
     # Since this endpoint renders a template, we can check for status 200 and HTML content.
@@ -109,7 +113,7 @@ def test_logs_trend_chart(client, app, monkeypatch):
         "log_type": ["INFO", "ERROR"]
     })
     monkeypatch.setattr("util.utils.parse_logs_to_dataframe", lambda folder: fake_data)
-    
+
     headers = get_admin_auth_headers(app)
     response = client.get("/logs/trend", headers=headers)
     # Endpoint should return a rendered template (200 status); check for HTML markers.
@@ -124,12 +128,12 @@ def test_list_endpoints_json(client, app, monkeypatch):
     """
     # Monkeypatching route_descriptions dictionary to include a fake description.
     monkeypatch.setattr("util.utils.route_descriptions", {"/fake": "Fake route for testing"})
-    
+
     headers = get_admin_auth_headers(app)
     # Simulate a GET request with query parameters: format=json
     response = client.get("/endpoints", headers=headers, query_string={"format": "json"})
     assert response.status_code == 200, "Expected 200 for endpoints listing"
-    
+
     data = response.get_json()
     # Check that metadata and endpoints keys are present
     assert "metadata" in data, "Expected 'metadata' in JSON response"
@@ -140,6 +144,7 @@ def test_list_endpoints_json(client, app, monkeypatch):
 ############################################
 # End of test_endpoints.py
 ############################################
+
 
 if __name__ == "__main__":
     pytest.main()

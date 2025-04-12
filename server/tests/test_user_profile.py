@@ -1,3 +1,4 @@
+from server import create_app
 import sys
 import os
 import pytest
@@ -7,15 +8,16 @@ from flask_jwt_extended import JWTManager, create_access_token
 # Prepend repository root so that "server" and other modules are importable.
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from server import create_app
 
 #############################################
 # Fake Functions for Firebase Operations
 #############################################
 
+
 def fake_get_user_id_by_email(email):
     """Fake function that always returns a test user ID."""
     return "fake_user_id"
+
 
 def fake_get_user_profile(user_id):
     """
@@ -30,6 +32,7 @@ def fake_get_user_profile(user_id):
         "bio": "Test bio, Halay"
     }]
 
+
 def fake_get_user_profile_empty(user_id):
     """Fake function that simulates no profile found, returning an empty list."""
     return [[]]
@@ -37,6 +40,7 @@ def fake_get_user_profile_empty(user_id):
 #############################################
 # Fixtures and Helper Functions
 #############################################
+
 
 @pytest.fixture
 def app():
@@ -49,6 +53,7 @@ def app():
     JWTManager(app)
     return app
 
+
 @pytest.fixture
 def client(app):
     """
@@ -57,6 +62,7 @@ def client(app):
     with app.test_client() as client:
         with app.app_context():
             yield client
+
 
 def get_me_auth_headers(app, scopes=None):
     """
@@ -76,6 +82,7 @@ def get_me_auth_headers(app, scopes=None):
 # Tests for Profile Endpoints
 #############################################
 
+
 def test_profile_healthcheck(client):
     """
     Test the public /profile/healthcheck endpoint.
@@ -87,6 +94,7 @@ def test_profile_healthcheck(client):
     assert data is not None, "Expected JSON response"
     assert data.get("status") == "ok", "Expected healthcheck status 'ok'"
     assert "Profile Service" in data.get("service", ""), "Expected 'Profile Service' in service description"
+
 
 def test_view_profile_success(monkeypatch, client, app):
     """
@@ -110,6 +118,7 @@ def test_view_profile_success(monkeypatch, client, app):
     assert "http" in data.get("avatar_url", ""), "Expected valid avatar_url"
     assert data.get("bio") == "Test bio, Halay", "Expected bio to match"
 
+
 def test_view_profile_not_found(monkeypatch, client, app):
     """
     Test the /profile/view endpoint when no user profile is found.
@@ -118,7 +127,7 @@ def test_view_profile_not_found(monkeypatch, client, app):
     """
     monkeypatch.setattr("database.firebase_operations.get_user_id_by_email", fake_get_user_id_by_email)
     monkeypatch.setattr("database.firebase_operations.get_user_profile", fake_get_user_profile_empty)
-    
+
     headers = get_me_auth_headers(app, scopes=["me"])
     response = client.get("/profile/view", headers=headers)
     # Expect a 404 when the returned profile list is empty (or its first element is empty).
@@ -129,6 +138,7 @@ def test_view_profile_not_found(monkeypatch, client, app):
 #############################################
 # End of tests/test_profile.py
 #############################################
+
 
 if __name__ == "__main__":
     pytest.main()
