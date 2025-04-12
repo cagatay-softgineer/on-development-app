@@ -9,7 +9,9 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-
+    defaults:
+      run:
+        working-directory: server
     steps:
       # 1. Checkout the repository
       - name: Checkout Repository
