@@ -6,7 +6,7 @@ from util.authlib import requires_scope
 util_bp = Blueprint("util", __name__)
 logger = get_logger("logs", "App Utils")
 
-# REMOVE ON PRODUCTION
+
 @util_bp.route("/endpoints")
 @requires_scope("admin")
 def list_endpoints():
@@ -69,10 +69,6 @@ def list_endpoints():
                 f"Args: {', '.join(e['arguments'])}, Description: {e['description']})\n"
             )
         return text_output, 200, {"Content-Type": "text/plain"}
-
-
-# ^^^^^^^^^^^^^^^^^^^^
-# REMOVE ON PRODUCTION
 
 
 @util_bp.route("/healthcheck", methods=["POST", "GET"])
