@@ -2,9 +2,6 @@ from util.logit import check_log_folder
 from util.utils import load_JSONs
 from config.config import settings
 
-check_log_folder()
-load_JSONs()
-
 try:
     # Code that may trigger the error
     from util.error_handling import log_error
@@ -47,7 +44,7 @@ gui = CmdGUI()
 
 
 def create_app(testing=False):
-    
+
     check_log_folder()
     load_JSONs()
 
