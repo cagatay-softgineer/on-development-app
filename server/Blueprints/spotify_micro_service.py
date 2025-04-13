@@ -13,7 +13,7 @@ from util.authlib import requires_scope
 # Initialize CmdGUI for visual feedback
 gui = CmdGUI()
 
-logger = get_logger("logs/spotify_micro_service.log", "SpotifyMicroService")
+logger = get_logger("logs", "SpotifyMicroService")
 
 # Define the Blueprint
 SpotifyMicroService_bp = Blueprint("api", __name__)

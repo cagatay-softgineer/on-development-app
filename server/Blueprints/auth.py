@@ -23,7 +23,7 @@ limiter = Limiter(key_func=get_remote_address)
 # Enable CORS for all routes in this blueprint
 CORS(auth_bp, resources={r"/*": {"origins": "*"}})
 
-logger = get_logger("logs/auth.log", "Auth")
+logger = get_logger("logs", "Auth")
 
 
 # Add /healthcheck to each blueprint

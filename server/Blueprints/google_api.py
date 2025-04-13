@@ -19,7 +19,7 @@ google_bp = Blueprint("google", __name__)
 limiter = Limiter(key_func=get_remote_address)
 CORS(google_bp, resources={r"/*": {"origins": "*"}})
 
-logger = get_logger("logs/google_bp.log", "Google")
+logger = get_logger("logs", "Google")
 
 
 @google_bp.before_request

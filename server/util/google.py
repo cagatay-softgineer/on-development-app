@@ -3,7 +3,7 @@ from config.config import settings
 from util.logit import get_logger
 import database.firebase_operations as firebase_operations
 
-logger = get_logger("logs/google_utils.log", "GoogleUtils")
+logger = get_logger("logs", "GoogleUtils")
 
 
 def get_current_user_profile_google(

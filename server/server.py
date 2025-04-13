@@ -66,7 +66,7 @@ def create_app(testing=False):
     CORS(app, resources={r"/*": {"origins": "*"}})
 
     # Add logging to the root logger
-    logger = get_logger("logs/service.log", "Service")
+    logger = get_logger("logs", "Service")
 
     # Middleware to log all requests
 

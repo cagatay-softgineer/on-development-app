@@ -6,7 +6,7 @@ import os
 # Initialize CmdGUI for visual feedback
 gui = CmdGUI()
 
-logger = get_logger("logs/error.log", "Error")
+logger = get_logger("logs", "Error")
 
 
 def log_error(e):

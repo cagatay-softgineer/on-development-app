@@ -6,7 +6,7 @@ import isodate
 from util.logit import get_logger
 from config.config import settings
 
-logger = get_logger("logs/youtube_utils.log", "YoutubeUtils")
+logger = get_logger("logs", "YoutubeUtils")
 playlist_cache = {}
 CACHE_DURATION = 3600  # Cache duration in seconds (1 hour)
 

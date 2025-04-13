@@ -14,7 +14,7 @@ OAUTHLIB_INSECURE_TRANSPORT = 1
 gui = CmdGUI()
 
 # Logging setup
-logger = get_logger("logs/utils.log", "Utils")
+logger = get_logger("logs", "Utils")
 
 
 def obfuscate(column_name: str) -> str:

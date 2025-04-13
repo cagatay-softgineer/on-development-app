@@ -6,7 +6,7 @@ from util.error_handling import log_error
 
 errors_bp = Blueprint("errors", __name__)
 CORS(errors_bp, resources={r"/*": {"origins": "*"}})
-logger = get_logger("logs/app_errors.log", "App Errors")
+logger = get_logger("logs", "AppErrors")
 
 error_counts = {400: 0, 401: 0, 403: 0, 404: 0, 405: 0, 408: 0, 429: 0, 500: 0}
 

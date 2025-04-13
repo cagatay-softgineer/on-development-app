@@ -7,7 +7,7 @@ from util.authlib import requires_scope
 
 lyrics_bp = Blueprint("lyrics", __name__, url_prefix="/lyrics")
 
-logger = get_logger("logs/lyrics.log", "MakroMusicService")
+logger = get_logger("logs", "MakroMusicService")
 
 
 @lyrics_bp.before_request

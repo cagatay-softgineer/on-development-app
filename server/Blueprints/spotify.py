@@ -26,7 +26,7 @@ limiter = Limiter(key_func=get_remote_address)
 # Enable CORS for all routes in this blueprint
 CORS(spotify_bp, resources={r"/*": {"origins": "*"}})
 
-logger = get_logger("logs/spotify_api.log", "Spotify API")
+logger = get_logger("logs", "Spotify API")
 
 
 @spotify_bp.before_request

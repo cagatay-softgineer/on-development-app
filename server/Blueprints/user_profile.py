@@ -6,7 +6,7 @@ from util.authlib import requires_scope
 
 profile_bp = Blueprint("profile", __name__)
 
-logger = get_logger("logs/profile.log", "Profile")
+logger = get_logger("logs", "Profile")
 
 
 @profile_bp.before_request

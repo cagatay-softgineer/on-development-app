@@ -21,7 +21,7 @@ youtubeMusic_bp = Blueprint("youtubeMusic", __name__)
 limiter = Limiter(key_func=get_remote_address)
 CORS(youtubeMusic_bp, resources={r"/*": {"origins": "*"}})
 
-logger = get_logger("logs/youtube_music.log", "YoutubeMusic")
+logger = get_logger("logs", "YoutubeMusic")
 
 
 @youtubeMusic_bp.before_request

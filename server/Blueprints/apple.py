@@ -18,7 +18,7 @@ limiter = Limiter(key_func=get_remote_address)
 # Enable CORS for all routes in this blueprint
 CORS(apple_bp, resources={r"/*": {"origins": "*"}})
 
-logger = get_logger("logs/apple_api.log", "Apple Music API")
+logger = get_logger("logs", "AppleMusicAPI")
 
 # Load environment variables
 # DEVELOPER_TOKEN is generated on your server (via JWT, etc.) and used by

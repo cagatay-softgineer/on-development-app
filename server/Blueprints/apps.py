@@ -22,7 +22,7 @@ GOOGLE_CLIENT_SECRETS_FILE = settings.google_client_secret
 # Enable CORS for all routes in this blueprint
 CORS(apps_bp, resources={r"/*": {"origins": "*"}})
 
-logger = get_logger("logs/app_link.log", "Apps")
+logger = get_logger("logs", "Apps")
 
 
 @apps_bp.before_request

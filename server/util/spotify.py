@@ -12,7 +12,7 @@ import database.firebase_operations as firebase_operations
 gui = CmdGUI()
 
 # Logging setup
-logger = get_logger("logs/spotify_util.log", "SpotifyUtils")
+logger = get_logger("logs", "SpotifyUtils")
 
 SPOTIFY_CLIENT_ID = settings.spotify_client_id
 SPOTIFY_CLIENT_SECRET = settings.spotify_client_secret

@@ -13,7 +13,7 @@ from plotly.utils import PlotlyJSONEncoder
 from util.authlib import requires_scope
 
 util_bp = Blueprint("util", __name__)
-logger = get_logger("logs/app_util.log", "App Utils")
+logger = get_logger("logs", "App Utils")
 
 # REMOVE ON PRODUCTION
 
