@@ -33,7 +33,7 @@ def obfuscate(column_name: str) -> str:
     return f"{hash_value[:12].upper()}"
 
 
-def get_email_username(email: str) -> str | None:
+def get_email_username(email: str) -> str:
     """
     Extracts and returns the part of an email address before the '@' symbol.
 
@@ -94,7 +94,7 @@ def ms2FormattedDuration(total_duration_ms: int) -> str:
     return formatted_duration
 
 
-def parse_logs_from_folder(folder_path: str) -> list[dict] | None:
+def parse_logs_from_folder(folder_path: str) -> list[dict]:
     """
     Parses log files from a specified folder and returns a list of parsed log data.
 
@@ -102,7 +102,7 @@ def parse_logs_from_folder(folder_path: str) -> list[dict] | None:
     folder_path (str): The path to the folder containing log files.
 
     Returns:
-    list[dict] | None: A list of dictionaries, where each dictionary represents a parsed log.
+    list[dict]: A list of dictionaries, where each dictionary represents a parsed log.
     If the folder does not exist or contains no log files, returns None.
 
     Each dictionary in the list contains the following keys:

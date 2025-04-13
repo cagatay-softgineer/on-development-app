@@ -8,7 +8,7 @@ logger = get_logger("logs", "GoogleUtils")
 
 def get_current_user_profile_google(
     access_token: str, user_id: int | str
-) -> dict | None:
+) -> dict:
     """
     Fetches the Google user profile using the provided access token.
     If the token is expired (HTTP 401), refreshes the token and retries.
@@ -18,7 +18,7 @@ def get_current_user_profile_google(
     user_id (int | str): The unique identifier of the user.
 
     Returns:
-    dict | None: The user profile information if the request is successful, None otherwise.
+    dict: The user profile information if the request is successful, None otherwise.
     """
     url = "https://www.googleapis.com/oauth2/v1/userinfo"
     headers = {"Authorization": f"Bearer {access_token}"}

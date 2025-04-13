@@ -268,8 +268,8 @@ def fetch_user_playlists(user_id, app_id):
 def calculate_playlist_duration(
     user_email: str,
     playlist_id: str,
-    access_token: str | None = None,
-    refresh_token: str | None = None,
+    access_token: str = None,
+    refresh_token: str = None,
 ) -> dict:
     """
     Calculates and returns the playlist duration and track count for a given Spotify playlist.
@@ -277,8 +277,8 @@ def calculate_playlist_duration(
     Parameters:
       user_email (str): The user's email.
       playlist_id (str): The Spotify playlist ID.
-      access_token (str | None): The access token (optional). If None, it will be retrieved.
-      refresh_token (str | None): The refresh token (optional).
+      access_token (str): The access token (optional). If None, it will be retrieved.
+      refresh_token (str): The refresh token (optional).
 
     Returns:
       dict: A dictionary containing playlist_id, total_duration_ms, formatted_duration, and total_track_count.
