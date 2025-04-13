@@ -97,7 +97,12 @@ jobs:
           coverage report
           coverage xml
 
-      # 9. Upload the coverage report as an artifact
+      # 9. List files for debugging to ensure coverage.xml exists
+      - name: List files for debug
+        run: |
+          find . -type f
+
+      # 10. Upload the coverage report as an artifact
       - name: Upload Coverage Report
         uses: actions/upload-artifact@v4.6.2
         with:
