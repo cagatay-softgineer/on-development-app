@@ -40,7 +40,7 @@ def create_app(testing=False):
 
     check_log_folder()
     load_JSONs()
-    
+
     app = Flask(__name__)
 
     jwt = JWTManager(app)  # noqa: F841
