@@ -55,7 +55,7 @@ GOOGLE_SCOPES = [
 # Path to your downloaded client secrets file
 current_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 cert_path = os.path.join(current_dir, "keys/client_secret_test.json")
-print(cert_path)
+
 GOOGLE_CLIENT_SECRETS_FILE = cert_path
 # Make sure to set a secret key for Flask session management in your app
 # configuration
