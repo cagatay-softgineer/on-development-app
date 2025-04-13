@@ -63,6 +63,7 @@ def visualize_logs():
         filename_filter=filename_filter,
     )
 
+
 @util_bp.route("/endpoints")
 @requires_scope("admin")
 def list_endpoints():
