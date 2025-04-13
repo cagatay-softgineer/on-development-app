@@ -7,7 +7,7 @@ logger = get_logger("logs", "GoogleUtils")
 
 
 def get_current_user_profile_google(
-    access_token: str, user_id: int | str
+    access_token: str, user_id
 ) -> dict:
     """
     Fetches the Google user profile using the provided access token.
@@ -15,7 +15,7 @@ def get_current_user_profile_google(
 
     Parameters:
     access_token (str): The access token used to authenticate the request.
-    user_id (int | str): The unique identifier of the user.
+    user_id : The unique identifier of the user.
 
     Returns:
     dict: The user profile information if the request is successful, None otherwise.
@@ -53,7 +53,7 @@ def refresh_access_token_and_update_db_for_Google(user_id, refresh_token):
     Refreshes the Google access token using the provided refresh token and updates the database with the new tokens.
 
     Parameters:
-    user_id (int | str): The unique identifier of the user.
+    user_id : The unique identifier of the user.
     refresh_token (str): The refresh token used to obtain a new access token.
 
     Returns:
