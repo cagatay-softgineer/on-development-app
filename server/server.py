@@ -1,6 +1,7 @@
 import util.setup  # noqa: F401
 from config.config import settings
 from flask import Flask, request
+from flask_talisman import Talisman
 from flask_jwt_extended import JWTManager
 from flask_limiter import Limiter
 from flask_swagger_ui import get_swaggerui_blueprint
@@ -38,6 +39,12 @@ gui = CmdGUI()
 def create_app(testing=False):
 
     app = Flask(__name__)
+    
+    Talisman(app, strict_transport_security=True,
+         strict_transport_security_max_age=31536000,
+         strict_transport_security_include_subdomains=True,
+         strict_transport_security_preload=True,
+         content_security_policy=None)
 
     jwt = JWTManager(app)  # noqa: F841
     limiter = Limiter(app)  # noqa: F841
@@ -49,7 +56,12 @@ def create_app(testing=False):
     app.config["PREFERRED_URL_SCHEME"] = "https"
     app.config["TESTING"] = testing
 
-    CORS(app, resources={r"/*": {"origins": "*"}})
+    CORS(app, resources={r"/*": {
+            "origins": [
+                "https://api-sync-branch.yggbranch.dev",
+                "http://python-hello-world-911611650068.europe-west3.run.app"
+            ]
+        }})
 
     # Add logging to the root logger
     logger = get_logger("logs", "Service")

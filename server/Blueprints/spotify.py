@@ -24,7 +24,12 @@ spotify_bp = Blueprint("spotify", __name__)
 limiter = Limiter(key_func=get_remote_address)
 
 # Enable CORS for all routes in this blueprint
-CORS(spotify_bp, resources={r"/*": {"origins": "*"}})
+CORS(spotify_bp, resources={r"/*": {
+        "origins": [
+            "https://api-sync-branch.yggbranch.dev",
+            "http://python-hello-world-911611650068.europe-west3.run.app"
+        ]
+    }})
 
 logger = get_logger("logs", "SpotifyAPI")
 

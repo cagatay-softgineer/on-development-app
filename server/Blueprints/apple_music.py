@@ -19,7 +19,12 @@ from util.models import PlaylistItemsRequest, UserEmailRequest
 
 appleMusic_bp = Blueprint("appleMusic", __name__)
 limiter = Limiter(key_func=get_remote_address)
-CORS(appleMusic_bp, resources={r"/*": {"origins": "*"}})
+CORS(appleMusic_bp, resources={r"/*": {
+        "origins": [
+            "https://api-sync-branch.yggbranch.dev",
+            "http://python-hello-world-911611650068.europe-west3.run.app"
+        ]
+    }})
 
 logger = logging.getLogger("logs/apple_music.log")
 

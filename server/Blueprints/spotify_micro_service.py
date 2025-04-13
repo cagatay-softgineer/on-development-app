@@ -1,4 +1,5 @@
 from flask import Blueprint, request, jsonify
+from flask_cors import CORS
 from flask_jwt_extended import jwt_required
 from util.spotify import calculate_playlist_duration
 from util.error_handling import log_error
@@ -17,6 +18,12 @@ logger = get_logger("logs", "SpotifyMicroService")
 
 # Define the Blueprint
 SpotifyMicroService_bp = Blueprint("api", __name__)
+CORS(SpotifyMicroService_bp, resources={r"/*": {
+        "origins": [
+            "https://api-sync-branch.yggbranch.dev",
+            "http://python-hello-world-911611650068.europe-west3.run.app"
+        ]
+    }})
 
 
 @SpotifyMicroService_bp.before_request

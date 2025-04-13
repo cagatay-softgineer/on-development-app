@@ -20,7 +20,12 @@ OAUTHLIB_INSECURE_TRANSPORT = 1
 GOOGLE_CLIENT_SECRETS_FILE = settings.google_client_secret
 
 # Enable CORS for all routes in this blueprint
-CORS(apps_bp, resources={r"/*": {"origins": "*"}})
+CORS(apps_bp, resources={r"/*": {
+        "origins": [
+            "https://api-sync-branch.yggbranch.dev",
+            "http://python-hello-world-911611650068.europe-west3.run.app"
+        ]
+    }})
 
 logger = get_logger("logs", "Apps")
 
