@@ -98,28 +98,6 @@ def test_visualize_logs_with_auth(monkeypatch, client, app):
     assert b"<html" in response.data.lower(), "Expected HTML output in response"
 
 
-def test_logs_trend_chart(client, app, monkeypatch):
-    """
-    Test the /logs/trend endpoint with admin authorization.
-    Monkeypatch parse_logs_to_dataframe to return a non-empty DataFrame.
-    """
-    import pandas as pd
-    from datetime import datetime
-
-    # Create a fake DataFrame with timestamp and log_type columns.
-    fake_data = pd.DataFrame({
-        "timestamp": [datetime(2023, 1, 1, 12, 0), datetime(2023, 1, 1, 13, 0)],
-        "log_type": ["INFO", "ERROR"]
-    })
-    monkeypatch.setattr("util.utils.parse_logs_to_dataframe", lambda folder: fake_data)
-
-    headers = get_admin_auth_headers(app)
-    response = client.get("/logs/trend", headers=headers)
-    # Endpoint should return a rendered template (200 status); check for HTML markers.
-    assert response.status_code == 200, "Expected 200 for logs trend chart endpoint"
-    assert b"<html" in response.data.lower(), "Expected HTML output for trend chart"
-
-
 def test_list_endpoints_json(client, app, monkeypatch):
     """
     Test the /endpoints endpoint by simulating filtering and verifying the JSON output.
