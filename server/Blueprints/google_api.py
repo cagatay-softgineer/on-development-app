@@ -1,3 +1,4 @@
+import os
 from flask import Blueprint, request, jsonify, session, redirect, render_template
 from flask_jwt_extended import jwt_required
 from flask_limiter import Limiter
@@ -52,7 +53,10 @@ GOOGLE_SCOPES = [
     "openid",
 ]  # Adjust scopes as needed
 # Path to your downloaded client secrets file
-GOOGLE_CLIENT_SECRETS_FILE = "keys/client_secret_test.json"
+current_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+cert_path = os.path.join(current_dir, "keys/client_secret_test.json")
+print(cert_path)
+GOOGLE_CLIENT_SECRETS_FILE = cert_path
 # Make sure to set a secret key for Flask session management in your app
 # configuration
 
