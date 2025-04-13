@@ -200,6 +200,7 @@ client_secret.json
 *.pem
 /docs
 fb-cc.json
+fb-cc-test.json
 test.py
 test\dashboard
 ssdk_rsrc/android/app/src/main/res/mipmap-hdpi/ygg.png

@@ -21,7 +21,7 @@ alias_map = {
 
 
 def init_firebase(config: FirebaseConfig):
-    cred = credentials.Certificate("database/fb-cc.json")
+    cred = credentials.Certificate("database/fb-cc-test.json")
     # config)
     firebase_admin.initialize_app(
         cred,

@@ -8,7 +8,6 @@ import database.firebase_operations as firebase_operations
 from util.models import UserEmailRequest
 from util.utils import get_email_username
 from util.google import get_current_user_profile_google
-from config.config import settings
 from util.logit import get_logger
 from google_auth_oauthlib.flow import Flow
 from util.authlib import requires_scope
@@ -53,7 +52,7 @@ GOOGLE_SCOPES = [
     "openid",
 ]  # Adjust scopes as needed
 # Path to your downloaded client secrets file
-GOOGLE_CLIENT_SECRETS_FILE = f"keys/{settings.google_client_secret_file}"
+GOOGLE_CLIENT_SECRETS_FILE = "keys/client_secret_test.json"
 # Make sure to set a secret key for Flask session management in your app
 # configuration
 

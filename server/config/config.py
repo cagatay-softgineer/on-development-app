@@ -17,11 +17,11 @@ class Settings(BaseSettings):
                                            env="GOOGLE_CLIENT_SECRET_FILE")
     SECRET_KEY: str = Field(default_factory=lambda: secrets.token_hex(16))
     apple_developer_token: str = Field(..., env="APPLE_DEVELOPER_TOKEN")
+    firebase_json: str = Field(..., env="FIREBASE_CC_JSON")
 
     class Config:
         env_file = ".env"
         env_file_encoding = "utf-8"
-
 
 settings = Settings()
 

@@ -1,6 +1,8 @@
 from util.logit import check_log_folder
+from util.utils import load_JSONs
 
 check_log_folder()
+load_JSONs()
 
 try:
     # Code that may trigger the error
