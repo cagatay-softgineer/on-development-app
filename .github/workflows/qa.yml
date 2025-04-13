@@ -8,6 +8,7 @@ on:
   push:
     branches:
       - main
+      - bug-fixing
   pull_request:
 
 jobs:
