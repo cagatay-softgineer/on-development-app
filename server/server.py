@@ -1,5 +1,6 @@
 from util.logit import check_log_folder
 from util.utils import load_JSONs
+from config.config import settings
 
 check_log_folder()
 load_JSONs()
@@ -37,7 +38,6 @@ try:
     from Blueprints.lyrics import lyrics_bp
     from Blueprints.youtube_music import youtubeMusic_bp
     import argparse
-    from config.config import settings
 
     # from IPython.core.display import display  # This import may fail  # noqa: F401
 except Exception as e:
@@ -47,7 +47,7 @@ gui = CmdGUI()
 
 
 def create_app(testing=False):
-
+    
     check_log_folder()
     load_JSONs()
 
