@@ -32,14 +32,15 @@ from Blueprints.lyrics import lyrics_bp
 from Blueprints.youtube_music import youtubeMusic_bp
 import argparse
 
-check_log_folder()
-load_JSONs()
 
 gui = CmdGUI()
 
 
 def create_app(testing=False):
 
+    check_log_folder()
+    load_JSONs()
+    
     app = Flask(__name__)
 
     jwt = JWTManager(app)  # noqa: F841
