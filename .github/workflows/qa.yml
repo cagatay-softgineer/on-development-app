@@ -16,24 +16,24 @@ jobs:
     defaults:
       run:
         working-directory: server
-    env:
-        "JWT_SECRET_KEY" : "test_secret"
-        "SPOTIFY_CLIENT_ID" : "dummy_spotify_client_id"
-        "SPOTIFY_CLIENT_SECRET" : "dummy_spotify_client_secret"
-        "AUTH_REDIRECT_URI" : "http : //localhost/callback"
-        "SALT" : "dummy_salt"
-        "MUSIXMATCH_API_KEY" : "dummy_musixmatch_api_key"
-        "GOOGLE_CLIENT_ID" : "dummy_google_client_id"
-        "GOOGLE_CLIENT_SECRET" : "dummy_google_client_secret"
-        "GOOGLE_CLIENT_SECRET_FILE" : "dummy_google_secret.json"
-        "APPLE_DEVELOPER_TOKEN" : "dummy_apple_developer_token"
-        "API_KEY" : "dummy_api_key"
-        "AUTH_DOMAIN" : "dummy_auth_domain"
-        "PROJECT_ID" : "dummy_project_id"
-        "STORAGE_BUCKET" : "dummy_storage_bucket"
-        "MESSAGING_SENDER_ID" : "dummy_sender_id"
-        "APP_ID" : "dummy_app_id"
-        "MEASUREMENT_ID" : "dummy_measurement_id"
+    env: 
+        "JWT_SECRET_KEY" : "${{ secrets.JWT_SECRET_KEY }}"
+        "SPOTIFY_CLIENT_ID" : "${{ secrets.SPOTIFY_CLIENT_ID }}"
+        "SPOTIFY_CLIENT_SECRET" : "${{ secrets.SPOTIFY_CLIENT_SECRET }}"
+        "AUTH_REDIRECT_URI" : "${{ secrets.AUTH_REDIRECT_URI }}"
+        "SALT" : "${{ secrets.SALT }}"
+        "MUSIXMATCH_API_KEY" : "${{ secrets.MUSIXMATCH_API_KEY }}"
+        "GOOGLE_CLIENT_ID" : "${{ secrets.GOOGLE_CLIENT_ID }}"
+        "GOOGLE_CLIENT_SECRET" : "${{ secrets.GOOGLE_CLIENT_SECRET }}"
+        "GOOGLE_CLIENT_SECRET_FILE" : "${{ secrets.GOOGLE_CLIENT_SECRET_FILE }}"
+        "APPLE_DEVELOPER_TOKEN" : "${{ secrets.APPLE_DEVELOPER_TOKEN }}"
+        "API_KEY" : "${{ secrets.API_KEY }}"
+        "AUTH_DOMAIN" : "${{ secrets.AUTH_DOMAIN }}"
+        "PROJECT_ID" : "${{ secrets.PROJECT_ID }}"
+        "STORAGE_BUCKET" : "${{ secrets.STORAGE_BUCKET }}"
+        "MESSAGING_SENDER_ID" : "${{ secrets.MESSAGING_SENDER_ID }}"
+        "APP_ID" : "${{ secrets.APP_ID }}"
+        "MEASUREMENT_ID" : "${{ secrets.MEASUREMENT_ID }}"
     steps:
       # 1. Checkout the repository
       - name: Checkout Repository
@@ -62,12 +62,7 @@ jobs:
           mkdir -p server/database
           
           # Write the secret files
-          echo "${{ secrets.APPLE }}" > server/keys/apple.txt
-          echo "${{ secrets.CERT_PEM }}" > server/keys/cert.pem
-          echo "${{ secrets.CLIENT_SECRET_JSON }}" > server/keys/client_secret.json
-          echo "${{ secrets.ENV }}" > server/.env
-          echo "${{ secrets.FB_CC_JSON }}" > server/database/fb-cc.json
-          echo "${{ secrets.KEY_PEM }}" > server/keys/key.pem
+          echo "${{ secrets.TEST }}"
 
       # 5. Install project dependencies
       - name: Install dependencies
@@ -86,7 +81,7 @@ jobs:
         run: |
           pip install pytest coverage
           export PYTHONPATH=${{ github.workspace }}/server
-          pytest --maxfail=1 --disable-warnings -q
+          pytest --maxfail=1 --disable-warnings
 
       # 8. Generate a code coverage report
       - name: Generate Coverage Report
