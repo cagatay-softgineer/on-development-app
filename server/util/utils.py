@@ -1,8 +1,6 @@
 import os
 from cmd_gui_kit import CmdGUI
-from datetime import datetime
 import hashlib
-import pandas as pd
 from config.config import settings
 from util.logit import get_logger
 import json
@@ -92,100 +90,6 @@ def ms2FormattedDuration(total_duration_ms: int) -> str:
     seconds = total_seconds % 60
     formatted_duration = f"{hours:02}:{minutes:02}:{seconds:02}"
     return formatted_duration
-
-
-def parse_logs_from_folder(folder_path: str) -> list[dict]:
-    """
-    Parses log files from a specified folder and returns a list of parsed log data.
-
-    Parameters:
-    folder_path (str): The path to the folder containing log files.
-
-    Returns:
-    list[dict]: A list of dictionaries, where each dictionary represents a parsed log.
-    If the folder does not exist or contains no log files, returns None.
-
-    Each dictionary in the list contains the following keys:
-    - "filename" (str): The name of the log file.
-    - "timestamp" (datetime): The timestamp of the log entry.
-    - "log_type" (str): The type of the log entry (e.g., INFO, DEBUG, WARN, ERROR).
-    - "message" (str): The content of the log entry.
-    """
-    logs = []
-    for filename in os.listdir(folder_path):
-        file_path = os.path.join(folder_path, filename)
-        if os.path.isfile(file_path) and filename.endswith(
-            ".log"
-        ):  # Assuming log files are .txt
-            with open(file_path, "r") as file:
-                for line in file:
-                    try:
-                        parts = line.split(" - ")
-                        timestamp = parts[0].strip()
-                        log_type = parts[2].strip()
-                        message = " - ".join(parts[3:]).strip()
-
-                        # Append parsed log data
-                        logs.append(
-                            {
-                                "filename": filename,
-                                "timestamp": datetime.strptime(
-                                    timestamp, "%Y-%m-%d %H:%M:%S,%f"
-                                ),  # Parse timestamp
-                                "log_type": log_type,
-                                "message": message,
-                            }
-                        )
-                    except (IndexError, ValueError):
-                        continue
-
-    # Sort logs by timestamp (descending order)
-    logs.sort(key=lambda log: log["timestamp"], reverse=True)
-    return logs
-
-
-ACCEPTED_LOG_TYPES = {"INFO", "DEBUG", "WARN", "ERROR"}
-
-
-# Helper function to parse logs and return a DataFrame
-def parse_logs_to_dataframe(folder_path: str) -> pd.DataFrame:
-    """
-    Parses log files from a specified folder and returns a DataFrame containing log data.
-
-    Parameters:
-    folder_path (str): The path to the folder containing log files. Each log file should be a text file with a '.log' extension.
-
-    Returns:
-    pd.DataFrame: A DataFrame containing the parsed log data. The DataFrame has two columns: 'timestamp' and 'log_type'.
-    The 'timestamp' column contains datetime objects representing the log timestamps.
-    The 'log_type' column contains strings representing the log types (INFO, DEBUG, WARN, ERROR).
-
-    The function reads each log file in the specified folder, parses the log entries, and appends the relevant data to a list.
-    It then creates a DataFrame from the parsed data and returns it.
-    """
-    data = []
-    for filename in os.listdir(folder_path):
-        file_path = os.path.join(folder_path, filename)
-        if os.path.isfile(file_path) and filename.endswith(".log"):
-            with open(file_path, "r") as file:
-                for line in file:
-                    try:
-                        parts = line.split(" - ")
-                        timestamp = datetime.strptime(
-                            parts[0].strip(), "%Y-%m-%d %H:%M:%S,%f"
-                        )
-                        log_type = (
-                            parts[2].strip().upper()
-                        )  # Convert to uppercase for consistency
-                        # Validate log type
-                        if log_type in ACCEPTED_LOG_TYPES:
-                            data.append(
-                                {"timestamp": timestamp, "log_type": log_type})
-                    except (IndexError, ValueError):
-                        continue
-    # Create a DataFrame from the parsed data
-    df = pd.DataFrame(data)
-    return df
 
 
 def load_JSONs():

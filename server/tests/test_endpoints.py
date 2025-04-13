@@ -64,40 +64,6 @@ def test_app_healthcheck(client):
     assert "App Service" in data.get("service", ""), "Expected 'App Service' in service description"
 
 
-def test_visualize_logs_without_auth(client):
-    """
-    Test the /logs endpoint without JWT authorization.
-    The endpoint is protected with requires_scope("admin"), so it should error.
-    """
-    response = client.get("/logs")
-    # Since there's no token, this should result in an error (often 401 or 403).
-    assert response.status_code in (401, 403), (
-        f"Expected unauthorized or forbidden error without token, got {response.status_code}"
-    )
-
-
-def test_visualize_logs_with_auth(monkeypatch, client, app):
-    """
-    Test the /logs endpoint with proper admin authorization.
-    Monkeypatch parse_logs_from_folder to return a controlled list of logs.
-    """
-    # Create fake logs data
-    fake_logs = [
-        {"filename": "app.log", "timestamp": "2023-01-01 12:00:00,000", "log_type": "INFO", "message": "Test log 1"},
-        {"filename": "app.log", "timestamp": "2023-01-01 13:00:00,000", "log_type": "ERROR", "message": "Test log 2"},
-    ]
-
-    # Monkeypatch the parse_logs_from_folder function in utilx module to return fake logs.
-    monkeypatch.setattr("util.utils.parse_logs_from_folder", lambda folder: fake_logs)
-
-    headers = get_admin_auth_headers(app)
-    response = client.get("/logs", headers=headers, query_string={"page": "1", "per_page": "1"})
-    # Since this endpoint renders a template, we can check for status 200 and HTML content.
-    assert response.status_code == 200, "Expected 200 for authorized logs visualization"
-    # For example, check that some part of the HTML template is present.
-    assert b"<html" in response.data.lower(), "Expected HTML output in response"
-
-
 def test_list_endpoints_json(client, app, monkeypatch):
     """
     Test the /endpoints endpoint by simulating filtering and verifying the JSON output.

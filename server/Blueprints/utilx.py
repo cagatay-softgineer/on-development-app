@@ -1,69 +1,12 @@
 from flask import Blueprint, render_template, jsonify, request, current_app
 from util.logit import get_logger
-from util.utils import (
-    route_descriptions,
-    parse_logs_from_folder,
-)
+from util.utils import route_descriptions
 from util.authlib import requires_scope
 
 util_bp = Blueprint("util", __name__)
 logger = get_logger("logs", "App Utils")
 
 # REMOVE ON PRODUCTION
-
-
-# Route for visualizing logs with filtering and pagination
-@util_bp.route("/logs", methods=["GET"])
-@requires_scope("admin")
-def visualize_logs():
-    """
-    This function retrieves logs from a specified folder, filters them based on query parameters,
-    and applies pagination. It then renders a template with the paginated logs.
-
-    Parameters:
-    None
-
-    Returns:
-    render_template: A rendered template with the paginated logs, page number, per page count,
-    total logs, log type filter, and filename filter.
-    """
-    logs_folder_path = "logs"
-    logs = parse_logs_from_folder(logs_folder_path)
-
-    # Get query parameters
-    log_type_filter = request.args.get("log_type", None)
-    filename_filter = request.args.get("filename", None)
-    page = int(request.args.get("page", 1))
-    per_page = int(request.args.get("per_page", 10))
-
-    # Apply filtering
-    if log_type_filter:
-        logs = [
-            log for log in logs if log_type_filter.lower() in log["log_type"].lower()
-        ]
-    if filename_filter:
-        logs = [
-            log for log in logs if filename_filter.lower() in log["filename"].lower()
-        ]
-
-    # Apply pagination
-    total_logs = len(logs)
-    start = (page - 1) * per_page
-    end = start + per_page
-    paginated_logs = logs[start:end]
-
-    # Return the rendered template with logs
-    return render_template(
-        "log.html",
-        logs=paginated_logs,
-        page=page,
-        per_page=per_page,
-        total_logs=total_logs,
-        log_type_filter=log_type_filter,
-        filename_filter=filename_filter,
-    )
-
-
 @util_bp.route("/endpoints")
 @requires_scope("admin")
 def list_endpoints():
