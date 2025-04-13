@@ -220,7 +220,6 @@ def load_JSONs():
 
     print(f"JSON file has been successfully written to: {file_path}")
 
-
     raw_json_str = os.getenv("GOOGLE_CLIENT_SECRET_FILE")
     if not raw_json_str:
         raise EnvironmentError("GOOGLE_CLIENT_SECRET_FILE environment variable not found.")
