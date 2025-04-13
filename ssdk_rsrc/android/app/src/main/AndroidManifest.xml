@@ -9,7 +9,8 @@
         android:name="${applicationName}"
         android:icon="@mipmap/ygg"
         android:extractNativeLibs="true"
-        android:enableOnBackInvokedCallback="true">
+        android:enableOnBackInvokedCallback="true"
+        android:allowBackup="false">
         
         
         <!-- Override the SDKUriHandlerActivity settings from the .aar manifest -->
