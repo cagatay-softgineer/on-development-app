@@ -1,44 +1,36 @@
 from util.logit import check_log_folder
 from util.utils import load_JSONs
 from config.config import settings
-
-try:
-    # Code that may trigger the error
-    from util.error_handling import log_error
-    from flask import Flask, request
-    from flask_jwt_extended import JWTManager
-    from flask_limiter import Limiter
-    from flask_swagger_ui import get_swaggerui_blueprint
-    from cmd_gui_kit import CmdGUI
-    from flask_cors import CORS
-    from util.logit import get_logger
-    from Blueprints.auth import auth_bp
-    from Blueprints.error import (
-        errors_bp,
-        bad_request,
-        unauthorized,
-        forbidden,
-        page_not_found,
-        method_not_allowed,
-        request_timeout,
-        too_many_requests,
-        internal_server_error,
-    )
-    from Blueprints.utilx import util_bp
-    from Blueprints.apps import apps_bp
-    from Blueprints.spotify import spotify_bp
-    from Blueprints.apple import apple_bp
-    from Blueprints.apple_music import appleMusic_bp
-    from Blueprints.user_profile import profile_bp
-    from Blueprints.google_api import google_bp
-    from Blueprints.spotify_micro_service import SpotifyMicroService_bp
-    from Blueprints.lyrics import lyrics_bp
-    from Blueprints.youtube_music import youtubeMusic_bp
-    import argparse
-
-    # from IPython.core.display import display  # This import may fail  # noqa: F401
-except Exception as e:
-    log_error(e)  # Log the error
+from flask import Flask, request
+from flask_jwt_extended import JWTManager
+from flask_limiter import Limiter
+from flask_swagger_ui import get_swaggerui_blueprint
+from cmd_gui_kit import CmdGUI
+from flask_cors import CORS
+from util.logit import get_logger
+from Blueprints.auth import auth_bp
+from Blueprints.error import (
+    errors_bp,
+    bad_request,
+    unauthorized,
+    forbidden,
+    page_not_found,
+    method_not_allowed,
+    request_timeout,
+    too_many_requests,
+    internal_server_error,
+)
+from Blueprints.utilx import util_bp
+from Blueprints.apps import apps_bp
+from Blueprints.spotify import spotify_bp
+from Blueprints.apple import apple_bp
+from Blueprints.apple_music import appleMusic_bp
+from Blueprints.user_profile import profile_bp
+from Blueprints.google_api import google_bp
+from Blueprints.spotify_micro_service import SpotifyMicroService_bp
+from Blueprints.lyrics import lyrics_bp
+from Blueprints.youtube_music import youtubeMusic_bp
+import argparse
 
 gui = CmdGUI()
 
