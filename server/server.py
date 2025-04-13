@@ -1,5 +1,4 @@
-from util.logit import check_log_folder
-from util.utils import load_JSONs
+import util.setup  # noqa: F401
 from config.config import settings
 from flask import Flask, request
 from flask_jwt_extended import JWTManager
@@ -37,9 +36,6 @@ gui = CmdGUI()
 
 
 def create_app(testing=False):
-
-    check_log_folder()
-    load_JSONs()
 
     app = Flask(__name__)
 

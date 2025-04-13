@@ -190,6 +190,7 @@ def parse_logs_to_dataframe(folder_path: str) -> pd.DataFrame:
 
 def load_JSONs():
     # Load environment variables from the .env file.
+    current_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
     load_dotenv()
 
     # Retrieve the JSON string from the environment variable.
@@ -208,7 +209,7 @@ def load_JSONs():
         raise ValueError("The FIREBASE_CC_JSON environment variable contains invalid JSON.") from e
 
     # Ensure that the target directory exists.
-    target_directory = "database"
+    target_directory = os.path.join(current_dir, "database")
     os.makedirs(target_directory, exist_ok=True)
 
     # Define the full file path.
@@ -235,7 +236,8 @@ def load_JSONs():
         raise ValueError("The GOOGLE_CLIENT_SECRET_FILE environment variable contains invalid JSON.") from e
 
     # Ensure that the target directory exists.
-    target_directory = "keys"
+
+    target_directory = os.path.join(current_dir, "keys")
     os.makedirs(target_directory, exist_ok=True)
 
     # Define the full file path.

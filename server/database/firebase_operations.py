@@ -1,6 +1,7 @@
 # firebase_commands.py
 
 import datetime
+import os
 import bcrypt
 from google.cloud.firestore_v1.base_query import FieldFilter
 from google.cloud.firestore_v1.collection import CollectionReference
@@ -21,7 +22,9 @@ alias_map = {
 
 
 def init_firebase(config: FirebaseConfig):
-    cred = credentials.Certificate("database/fb-cc-test.json")
+    current_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+    cert_path = os.path.join(current_dir, "database/fb-cc-test.json")
+    cred = credentials.Certificate(cert_path)
     # config)
     firebase_admin.initialize_app(
         cred,
