@@ -61,10 +61,10 @@ def create_app(testing=False):
         'form-action': ["'self'"]
     }
     Talisman(app, strict_transport_security=True,
-         strict_transport_security_max_age=31536000,
-         strict_transport_security_include_subdomains=True,
-         strict_transport_security_preload=True,
-         content_security_policy=csp)
+        strict_transport_security_max_age=31536000,
+        strict_transport_security_include_subdomains=True,
+        strict_transport_security_preload=True,
+        content_security_policy=csp)
 
     jwt = JWTManager(app)  # noqa: F841
     limiter = Limiter(app)  # noqa: F841
