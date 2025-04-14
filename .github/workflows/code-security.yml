@@ -56,5 +56,13 @@ jobs:
       - name: Install Bandit
         run: pip install bandit
 
-      - name: Run Bandit Scan
-        run: bandit -r .
+      - name: Run Bandit Scan and Generate Report
+        run: |
+          # Run Bandit recursively on the code and generate a text report
+          bandit -r . -f txt > bandit_report.txt
+
+      - name: Upload Bandit Report Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: bandit-report
+          path: bandit_report.txt
