@@ -77,11 +77,11 @@ def create_app(testing=False):
     app.config["TESTING"] = testing
 
     CORS(app, resources={r"/*": {
-            "origins": [
-                "https://api-sync-branch.yggbranch.dev",
-                "http://python-hello-world-911611650068.europe-west3.run.app"
-            ]
-        }})
+        "origins": [
+            "https://api-sync-branch.yggbranch.dev",
+            "http://python-hello-world-911611650068.europe-west3.run.app"
+        ]
+    }})
 
     # Add logging to the root logger
     logger = get_logger("logs", "Service")
@@ -111,15 +111,15 @@ def create_app(testing=False):
         app.config["API_URL"],
         config={"app_name": "Micro Service"},
     )
-    
+
     @app.route("/", methods=["GET"])
     def index():
         return render_template("index.html", user_id="pomodoro_enjoyer")
-    
+
     @app.route("/open", methods=["GET"])
     def open():
         return render_template("open.html", user_id="pomodoro_enjoyer")
-        
+
     app.register_blueprint(auth_bp, url_prefix="/auth")
     app.register_blueprint(apps_bp, url_prefix="/apps")
     app.register_blueprint(spotify_bp, url_prefix="/spotify")

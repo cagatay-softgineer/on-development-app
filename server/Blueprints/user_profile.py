@@ -9,11 +9,11 @@ profile_bp = Blueprint("profile", __name__)
 
 logger = get_logger("logs", "Profile")
 CORS(profile_bp, resources={r"/*": {
-        "origins": [
-            "https://api-sync-branch.yggbranch.dev",
-            "http://python-hello-world-911611650068.europe-west3.run.app"
-        ]
-    }})
+    "origins": [
+        "https://api-sync-branch.yggbranch.dev",
+        "http://python-hello-world-911611650068.europe-west3.run.app"
+    ]
+}})
 
 
 @profile_bp.before_request

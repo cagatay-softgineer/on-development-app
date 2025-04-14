@@ -7,11 +7,11 @@ from util.authlib import requires_scope
 util_bp = Blueprint("util", __name__)
 logger = get_logger("logs", "App Utils")
 CORS(util_bp, resources={r"/*": {
-        "origins": [
-            "https://api-sync-branch.yggbranch.dev",
-            "http://python-hello-world-911611650068.europe-west3.run.app"
-        ]
-    }})
+    "origins": [
+        "https://api-sync-branch.yggbranch.dev",
+        "http://python-hello-world-911611650068.europe-west3.run.app"
+    ]
+}})
 
 
 @util_bp.route("/endpoints")

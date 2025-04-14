@@ -19,11 +19,11 @@ logger = get_logger("logs", "SpotifyMicroService")
 # Define the Blueprint
 SpotifyMicroService_bp = Blueprint("api", __name__)
 CORS(SpotifyMicroService_bp, resources={r"/*": {
-        "origins": [
-            "https://api-sync-branch.yggbranch.dev",
-            "http://python-hello-world-911611650068.europe-west3.run.app"
-        ]
-    }})
+    "origins": [
+        "https://api-sync-branch.yggbranch.dev",
+        "http://python-hello-world-911611650068.europe-west3.run.app"
+    ]
+}})
 
 
 @SpotifyMicroService_bp.before_request

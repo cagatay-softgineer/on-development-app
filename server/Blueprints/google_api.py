@@ -19,11 +19,11 @@ OAUTHLIB_INSECURE_TRANSPORT = 1
 google_bp = Blueprint("google", __name__)
 limiter = Limiter(key_func=get_remote_address)
 CORS(google_bp, resources={r"/*": {
-        "origins": [
-            "https://api-sync-branch.yggbranch.dev",
-            "http://python-hello-world-911611650068.europe-west3.run.app"
-        ]
-    }})
+    "origins": [
+        "https://api-sync-branch.yggbranch.dev",
+        "http://python-hello-world-911611650068.europe-west3.run.app"
+    ]
+}})
 
 logger = get_logger("logs", "Google")
 

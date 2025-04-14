@@ -10,12 +10,12 @@ lyrics_bp = Blueprint("lyrics", __name__, url_prefix="/lyrics")
 
 logger = get_logger("logs", "MakroMusicService")
 CORS(lyrics_bp, resources={r"/*": {
-        "origins": [
-            "https://api-sync-branch.yggbranch.dev",
-            "http://python-hello-world-911611650068.europe-west3.run.app"
-        ]
-    }})
-    
+    "origins": [
+        "https://api-sync-branch.yggbranch.dev",
+        "http://python-hello-world-911611650068.europe-west3.run.app"
+    ]
+}})
+
 
 @lyrics_bp.before_request
 def log_lyrics_requests():

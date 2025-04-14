@@ -6,11 +6,11 @@ from util.error_handling import log_error
 
 errors_bp = Blueprint("errors", __name__)
 CORS(errors_bp, resources={r"/*": {
-        "origins": [
-            "https://api-sync-branch.yggbranch.dev",
-            "http://python-hello-world-911611650068.europe-west3.run.app"
-        ]
-    }})
+    "origins": [
+        "https://api-sync-branch.yggbranch.dev",
+        "http://python-hello-world-911611650068.europe-west3.run.app"
+    ]
+}})
 logger = get_logger("logs", "AppErrors")
 
 error_counts = {400: 0, 401: 0, 403: 0, 404: 0, 405: 0, 408: 0, 429: 0, 500: 0}
