@@ -62,7 +62,7 @@ jobs:
           bandit -r . -f txt > bandit_report.txt
 
       - name: Upload Bandit Report Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4.6.2
         with:
           name: bandit-report
           path: bandit_report.txt
