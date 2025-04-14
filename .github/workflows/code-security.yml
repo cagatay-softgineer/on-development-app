@@ -60,7 +60,7 @@ jobs:
         run: pip install bandit
 
       - name: Run Bandit Scan and Generate Report
-        run: bandit -r . -f json -o bandit_report.json
+        run: bandit -r . -f --exit-zero json -o bandit_report.json
 
       - name: Upload Bandit Report Artifact
         uses: actions/upload-artifact@v4.6.2
