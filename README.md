@@ -1,5 +1,6 @@
 [![CodeQL](https://github.com/cagatay-softgineer/SpotifySDK-Research/actions/workflows/github-code-scanning/codeql/badge.svg?branch=main)](https://github.com/cagatay-softgineer/SpotifySDK-Research/actions/workflows/github-code-scanning/codeql)
 [![QA Automation](https://github.com/cagatay-softgineer/SpotifySDK-Research/actions/workflows/qa.yml/badge.svg)](https://github.com/cagatay-softgineer/SpotifySDK-Research/actions/workflows/qa.yml)
+[![Code Security Scan](https://github.com/cagatay-softgineer/SpotifySDK-Research/actions/workflows/code-security.yml/badge.svg)](https://github.com/cagatay-softgineer/SpotifySDK-Research/actions/workflows/code-security.yml)
 # SpotifySDK-Research
  
 # Pomodro Backend Server 
