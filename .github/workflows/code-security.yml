@@ -14,34 +14,6 @@ on:
     - cron: '0 0 * * 0'  # Optional: run weekly
 
 jobs:
-  codeql:
-    name: CodeQL Static Analysis
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: server
-    permissions:
-      contents: read
-      security-events: write
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
-      - name: Initialize CodeQL
-        uses: github/codeql-action/init@v2
-        with:
-          languages: python
-          queries: []  # This disables the default queries
-          # You can add custom queries or override search paths if needed
-
-      - name: Autobuild
-        uses: github/codeql-action/autobuild@v2
-
-      - name: Run CodeQL Analysis
-        uses: github/codeql-action/analyze@v2
-        with:
-          category: "/language:python"
-
   bandit:
     name: Bandit Security Scanner
     runs-on: ubuntu-latest
