@@ -60,11 +60,12 @@ def create_app(testing=False):
         # Ensure that forms only post back to your own domain
         'form-action': ["'self'"]
     }
-    Talisman(app, strict_transport_security=True,
-        strict_transport_security_max_age=31536000,
-        strict_transport_security_include_subdomains=True,
-        strict_transport_security_preload=True,
-        content_security_policy=csp)
+    Talisman(app,
+             strict_transport_security=True,
+             strict_transport_security_max_age=31536000,
+             strict_transport_security_include_subdomains=True,
+             strict_transport_security_preload=True,
+             content_security_policy=csp)
 
     jwt = JWTManager(app)  # noqa: F841
     limiter = Limiter(app)  # noqa: F841
