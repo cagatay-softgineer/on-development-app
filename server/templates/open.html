@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/static/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Skranji:wght@400;700&display=swap" rel="stylesheet">
+  <title>Pomodoro - Open Mobile App</title>
+  <style>
+    /* Hide all command lines initially */
+    .command-line {
+      opacity: 0;
+      transition: opacity 0.3s ease-in;
+    }
+  </style>
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      // Get all command line elements and reveal them one-by-one
+      const lines = document.querySelectorAll('.command-line');
+      let delay = 0;
+      lines.forEach((line) => {
+        setTimeout(() => {
+          line.style.opacity = 1;
+        }, delay);
+        delay += 300; // delay in milliseconds between each line
+      });
+
+      // Redirect to the /open endpoint to launch the mobile app after all lines are shown
+      setTimeout(() => {
+        window.location = "/open";
+      }, delay + 2000);
+
+      // Fallback: If the mobile app doesn't open, redirect to a fallback URL after an additional delay.
+      setTimeout(() => {
+        window.location = "https://www.google.com";
+      }, delay + 4000);
+    });
+  </script>
+</head>
+<body>
+  <main class="bsod container">
+    <!-- Command-line style presentation -->
+    <p>
+      <span class="command-line">Microsoft Windows [Version 5.1.2600]</span><br>
+      <span class="command-line">(C) Copyright 1985-2001 Microsoft Corp.</span><br>
+      <span class="command-line">&nbsp;</span><br>
+      <span class="command-line">C:\Users\{{user_id}}> launch_mobile_app.bat</span><br>
+      <span class="command-line">=====================================</span><br>
+      <span class="command-line">Pomodoro Mobile App Launcher</span><br>
+      <span class="command-line">Preparing to open your mobile app...</span><br>
+      <span class="command-line">&nbsp;</span><br>
+      <span class="command-line">[INFO] Initializing mobile integration services...</span><br>
+      <span class="command-line">[OK] Authentication verified. Backend services active.</span><br>
+      <span class="command-line">[OK] Mobile deep linking configured.</span><br>
+      <span class="command-line">&nbsp;</span><br>
+      <span class="command-line">Launching Mobile App...</span><br>
+      <span class="command-line">&nbsp;</span><br>
+      <span class="command-line">Redirecting to mobile app endpoint...</span><br>
+      <span class="command-line">&nbsp;</span><br>
+      <span class="command-line">Press any key to cancel and go to fallback.</span><br>
+      <span class="command-line">&nbsp;</span><br>
+      <span class="command-line">C:\Users\{{user_id}}> exit.bat<span id="underscore" class="console-underscore">_</span></span><br>
+    </p>
+  </main>
+  <footer>
+    <p>© 2025 HelloWorld.dev</p>
+  </footer>
+  <script>
+    // Optional underscore blinking animation
+    let visible = true;
+    const underscore = document.getElementById('underscore');
+    window.setInterval(function() {
+      underscore.style.opacity = visible ? 0 : 1;
+      visible = !visible;
+    }, 400);
+  </script>
+</body>
+</html>

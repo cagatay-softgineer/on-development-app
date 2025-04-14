@@ -1,6 +1,6 @@
 import util.setup  # noqa: F401
 from config.config import settings
-from flask import Flask, request
+from flask import Flask, render_template, request
 from flask_talisman import Talisman
 from flask_jwt_extended import JWTManager
 from flask_limiter import Limiter
@@ -39,12 +39,32 @@ gui = CmdGUI()
 def create_app(testing=False):
 
     app = Flask(__name__)
-    
+    csp = {
+        'default-src': [
+            "'self'",
+            "https://api-sync-branch.yggbranch.dev",
+            "http://python-hello-world-911611650068.europe-west3.run.app"
+        ],
+        'script-src': [
+            "'self'",
+            "https://api-sync-branch.yggbranch.dev",
+            "http://python-hello-world-911611650068.europe-west3.run.app"
+        ],
+        'style-src': [
+            "'self'",
+            "https://api-sync-branch.yggbranch.dev",
+            "http://python-hello-world-911611650068.europe-west3.run.app"
+        ],
+        # Prevent any third party from embedding your site
+        'frame-ancestors': ["'none'"],
+        # Ensure that forms only post back to your own domain
+        'form-action': ["'self'"]
+    }
     Talisman(app, strict_transport_security=True,
          strict_transport_security_max_age=31536000,
          strict_transport_security_include_subdomains=True,
          strict_transport_security_preload=True,
-         content_security_policy=None)
+         content_security_policy=csp)
 
     jwt = JWTManager(app)  # noqa: F841
     limiter = Limiter(app)  # noqa: F841
@@ -91,7 +111,15 @@ def create_app(testing=False):
         app.config["API_URL"],
         config={"app_name": "Micro Service"},
     )
-
+    
+    @app.route("/", methods=["GET"])
+    def index():
+        return render_template("index.html", user_id="pomodoro_enjoyer")
+    
+    @app.route("/open", methods=["GET"])
+    def open():
+        return render_template("open.html", user_id="pomodoro_enjoyer")
+        
     app.register_blueprint(auth_bp, url_prefix="/auth")
     app.register_blueprint(apps_bp, url_prefix="/apps")
     app.register_blueprint(spotify_bp, url_prefix="/spotify")

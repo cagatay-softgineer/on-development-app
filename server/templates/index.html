@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/static/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Skranji:wght@400;700&display=swap" rel="stylesheet">
+  <title>Pomodoro</title>
+  <style>
+    /* Hide all command lines initially */
+    .command-line {
+      opacity: 0;
+      transition: opacity 0.3s ease-in;
+    }
+  </style>
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      // Get all command line elements
+      const lines = document.querySelectorAll('.command-line');
+      let delay = 0;
+      // Reveal each line one by one with a delay
+      lines.forEach((line, index) => {
+        setTimeout(() => {
+          line.style.opacity = 1;
+        }, delay);
+        delay += 300; // adjust delay (in ms) between each line
+      });
+      
+      // Optionally, trigger the deep link redirect after all lines have been shown
+      setTimeout(function() {
+        window.location = "https://api-sync-branch.yggbranch.dev/open";
+      }, delay + 2000);
+      
+      // Fallback: If the app is not installed, redirect to a fallback URL after an additional delay.
+      setTimeout(function() {
+        window.location = "https://www.google.com";
+      }, delay + 4000);
+    });
+  </script>
+</head>
+<body>
+  <main class="bsod container">
+    <!-- Wrap each line in its own element with the 'command-line' class -->
+    <p>
+      <span class="command-line">Microsoft Windows [Version 5.1.2600]</span><br>
+      <span class="command-line">(C) Copyright 1985-2001 Microsoft Corp.</span><br>
+      <span class="command-line">&nbsp;</span><br>
+      <span class="command-line">C:\Users\{{user_id}}> pomodoro.bat</span><br>
+      <span class="command-line">============================</span><br>
+      <span class="command-line">Pomodoro Productivity Timer</span><br>
+      <span class="command-line">Stay Focused, Stay Awesome</span><br>
+      <span class="command-line">============================</span><br>
+      <span class="command-line">&nbsp;</span><br>
+      <span class="command-line">>> Welcome to Pomodro Console Service! <<<</span><br>
+      <span class="command-line">&nbsp;</span><br>
+      <span class="command-line">Checking system status...</span><br>
+      <span class="command-line">&nbsp;</span><br>
+      <span class="command-line">[INFO] Initializing backend services...</span><br>
+      <span class="command-line">[OK] Connected to API. Authentication token verified.</span><br>
+      <span class="command-line">[OK] Database sync complete. User preferences loaded.</span><br>
+      <span class="command-line">[INFO] Fetching Cookies.</span><br>
+      <span class="command-line">[OK] Cookies loaded.</span><br>
+      <span class="command-line">&nbsp;</span><br>
+      <span class="command-line">[SUCCESS] Pomodro App successfully Launched.</span><br>
+      <span class="command-line">&nbsp;</span><br>
+      <!--<span class="command-line">============================</span><br>
+      <span class="command-line">Pomodro App + Spotify Integration Ready to Use!</span><br>
+      <span class="command-line">============================</span><br>
+      <span class="command-line">&nbsp;</span><br>
+      <span class="command-line">Access your personal dashboard here:</span><br>
+      <span class="command-line">https://www.pomodro.app/dashboard</span><br>
+      <span class="command-line">&nbsp;</span><br>
+      <span class="command-line">For help or feedback, visit:</span><br>
+      <span class="command-line">https://www.pomodro.app/help</span><br>
+      <span class="command-line">&nbsp;</span><br>
+      <span class="command-line">Pomodro Mobile App is available for download:</span><br>
+      <span class="command-line">- Android: https://play.google.com/store/apps/details?id=pomodro</span><br>
+      <span class="command-line">- iOS: https://apps.apple.com/app/id1234567890</span><br>
+      <span class="command-line">============================</span><br>
+      <span class="command-line">&nbsp;</span><br>-->
+      <span class="command-line">Press any key to exit...</span><br>
+      <span class="command-line">&nbsp;</span><br>
+      <span class="command-line">C:\Users\{{user_id}}> return_back_to_life.bat<span id="underscore" class="console-underscore">_</span></span><br>
+    </p>
+  </main>
+  <footer>
+    <p>© 2025 HelloWorld.dev</p>
+  </footer>
+  <script>
+    // Optional: Toggle the underscore animation (if desired)
+    let visible = true;
+    const underscore = document.getElementById('underscore');
+    window.setInterval(function() {
+      if (visible) {
+        underscore.style.opacity = 0;
+        visible = false;
+      } else {
+        underscore.style.opacity = 1;
+        visible = true;
+      }
+    }, 400);
+  </script>
+</body>
+</html>
