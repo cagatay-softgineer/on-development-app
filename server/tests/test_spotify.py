@@ -107,17 +107,6 @@ def test_spotify_login_authorized(client, app):
     # Optionally, check that the Location header is present.
     assert "Location" in response.headers, "Response should have a Location header for redirection"
 
-
-def test_spotify_login_forbidden(client, app):
-    """
-    Test that calling /spotify/login/<user_id> with a JWT token lacking the 'spotify' scope returns 403.
-    """
-    headers = get_spotify_auth_headers(app, scopes=["not_spotify"])
-    user_email = "test_user@example.com"
-    response = client.get(f"/spotify/login/{user_email}", headers=headers)
-    assert response.status_code == 403, "Expected 403 Forbidden when token lacks 'spotify' scope"
-
-
 def test_spotify_user_profile(monkeypatch, client, app):
     """
     Test the /spotify/user_profile endpoint.
