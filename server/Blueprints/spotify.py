@@ -1,6 +1,6 @@
-from flask import Blueprint, request, jsonify, redirect, render_template
+from flask import Blueprint, request, jsonify, redirect, render_template, session
 from markupsafe import escape
-from flask_jwt_extended import get_jwt_identity, jwt_required
+from flask_jwt_extended import jwt_required
 from flask_limiter import Limiter
 from flask_cors import CORS
 from flask_limiter.util import get_remote_address
@@ -24,12 +24,7 @@ spotify_bp = Blueprint("spotify", __name__)
 limiter = Limiter(key_func=get_remote_address)
 
 # Enable CORS for all routes in this blueprint
-CORS(spotify_bp, resources={r"/*": {
-    "origins": [
-        "https://api-sync-branch.yggbranch.dev",
-        "http://python-hello-world-911611650068.europe-west3.run.app"
-    ]
-}})
+CORS(spotify_bp, resources=settings.CORS_resource_allow_all)
 
 logger = get_logger("logs", "SpotifyAPI")
 
@@ -57,10 +52,8 @@ def generate_random_state(length=16):
     return secrets.token_hex(length)
 
 
-@spotify_bp.route("/login/<user_id>", methods=["GET"])
-@jwt_required()
-@requires_scope("spotify")
-def login(user_id):
+@spotify_bp.route("/login/<user_email>", methods=["GET"])
+def login(user_email):
     """
     This function handles the login process for a user using Spotify's authorization flow.
     It generates a random state, constructs an authorization URL, and redirects the user to Spotify's authorization page.
@@ -71,20 +64,26 @@ def login(user_id):
     Returns:
     - A Flask redirect response to Spotify's authorization URL.
     """
-
+    
     state = generate_random_state()
+    
+    session['spotify_oauth'] = {
+      'state': state,
+      'user_email': user_email
+    }
+    
     scope = (
-        "app-remote-control"
-        "streaming"
-        "user-read-recently-played "
-        "user-read-private"
-        "user-read-email"
-        "playlist-read-private "
-        "playlist-read-collaborative"
-        "user-library-read"
-        "user-top-read "
-        "user-read-playback-state"
-        "user-modify-playback-state "
+        "app-remote-control " +
+        "streaming " +
+        "user-read-recently-played " +
+        "user-read-private " +
+        "user-read-email " +
+        "playlist-read-private " +
+        "playlist-read-collaborative " +
+        "user-library-read " +
+        "user-top-read " +
+        "user-read-playback-state " +
+        "user-modify-playback-state " +
         "user-read-currently-playing"
     )
 
@@ -244,46 +243,50 @@ def callback():
     - A Flask response object containing a rendered HTML template with success message and user ID if the access token is obtained successfully.
     - A Flask response object containing a JSON object with an error message if the access token cannot be obtained.
     """
-    code = request.args.get("code")
-    if not code:
-        logger.error("Authorization code not found in callback request.")
-        return jsonify({"error": "Authorization code not found"}), 400
+    code  = request.args.get("code")
+    state = request.args.get("state")
 
+    oauth = session.get('spotify_oauth')
+    if not oauth or oauth.get('state') != state:
+        logger.error("OAuth state mismatch or missing session data")
+        return jsonify({"error": "Invalid OAuth session"}), 400
+
+    user_email = oauth.get('user_email')
+    if not code:
+        return jsonify({"error": "No code in callback"}), 400
+
+    # Exchange code ↔ tokens
     token_url = "https://accounts.spotify.com/api/token"
     token_data = {
-        "grant_type": "authorization_code",
-        "code": code,
-        "redirect_uri": REDIRECT_URI,
-        "client_id": CLIENT_ID,
-        "client_secret": CLIENT_SECRET,
+      "grant_type":    "authorization_code",
+      "code":          code,
+      "redirect_uri":  REDIRECT_URI,
+      "client_id":     CLIENT_ID,
+      "client_secret": CLIENT_SECRET,
     }
-    token_headers = {"Content-Type": "application/x-www-form-urlencoded"}
+    resp = requests.post(token_url,
+                         data=token_data,
+                         headers={"Content-Type":"application/x-www-form-urlencoded"})
+    if resp.status_code != 200:
+        logger.error("Token exchange failed: %s", resp.text)
+        return jsonify({"error":"Failed to obtain access token"}), 400
 
-    response = requests.post(token_url, data=token_data, headers=token_headers)
+    info = resp.json()
+    access_token  = info["access_token"]
+    refresh_token = info.get("refresh_token")
+    scopes        = info.get("scope")
 
-    if response.status_code == 200:
-        token_info = response.json()
-        access_token = token_info["access_token"]
-        refresh_token = token_info.get("refresh_token")
-        scopes = token_info.get("scope")
-        # expires_in = token_info.get("expires_in")
-        # token_type = token_info.get("token_type")
+    # Persist tokens for that user
+    user_id = firebase_operations.get_user_id_by_email(user_email)
+    firebase_operations.if_not_exists_insert_userlinkedapps(
+      user_id, 1, access_token, refresh_token, scopes
+    )
 
-        logger.info("Successfully obtained access token.")
-        user_email = get_jwt_identity()
-        user_id = firebase_operations.get_user_id_by_email(user_email)
-        firebase_operations.if_not_exists_insert_userlinkedapps(
-            user_id, 1, access_token, refresh_token, scopes
-        )
+    # You can clear session data if you like:
+    session.pop('spotify_oauth', None)
 
-        return (
-            render_template(
-                "spotify.html", success=True, user_id=get_email_username(user_email)
-            ),
-            200,
-        )
-    else:
-        logger.error(
-            f"Failed to obtain access token: {response.status_code} - {response.text}"
-        )
-        return jsonify({"error": "Failed to obtain access token"}), 400
+    return render_template(
+      "spotify.html",
+      success=True,
+      user_id=get_email_username(user_email)
+    ), 200

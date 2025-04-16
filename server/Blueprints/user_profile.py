@@ -4,16 +4,12 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from util.logit import get_logger
 import database.firebase_operations as firebase_operations
 from util.authlib import requires_scope
+from config.config import settings
 
 profile_bp = Blueprint("profile", __name__)
 
 logger = get_logger("logs", "Profile")
-CORS(profile_bp, resources={r"/*": {
-    "origins": [
-        "https://api-sync-branch.yggbranch.dev",
-        "http://python-hello-world-911611650068.europe-west3.run.app"
-    ]
-}})
+CORS(profile_bp, resources=settings.CORS_resource_allow_all)
 
 
 @profile_bp.before_request

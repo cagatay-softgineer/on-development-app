@@ -3,14 +3,10 @@ from flask import Blueprint, render_template, jsonify
 from flask_cors import CORS
 from util.logit import get_logger
 from util.error_handling import log_error
+from config.config import settings
 
 errors_bp = Blueprint("errors", __name__)
-CORS(errors_bp, resources={r"/*": {
-    "origins": [
-        "https://api-sync-branch.yggbranch.dev",
-        "http://python-hello-world-911611650068.europe-west3.run.app"
-    ]
-}})
+CORS(errors_bp, resources=settings.CORS_resource_allow_all)
 logger = get_logger("logs", "AppErrors")
 
 error_counts = {400: 0, 401: 0, 403: 0, 404: 0, 405: 0, 408: 0, 429: 0, 500: 0}

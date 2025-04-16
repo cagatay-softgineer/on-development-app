@@ -9,12 +9,7 @@ from util.authlib import requires_scope
 lyrics_bp = Blueprint("lyrics", __name__, url_prefix="/lyrics")
 
 logger = get_logger("logs", "MakroMusicService")
-CORS(lyrics_bp, resources={r"/*": {
-    "origins": [
-        "https://api-sync-branch.yggbranch.dev",
-        "http://python-hello-world-911611650068.europe-west3.run.app"
-    ]
-}})
+CORS(lyrics_bp, resources=settings.CORS_resource_allow_all)
 
 
 @lyrics_bp.before_request

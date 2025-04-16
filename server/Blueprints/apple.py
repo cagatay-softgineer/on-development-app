@@ -16,12 +16,7 @@ apple_bp = Blueprint("apple", __name__)
 limiter = Limiter(key_func=get_remote_address)
 
 # Enable CORS for all routes in this blueprint
-CORS(apple_bp, resources={r"/*": {
-    "origins": [
-        "https://api-sync-branch.yggbranch.dev",
-        "http://python-hello-world-911611650068.europe-west3.run.app"
-    ]
-}})
+CORS(apple_bp, resources=settings.CORS_resource_allow_all)
 
 logger = get_logger("logs", "AppleMusicAPI")
 
@@ -46,7 +41,6 @@ def apple_healthcheck():
 
 
 @apple_bp.route("/login/<user_id>", methods=["GET"])
-@jwt_required()
 @requires_scope("apple")
 def login(user_id):
     """

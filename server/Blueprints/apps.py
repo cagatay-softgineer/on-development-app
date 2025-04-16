@@ -20,12 +20,7 @@ OAUTHLIB_INSECURE_TRANSPORT = 1
 GOOGLE_CLIENT_SECRETS_FILE = settings.google_client_secret
 
 # Enable CORS for all routes in this blueprint
-CORS(apps_bp, resources={r"/*": {
-    "origins": [
-        "https://api-sync-branch.yggbranch.dev",
-        "http://python-hello-world-911611650068.europe-west3.run.app"
-    ]
-}})
+CORS(apps_bp, resources=settings.CORS_resource_allow_all)
 
 logger = get_logger("logs", "Apps")
 
@@ -143,10 +138,10 @@ def check_linked_app():
             ),
             400,
         )
-
+    access_tokens = False
     response = firebase_operations.get_userlinkedapps_tokens(user_id, app_id)
-
-    access_tokens = response[0]["access_token"]
+    if response and response[0]:
+        access_tokens = response[0]["access_token"]
     user_linked = response is not None
     # print("User access_tokens", access_tokens)
     if access_tokens:

@@ -187,7 +187,7 @@ def fetch_user_playlists(user_id, app_id):
     offset = 0
     order = 0
     formatted_playlists = []
-    playlist_count_limit = 2
+    playlist_count_limit = 5
     is_playlist_count_exceeded_to_limit = False
     while True:
         url = url_template.format(offset=offset)

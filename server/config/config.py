@@ -22,7 +22,38 @@ class Settings(BaseSettings):
     class Config:
         env_file = ".env"
         env_file_encoding = "utf-8"
-
+    csp = {
+        'default-src': [
+            "'self'",
+            "https://api-sync-branch.yggbranch.dev",
+            "http://python-hello-world-911611650068.europe-west3.run.app"
+        ],
+        'script-src': [
+            "'self'",
+            "https://api-sync-branch.yggbranch.dev",
+            "http://python-hello-world-911611650068.europe-west3.run.app"
+        ],
+        'style-src': [
+            "'self'",
+            "https://api-sync-branch.yggbranch.dev",
+            "http://python-hello-world-911611650068.europe-west3.run.app"
+        ],
+        # Prevent any third party from embedding your site
+        'frame-ancestors': ["'none'"],
+        # Ensure that forms only post back to your own domain
+        'form-action': ["'self'"]
+    }
+    
+    csp_allow_all = {}
+    
+    CORS_resource = {r"/*": {
+        "origins": [
+            "https://api-sync-branch.yggbranch.dev",
+            "http://python-hello-world-911611650068.europe-west3.run.app"
+        ]
+    }}
+    
+    CORS_resource_allow_all = {r"/*": {"origins": "*"}}
 
 settings = Settings()
 

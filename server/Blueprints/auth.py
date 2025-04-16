@@ -15,18 +15,13 @@ from util.models import RegisterRequest, LoginRequest  # Import models
 from util.logit import get_logger
 from pydantic import ValidationError
 from util.authlib import default_user
-
+from config.config import settings
 
 auth_bp = Blueprint("auth", __name__)
 limiter = Limiter(key_func=get_remote_address)
 
 # Enable CORS for all routes in this blueprint
-CORS(auth_bp, resources={r"/*": {
-    "origins": [
-        "https://api-sync-branch.yggbranch.dev",
-        "http://python-hello-world-911611650068.europe-west3.run.app"
-    ]
-}})
+CORS(auth_bp, resources=settings.CORS_resource_allow_all)
 
 logger = get_logger("logs", "Auth")
 

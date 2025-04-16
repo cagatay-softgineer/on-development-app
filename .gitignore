@@ -216,3 +216,4 @@ server/keys
 *.kt
 /ssdk_rsrc_backup
 /server/diagrams
+/uploads

@@ -3,15 +3,11 @@ from flask_cors import CORS
 from util.logit import get_logger
 from util.utils import route_descriptions
 from util.authlib import requires_scope
+from config.config import settings
 
 util_bp = Blueprint("util", __name__)
 logger = get_logger("logs", "App Utils")
-CORS(util_bp, resources={r"/*": {
-    "origins": [
-        "https://api-sync-branch.yggbranch.dev",
-        "http://python-hello-world-911611650068.europe-west3.run.app"
-    ]
-}})
+CORS(util_bp, resources=settings.CORS_resource_allow_all)
 
 
 @util_bp.route("/endpoints")

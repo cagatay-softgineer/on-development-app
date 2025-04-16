@@ -39,33 +39,12 @@ gui = CmdGUI()
 def create_app(testing=False):
 
     app = Flask(__name__)
-    csp = {
-        'default-src': [
-            "'self'",
-            "https://api-sync-branch.yggbranch.dev",
-            "http://python-hello-world-911611650068.europe-west3.run.app"
-        ],
-        'script-src': [
-            "'self'",
-            "https://api-sync-branch.yggbranch.dev",
-            "http://python-hello-world-911611650068.europe-west3.run.app"
-        ],
-        'style-src': [
-            "'self'",
-            "https://api-sync-branch.yggbranch.dev",
-            "http://python-hello-world-911611650068.europe-west3.run.app"
-        ],
-        # Prevent any third party from embedding your site
-        'frame-ancestors': ["'none'"],
-        # Ensure that forms only post back to your own domain
-        'form-action': ["'self'"]
-    }
     Talisman(app,
              strict_transport_security=True,
              strict_transport_security_max_age=31536000,
              strict_transport_security_include_subdomains=True,
              strict_transport_security_preload=True,
-             content_security_policy=csp)
+             content_security_policy=settings.csp_allow_all)
 
     jwt = JWTManager(app)  # noqa: F841
     limiter = Limiter(app)  # noqa: F841

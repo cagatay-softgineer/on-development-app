@@ -1,6 +1,5 @@
 import os
 from flask import Blueprint, request, jsonify, session, redirect, render_template
-from flask_jwt_extended import jwt_required
 from flask_limiter import Limiter
 from flask_cors import CORS
 from flask_limiter.util import get_remote_address
@@ -12,18 +11,14 @@ from util.google import get_current_user_profile_google
 from util.logit import get_logger
 from google_auth_oauthlib.flow import Flow
 from util.authlib import requires_scope
+from config.config import settings
 
 OAUTHLIB_INSECURE_TRANSPORT = 1
 
 # Initialize Blueprint and Limiter
 google_bp = Blueprint("google", __name__)
 limiter = Limiter(key_func=get_remote_address)
-CORS(google_bp, resources={r"/*": {
-    "origins": [
-        "https://api-sync-branch.yggbranch.dev",
-        "http://python-hello-world-911611650068.europe-west3.run.app"
-    ]
-}})
+CORS(google_bp, resources=settings.CORS_resource_allow_all)
 
 logger = get_logger("logs", "Google")
 
@@ -67,7 +62,6 @@ GOOGLE_CLIENT_SECRETS_FILE = cert_path
 
 
 @google_bp.route("/google_api_bind", methods=["GET"])
-@jwt_required()
 @requires_scope("google")
 def google_api_bind():
     """

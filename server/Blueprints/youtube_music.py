@@ -19,12 +19,7 @@ OAUTHLIB_INSECURE_TRANSPORT = 1
 
 youtubeMusic_bp = Blueprint("youtubeMusic", __name__)
 limiter = Limiter(key_func=get_remote_address)
-CORS(youtubeMusic_bp, resources={r"/*": {
-    "origins": [
-        "https://api-sync-branch.yggbranch.dev",
-        "http://python-hello-world-911611650068.europe-west3.run.app"
-    ]
-}})
+CORS(youtubeMusic_bp, resources=settings.CORS_resource_allow_all)
 
 logger = get_logger("logs", "YoutubeMusic")
 
