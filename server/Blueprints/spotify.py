@@ -67,7 +67,7 @@ def login(user_email):
 
     state = generate_random_state()
 
-    session['spotify_oauth'] = {'state' : state, 'user_email' : user_email}
+    session['spotify_oauth'] = {'state': state, 'user_email': user_email}
 
     scope = (
         "app-remote-control " +
@@ -240,7 +240,7 @@ def callback():
     - A Flask response object containing a rendered HTML template with success message and user ID if the access token is obtained successfully.
     - A Flask response object containing a JSON object with an error message if the access token cannot be obtained.
     """
-    code  = request.args.get("code")
+    code = request.args.get("code")
     state = request.args.get("state")
 
     oauth = session.get('spotify_oauth')
@@ -255,18 +255,18 @@ def callback():
     # Exchange code ↔ tokens
     token_url = "https://accounts.spotify.com/api/token"
     token_data = {
-    "grant_type" : "authorization_code",
-    "code" : code,
-    "redirect_uri" : REDIRECT_URI,
-    "client_id" : CLIENT_ID,
-    "client_secret" : CLIENT_SECRET,
+    "grant_type": "authorization_code",
+    "code": code,
+    "redirect_uri": REDIRECT_URI,
+    "client_id": CLIENT_ID,
+    "client_secret": CLIENT_SECRET,
     }
     resp = requests.post(token_url,
                          data=token_data,
-                         headers={"Content-Type":"application/x-www-form-urlencoded"})
+                         headers={"Content-Type": "application/x-www-form-urlencoded"})
     if resp.status_code != 200:
         logger.error("Token exchange failed: %s", resp.text)
-        return jsonify({"error":"Failed to obtain access token"}), 400
+        return jsonify({"error": "Failed to obtain access token"}), 400
 
     info = resp.json()
     access_token = info["access_token"]
