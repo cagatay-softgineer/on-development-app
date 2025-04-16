@@ -107,6 +107,7 @@ def test_spotify_login_authorized(client, app):
     # Optionally, check that the Location header is present.
     assert "Location" in response.headers, "Response should have a Location header for redirection"
 
+
 def test_spotify_user_profile(monkeypatch, client, app):
     """
     Test the /spotify/user_profile endpoint.
