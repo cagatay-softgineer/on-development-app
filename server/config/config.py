@@ -43,17 +43,18 @@ class Settings(BaseSettings):
         # Ensure that forms only post back to your own domain
         'form-action': ["'self'"]
     }
-    
+
     csp_allow_all = {}
-    
+
     CORS_resource = {r"/*": {
         "origins": [
             "https://api-sync-branch.yggbranch.dev",
             "http://python-hello-world-911611650068.europe-west3.run.app"
         ]
     }}
-    
+
     CORS_resource_allow_all = {r"/*": {"origins": "*"}}
+
 
 settings = Settings()
 

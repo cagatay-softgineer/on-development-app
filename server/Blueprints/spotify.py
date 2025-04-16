@@ -64,14 +64,11 @@ def login(user_email):
     Returns:
     - A Flask redirect response to Spotify's authorization URL.
     """
-    
+
     state = generate_random_state()
-    
-    session['spotify_oauth'] = {
-      'state': state,
-      'user_email': user_email
-    }
-    
+
+    session['spotify_oauth'] = {'state': state,'user_email': user_email}
+
     scope = (
         "app-remote-control " +
         "streaming " +
@@ -258,11 +255,11 @@ def callback():
     # Exchange code ↔ tokens
     token_url = "https://accounts.spotify.com/api/token"
     token_data = {
-      "grant_type":    "authorization_code",
-      "code":          code,
-      "redirect_uri":  REDIRECT_URI,
-      "client_id":     CLIENT_ID,
-      "client_secret": CLIENT_SECRET,
+    "grant_type":"authorization_code",
+    "code":code,
+    "redirect_uri":REDIRECT_URI,
+    "client_id":CLIENT_ID,
+    "client_secret":CLIENT_SECRET,
     }
     resp = requests.post(token_url,
                          data=token_data,
