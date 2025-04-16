@@ -67,7 +67,7 @@ def login(user_email):
 
     state = generate_random_state()
 
-    session['spotify_oauth'] = {'state': state,'user_email': user_email}
+    session['spotify_oauth'] = {'state' : state, 'user_email' : user_email}
 
     scope = (
         "app-remote-control " +
@@ -255,11 +255,11 @@ def callback():
     # Exchange code ↔ tokens
     token_url = "https://accounts.spotify.com/api/token"
     token_data = {
-    "grant_type":"authorization_code",
-    "code":code,
-    "redirect_uri":REDIRECT_URI,
-    "client_id":CLIENT_ID,
-    "client_secret":CLIENT_SECRET,
+    "grant_type" : "authorization_code",
+    "code" : code,
+    "redirect_uri" : REDIRECT_URI,
+    "client_id" : CLIENT_ID,
+    "client_secret" : CLIENT_SECRET,
     }
     resp = requests.post(token_url,
                          data=token_data,
@@ -269,9 +269,9 @@ def callback():
         return jsonify({"error":"Failed to obtain access token"}), 400
 
     info = resp.json()
-    access_token  = info["access_token"]
+    access_token = info["access_token"]
     refresh_token = info.get("refresh_token")
-    scopes        = info.get("scope")
+    scopes = info.get("scope")
 
     # Persist tokens for that user
     user_id = firebase_operations.get_user_id_by_email(user_email)
