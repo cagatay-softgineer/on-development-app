@@ -3,6 +3,7 @@
 from flask_jwt_extended import JWTManager, create_access_token
 import sys
 import os
+from flask import Flask
 import pytest
 from datetime import timedelta
 
