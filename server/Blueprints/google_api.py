@@ -54,36 +54,46 @@ GOOGLE_SCOPES = [
 ]  # Adjust scopes as needed
 # Path to your downloaded client secrets file
 current_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-cert_path = os.path.join(current_dir, "keys/client_secret_test.json")
+# This file lives in …/SpotifySDK-Research/server/Blueprints/your_module.py
+MODULE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-GOOGLE_CLIENT_SECRETS_FILE = cert_path
+# Go up one level to …/SpotifySDK-Research/server
+SERVER_ROOT = os.path.abspath(os.path.join(MODULE_DIR, os.pardir))
+
+# Now set the client-secrets path to server/keys/…
+GOOGLE_CLIENT_SECRETS_FILE = os.path.join(
+    SERVER_ROOT,
+    "keys",
+    "client_secret_test.json"
+)
+
 # Make sure to set a secret key for Flask session management in your app
 # configuration
 
 
 @google_bp.route("/google_api_bind", methods=["GET"])
-@requires_scope("google")
 def google_api_bind():
     """
-    Initiate the OAuth 2.0 flow with Google by redirecting the user to the authorization URL.
-
-    Parameters:
-    - request (flask.Request): The incoming request object containing the user's email as a query parameter.
-
-    Returns:
-    - flask.Response:
-        - If the user_email parameter is missing in the request, returns a jsonify object with an error message and a 400 status code.
-        - Otherwise, initiates the OAuth 2.0 flow with Google, stores the user_email in the session, and redirects the user to the authorization URL.
-          If any exception occurs during the process, logs the error, and returns a jsonify object with an error message and a 500 status code.
+    Initiate the OAuth 2.0 flow with Google by redirecting the user
+    to the authorization URL, using user_email passed as a query param.
     """
+    # 1. Read user_email from the URL
+    user_email = request.args.get("user_email", type=str)
+    if not user_email:
+        return jsonify({"error": "Missing required query parameter 'user_email'"}), 400
+
+    # 2. Validate via Pydantic
     try:
-        try:
-            payload = UserEmailRequest.parse_obj(request.get_json())
-        except ValidationError as ve:
-            return jsonify({"error": ve.errors()}), 400
-        user_email = payload.user_email
-        # Store user_email in the session
-        session["user_email"] = user_email
+        payload = UserEmailRequest(user_email=user_email)
+    except ValidationError as ve:
+        return jsonify({"error": ve.errors()}), 400
+
+    # 3. (Optional) Log or print for debugging
+    print("Using client secrets file at:", GOOGLE_CLIENT_SECRETS_FILE)
+
+    # 4. Store email and start the OAuth flow
+    session["user_email"] = payload.user_email
+    try:
         flow = Flow.from_client_secrets_file(
             GOOGLE_CLIENT_SECRETS_FILE,
             scopes=GOOGLE_SCOPES,
@@ -92,18 +102,18 @@ def google_api_bind():
         authorization_url, state = flow.authorization_url(
             access_type="offline", prompt="consent", include_granted_scopes="true"
         )
-        # Store the state in the session so that the callback can verify the
-        # response
         session["google_oauth_state"] = state
         logger.info("Redirecting user to Google OAuth consent screen.")
         return redirect(authorization_url)
-    except Exception as e:
-        logger.error("Error initiating Google OAuth flow: %s", e)
-        return jsonify({"error": "Failed to initiate Google OAuth flow."}), 500
 
+    except Exception as e:
+        logger.exception("Error initiating Google OAuth flow")
+        return jsonify({
+            "error": "Failed to initiate Google OAuth flow.",
+            "details": str(e)
+        }), 500
 
 @google_bp.route("/google_api_callback", methods=["GET"])
-@requires_scope("google")
 def google_api_callback():
     """
     Handle the OAuth 2.0 callback from Google. This endpoint exchanges the authorization code

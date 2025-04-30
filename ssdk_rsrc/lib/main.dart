@@ -108,23 +108,24 @@ class StartPage extends StatelessWidget {
       appBar: AppBar(title: const Text('Home Page')),
       body: Stack(
         children: [
+          // Align(
+          //   alignment: Alignment.topCenter,
+          //   child: Padding(
+          //     padding: const EdgeInsets.only(top: 50.0),
+          //     child:
+          //     CustomButton(
+          //       text: "Button Customizer",
+          //       onPressed: () {
+          //         Navigator.pushNamed(context, '/button_customizer');
+          //       },
+          //       buttonParams: mainButtonParams,
+          //     ),
+          //   ),
+          // ),
           Align(
             alignment: Alignment.topCenter,
             child: Padding(
               padding: const EdgeInsets.only(top: 50.0),
-              child: CustomButton(
-                text: "Button Customizer",
-                onPressed: () {
-                  Navigator.pushNamed(context, '/button_customizer');
-                },
-                buttonParams: mainButtonParams,
-              ),
-            ),
-          ),
-          Align(
-            alignment: Alignment.topCenter,
-            child: Padding(
-              padding: const EdgeInsets.only(top: 200.0),
               child: CustomButton(
                 text: "Login Page",
                 onPressed: () {
@@ -137,7 +138,7 @@ class StartPage extends StatelessWidget {
           Align(
             alignment: Alignment.topCenter,
             child: Padding(
-              padding: const EdgeInsets.only(top: 350.0),
+              padding: const EdgeInsets.only(top: 200.0),
               child: CustomButton(
                 text: "Register Page",
                 onPressed: () {

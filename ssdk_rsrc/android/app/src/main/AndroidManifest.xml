@@ -10,9 +10,9 @@
         android:icon="@mipmap/ygg"
         android:extractNativeLibs="true"
         android:enableOnBackInvokedCallback="true"
-        android:allowBackup="false">
-        
-        
+        android:allowBackup="false"
+        tools:replace="android:allowBackup">
+
         <!-- Override the SDKUriHandlerActivity settings from the .aar manifest -->
         <activity
             android:name="com.apple.android.sdk.authentication.SDKUriHandlerActivity"
