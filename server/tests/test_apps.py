@@ -3,6 +3,7 @@
 import sys
 import os
 import pytest
+from flask import Flask
 from flask_jwt_extended import JWTManager, create_access_token
 
 # Prepend repository root so imports for 'server' and 'util' work correctly.
@@ -16,7 +17,8 @@ def app():
     Create a Flask app instance for testing.
     Set the 'TESTING' flag and initialize the JWTManager to support JWT-protected endpoints.
     """
-    app = create_app(testing=True)
+    app = Flask(__name__)
+    app = create_app(app, testing=True)
     app.config["JWT_SECRET_KEY"] = "test-secret"  # Use a simple secret for tests
     JWTManager(app)
     return app

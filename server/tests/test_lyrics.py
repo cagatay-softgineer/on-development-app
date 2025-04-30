@@ -21,7 +21,8 @@ def app():
     Create a Flask app instance for testing.
     Initialize the JWTManager so that JWT-protected endpoints work.
     """
-    app = create_app(testing=True)
+    app = Flask(__name__)
+    app = create_app(app, testing=True)
     app.config["JWT_SECRET_KEY"] = "test-secret"
     JWTManager(app)
     return app

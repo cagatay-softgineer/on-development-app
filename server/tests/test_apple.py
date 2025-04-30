@@ -2,6 +2,7 @@
 
 import sys
 import os
+from flask import Flask
 import pytest
 from flask_jwt_extended import create_access_token
 
@@ -16,7 +17,8 @@ def app():
     Create a Flask app instance for testing. Ensure that a JWT secret key is set
     so that tokens can be generated.
     """
-    app = create_app(testing=True)
+    app = Flask(__name__)
+    app = create_app(app, testing=True)
     app.config["JWT_SECRET_KEY"] = "test-secret"
     return app
 
