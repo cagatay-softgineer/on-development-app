@@ -152,14 +152,9 @@ Below is a sample directory structure for the project:
 
 ``` 
 server/
-├── Dockerfile
-├── requirements.txt
-├── run_on_waitress.py
-├── run_server.bat
-└── server.py
-| 
-├───Blueprints/
-│   ├── .env
+├── .bandit
+├── Blueprints/
+│   ├── __init__.py
 │   ├── apple.py
 │   ├── apple_music.py
 │   ├── apps.py
@@ -172,14 +167,26 @@ server/
 │   ├── user_profile.py
 │   ├── utilx.py
 │   └── youtube_music.py
-│
-├───config/
+├── Dockerfile
+├── __init__.py
+├── bandit.yaml
+├── config/
+│   ├── __init__.py
 │   └── config.py
-│
-├───database/
+├── database/
+│   ├── __init__.py
 │   └── firebase_operations.py
-|
-├───templates/
+├── helper/
+│   └── error.py
+├── requirements.txt
+├── run_on_waitress.py
+├── run_server.bat
+├── server.py
+├── static/
+│   ├── icon/
+│   ├── style.css
+│   └── swagger.json
+├── templates/
 │   ├── apple.html
 │   ├── apple_login.html
 │   ├── endpoint.html
@@ -187,16 +194,31 @@ server/
 │   ├── google.html
 │   ├── index.html
 │   ├── log.html
-│   ├── plotly_chart.html
+│   ├── open.html
 │   └── spotify.html
-│
-└───util/
+├── tests/
+│   ├── test_apple.py
+│   ├── test_apps.py
+│   ├── test_auth.py
+│   ├── test_endpoints.py
+│   ├── test_lyrics.py
+│   ├── test_spotify.py
+│   ├── test_spotify_micro_service.py
+│   ├── test_user_profile.py
+│   ├── test_utils.py
+│   └── test_youtube_music.py
+└── util/
+    ├── __init__.py
+    ├── app.py
     ├── authlib.py
+    ├── blueprints.py
+    ├── error_handlers.py
     ├── error_handling.py
     ├── google.py
     ├── logit.py
     ├── models.py
     ├── playlist.py
+    ├── setup.py
     ├── spotify.py
     ├── utils.py
     └── youtube.py
