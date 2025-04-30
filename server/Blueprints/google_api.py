@@ -113,6 +113,7 @@ def google_api_bind():
             "details": str(e)
         }), 500
 
+
 @google_bp.route("/google_api_callback", methods=["GET"])
 def google_api_callback():
     """

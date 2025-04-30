@@ -12,7 +12,7 @@ from helper.error import (
 )
 
 
-def register_error_handlers(app:Flask, testing=False):
+def register_error_handlers(app: Flask, testing=False):
 
     app.register_blueprint(errors_bp, url_prefix="/")
     app.register_error_handler(400, bad_request)

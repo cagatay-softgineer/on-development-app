@@ -12,9 +12,10 @@ from Blueprints.spotify_micro_service import SpotifyMicroService_bp
 from Blueprints.lyrics import lyrics_bp
 from Blueprints.youtube_music import youtubeMusic_bp
 
-def register_blueprints(app:Flask, testing=False):
 
-        # Swagger documentation setup
+def register_blueprints(app: Flask, testing=False):
+
+    # Swagger documentation setup
     swaggerui_blueprint = get_swaggerui_blueprint(
         app.config["SWAGGER_URL"],
         app.config["API_URL"],

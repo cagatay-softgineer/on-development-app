@@ -8,7 +8,8 @@ from util.logit import get_logger
 from util.blueprints import register_blueprints
 from util.error_handlers import register_error_handlers
 
-def create_app(app:Flask, testing=False):
+
+def create_app(app: Flask, testing=False):
 
     Talisman(app,
              strict_transport_security=True,
