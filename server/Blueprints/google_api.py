@@ -77,21 +77,15 @@ def google_api_bind():
     Initiate the OAuth 2.0 flow with Google by redirecting the user
     to the authorization URL, using user_email passed as a query param.
     """
-    # 1. Read user_email from the URL
     user_email = request.args.get("user_email", type=str)
     if not user_email:
         return jsonify({"error": "Missing required query parameter 'user_email'"}), 400
 
-    # 2. Validate via Pydantic
     try:
         payload = UserEmailRequest(user_email=user_email)
     except ValidationError as ve:
         return jsonify({"error": ve.errors()}), 400
 
-    # 3. (Optional) Log or print for debugging
-    print("Using client secrets file at:", GOOGLE_CLIENT_SECRETS_FILE)
-
-    # 4. Store email and start the OAuth flow
     session["user_email"] = payload.user_email
     try:
         flow = Flow.from_client_secrets_file(
@@ -107,10 +101,9 @@ def google_api_bind():
         return redirect(authorization_url)
 
     except Exception as e:
-        logger.exception("Error initiating Google OAuth flow")
+        logger.error("Error initiating Google OAuth flow: %s", e)
         return jsonify({
             "error": "Failed to initiate Google OAuth flow.",
-            "details": str(e)
         }), 500
 
 
