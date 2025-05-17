@@ -165,6 +165,7 @@ def get_next_user_id(db: firestore.Client = DB) -> int:
     transaction = db.transaction()
     return txn_increment(transaction)
 
+
 def insert_user(email: str, password: str, alias_map: dict = alias_map) -> int:
     """
     Emulates:
@@ -191,9 +192,9 @@ def insert_user(email: str, password: str, alias_map: dict = alias_map) -> int:
 
     # 5) Create the user document (ID = str(user_id))
     users_col.document(str(user_id)).set({
-        "user_id":    user_id,
-        "email":      email,
-        "password":   hashed_str,
+        "user_id": user_id,
+        "email": email,
+        "password": hashed_str,
         "created_at": now,
         "updated_at": now,
     })
