@@ -7,7 +7,7 @@
     <application
         android:label="Pomodoro"
         android:name="${applicationName}"
-        android:icon="@mipmap/ygg"
+        android:icon="@mipmap/launcher_icon"
         android:extractNativeLibs="true"
         android:enableOnBackInvokedCallback="true"
         android:allowBackup="false"

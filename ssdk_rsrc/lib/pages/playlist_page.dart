@@ -57,10 +57,6 @@ class PlaylistPageState extends State<PlaylistPage> {
       mergedPlaylists.addAll(results[1]);
       mergedPlaylists.addAll(results[2]);
 
-      //Remove IT
-      mergedPlaylists.clear();
-      mergedPlaylists.addAll(results[0]);
-
       setState(() {
         playlists = mergedPlaylists;
       });

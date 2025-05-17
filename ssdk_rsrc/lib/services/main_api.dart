@@ -34,8 +34,12 @@ class MainAPI {
 
   // List of candidate base URLs.
   final List<String> _baseUrls = [
+    // Development Backend
     'https://api-sync-branch.yggbranch.dev/',
-    'https://python-hello-world-911611650068.europe-west3.run.app/'
+
+    // Deployment Backend
+    'https://python-hello-world-911611650068.europe-west3.run.app/',
+    'https://pomodoro-911611650068.europe-west8.run.app/',
   ];
 
   MainAPI() {
@@ -590,7 +594,7 @@ if (response.statusCode == 200) {
       }
 
       // Construct URL
-      final url = 'https://api-sync-branch.yggbranch.dev/spotify/login/$userId';
+      final url = '${baseUrl}spotify/login/$userId';
       //print('Generated URL: $url');
 
       // Check if the URL can be launched
@@ -702,5 +706,4 @@ if (response.statusCode == 200) {
       );
     }
   }
-  
 }

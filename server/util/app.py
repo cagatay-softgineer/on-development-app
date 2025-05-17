@@ -28,12 +28,7 @@ def create_app(app: Flask, testing=False):
     app.config["PREFERRED_URL_SCHEME"] = "https"
     app.config["TESTING"] = testing
 
-    CORS(app, resources={r"/*": {
-        "origins": [
-            "https://api-sync-branch.yggbranch.dev",
-            "http://python-hello-world-911611650068.europe-west3.run.app"
-        ]
-    }})
+    CORS(app, resources=settings.CORS_resource_allow_all)
 
     # Add logging to the root logger
     logger = get_logger("logs", "Service")

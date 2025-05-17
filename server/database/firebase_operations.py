@@ -151,21 +151,54 @@ def delete_userlinkedapps(user_id: int, app_id: int,
 # Auth Commands
 # ---------------------------
 
+def get_next_user_id(db: firestore.Client = DB) -> int:
+    counter_ref = db.collection("counters").document("users")
 
-def insert_user(email: str, password: str, alias_map: dict = alias_map):
+    @firestore.transactional
+    def txn_increment(txn):
+        snap = counter_ref.get(transaction=txn)
+        current = snap.get("seq") or 0
+        new = current + 1
+        txn.update(counter_ref, {"seq": new})
+        return new
+
+    transaction = db.transaction()
+    return txn_increment(transaction)
+
+def insert_user(email: str, password: str, alias_map: dict = alias_map) -> int:
     """
     Emulates:
       INSERT INTO users (email, password) VALUES (?, ?)
+    Inserts a user with:
+      • numeric user_id       (from our counter)
+      • bcrypt-hashed password
+      • created_at & updated_at (UTC datetime)
+
+    Returns the new user_id.
     """
-    col = get_collection("users", alias_map)
+    # 1) Initialize Firestore client
+    users_col = get_collection("users", alias_map)
 
-    # Encrypt the password using bcrypt
+    # 2) Hash the password
     hashed = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt())
-
-    # Decode the hashed password to convert it from a bytes object to a string
     hashed_str = hashed.decode("utf-8")
 
-    col.add({"email": email, "password": hashed_str})
+    # 3) Obtain the next numeric ID
+    user_id = get_next_user_id()
+
+    # 4) Prepare timestamp
+    now = datetime.datetime.utcnow()
+
+    # 5) Create the user document (ID = str(user_id))
+    users_col.document(str(user_id)).set({
+        "user_id":    user_id,
+        "email":      email,
+        "password":   hashed_str,
+        "created_at": now,
+        "updated_at": now,
+    })
+
+    return user_id
 
 
 def get_user_password_and_email(email: str, alias_map: dict = alias_map):

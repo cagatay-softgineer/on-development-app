@@ -68,13 +68,13 @@ class _HomePageState extends State<HomePage> {
           children: [
             SizedBox(height: 20), // Adds space from the top
             // CustomButton to Navigate to Button Customizer
-      //   CustomButton(
-      //     text: "Navigate To\nButton Customizer",
-      //     onPressed: () {
-      //       Navigator.pushNamed(context, '/button_customizer');
-      //     },
-      //     buttonParams: navigateButtonParams,
-      //   ),
+           CustomButton(
+             text: "Navigate To\nButton Customizer",
+             onPressed: () {
+               Navigator.pushNamed(context, '/button_customizer');
+             },
+             buttonParams: navigateButtonParams,
+           ),
             SizedBox(height: 20), // Adds vertical spacing
             // CustomButton for Logout
             CustomButton(
@@ -122,28 +122,28 @@ class _HomePageState extends State<HomePage> {
             ),
             SizedBox(height: 20), // Adds vertical spacing
             // CustomButton for Logout
-      //    CustomButton(
-      //      text: "Timer",
-      //      onPressed: () {
-      //        // Implement your logout logic here
-      //        // For example, navigate back to the login page
-      //        Navigator.pushNamed(
-      //            context, '/timer');
-      //      },
-      //      buttonParams: timerButtonParams,
-      //    ),
+            CustomButton(
+              text: "Timer",
+              onPressed: () {
+                // Implement your logout logic here
+                // For example, navigate back to the login page
+                Navigator.pushNamed(
+                    context, '/timer');
+              },
+              buttonParams: timerButtonParams,
+            ),
             SizedBox(height: 20), // Adds vertical spacing
             // CustomButton for Logout
-      //    CustomButton(
-      //      text: "Custom Timer",
-      //      onPressed: () {
-      //        // Implement your logout logic here
-      //        // For example, navigate back to the login page
-      //        Navigator.pushNamed(
-      //            context, '/custom_timer');
-      //      },
-      //      buttonParams: timerButtonParams,
-      //    ),
+            CustomButton(
+              text: "Custom Timer",
+              onPressed: () {
+                // Implement your logout logic here
+                // For example, navigate back to the login page
+                Navigator.pushNamed(
+                    context, '/custom_timer');
+              },
+              buttonParams: timerButtonParams,
+            ),
             SizedBox(height: 20), // Adds vertical spacing
             AdaptiveButton(
               child: Icon(AdaptiveIcons.home),

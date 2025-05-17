@@ -41,7 +41,6 @@ def apple_healthcheck():
 
 
 @apple_bp.route("/login/<user_id>", methods=["GET"])
-@requires_scope("apple")
 def login(user_id):
     """
     Initiates the Apple Music authentication process.

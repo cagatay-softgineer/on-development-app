@@ -1,4 +1,5 @@
 import 'package:ssdk_rsrc/models/button_params.dart'; // Ensure the correct path
+import 'package:ssdk_rsrc/styles/color_palette.dart';
 
 Map<String, dynamic> mainButton = {
   "backgroundColor": "Color(0xFF0000FF)", // Blue
@@ -28,6 +29,96 @@ Map<String, dynamic> mainButton = {
   "fontFamily": "Roboto",
   "backgroundAlpha": 0.9,
   "iconSize" : 36,
+};
+
+Map<String, dynamic> goldenButton = {
+  "backgroundColor": ColorPalette.gold_, // Blue
+  "textColor": ColorPalette.white_,       // White
+  "borderRadius": 8.0,
+  "padding": "EdgeInsets(0.0, 0.0, 0.0, 0.0)",
+  "textStyle": "TextStyle(fontSize: 14.0, color: Color(0xFFFFFFFF))",
+  "elevation": 20.0,
+  "buttonWidth": 200.0,
+  "buttonHeight": 48.0,
+  "borderColor": "Color(0x00000000)",      // Transparent
+  "letterSpacing": 4.0,
+  "blurAmount": 5.0,
+  "useGradient": false,
+  "gradientStartColor": "Color(0xFF00AAAA)", // Blue
+  "gradientEndColor": "Color(0x66FF00FF)",   // Purple
+  "leadingIcon": "",
+  "trailingIcon": "Icons.arrow_forward_ios",
+  "textAlign": "TextAlign.center",
+  "isEnabled": true,
+  "shape": "BoxShape.rectangle",
+  "hoverColor": "Color(0xFF1E88E5)",
+  "focusColor": "Color(0xFF42A5F5)",
+  "shadowColor": "Color(0x66000000)",
+  "shadowOffset": "Offset(2.0, 2.0)",
+  "isLoading": false,
+  "fontFamily": "Roboto",
+  "backgroundAlpha": 0.9,
+  "iconSize" : 24,
+};
+
+Map<String, dynamic> whiteButton = {
+  "backgroundColor": ColorPalette.white_, // Blue
+  "textColor": ColorPalette.backgroundColor_,       // White
+  "borderRadius": 16.0,
+  "padding": "EdgeInsets(0.0, 0.0, 0.0, 0.0)",
+  "textStyle": "TextStyle(fontSize: 14.0, color: Color(0xFFFFFFFF))",
+  "elevation": 20.0,
+  "buttonWidth": 200.0,
+  "buttonHeight": 48.0,
+  "borderColor": "Color(0x00000000)",      // Transparent
+  "letterSpacing": 4.0,
+  "blurAmount": 5.0,
+  "useGradient": false,
+  "gradientStartColor": "Color(0xFF00AAAA)", // Blue
+  "gradientEndColor": "Color(0x66FF00FF)",   // Purple
+  "leadingIcon": "",
+  "trailingIcon": "",
+  "textAlign": "TextAlign.center",
+  "isEnabled": true,
+  "shape": "BoxShape.rectangle",
+  "hoverColor": "Color(0xFF1E88E5)",
+  "focusColor": "Color(0xFF42A5F5)",
+  "shadowColor": ColorPalette.white_,
+  "shadowOffset": "Offset(2.0, 2.0)",
+  "isLoading": false,
+  "fontFamily": "Roboto",
+  "backgroundAlpha": 0.9,
+  "iconSize" : 24,
+};
+
+Map<String, dynamic> closeButton = {
+  "backgroundColor": Transparent.a00_, // Blue
+  "textColor": ColorPalette.gold_,       // White
+  "borderRadius": 16.0,
+  "padding": "EdgeInsets(0.0, 0.0, 0.0, 0.0)",
+  "textStyle": "TextStyle(fontSize: 14.0, color: Color(0xFFFFFFFF))",
+  "elevation": 10.0,
+  "buttonWidth": 50.0,
+  "buttonHeight": 50.0,
+  "borderColor": Transparent.a00_,      // Transparent
+  "letterSpacing": 0.0,
+  "blurAmount": 5.0,
+  "useGradient": false,
+  "gradientStartColor": "Color(0xFF00AAAA)", // Blue
+  "gradientEndColor": "Color(0x66FF00FF)",   // Purple
+  "leadingIcon": "Icons.close_outlined",
+  "trailingIcon": "",
+  "textAlign": "TextAlign.center",
+  "isEnabled": true,
+  "shape": "BoxShape.circle",
+  "hoverColor": "Color(0xFF1E88E5)",
+  "focusColor": "Color(0xFF42A5F5)",
+  "shadowColor": Transparent.a44_,
+  "shadowOffset": "Offset(0.0, 0.0)",
+  "isLoading": false,
+  "fontFamily": "Roboto",
+  "backgroundAlpha": 0.9,
+  "iconSize" : 40,
 };
 
 Map<String, dynamic> playlistButton = {
@@ -117,7 +208,7 @@ Map<String, dynamic> navigateButton = {
   "isLoading": false,
   "fontFamily": "Roboto",
   "backgroundAlpha": 0.9,
-  "iconSize" : 36, 
+  "iconSize" : 36,
 };
 
 Map<String, dynamic> logoutButton = {
@@ -541,6 +632,9 @@ Map<String, dynamic> stopSessionSmall = {
 };
 
 ButtonParams mainButtonParams = ButtonParams.fromMap(mainButton);
+ButtonParams goldenButtonParams = ButtonParams.fromMap(goldenButton);
+ButtonParams whiteButtonParams = ButtonParams.fromMap(whiteButton);
+ButtonParams closeButtonParams = ButtonParams.fromMap(closeButton);
 ButtonParams navigateButtonParams = ButtonParams.fromMap(navigateButton);
 ButtonParams logoutButtonParams = ButtonParams.fromMap(logoutButton);
 ButtonParams spotifyButtonParams = ButtonParams.fromMap(spotify);
