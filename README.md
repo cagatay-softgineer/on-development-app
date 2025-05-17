@@ -1,7 +1,32 @@
 [![CodeQL](https://github.com/cagatay-softgineer/SpotifySDK-Research/actions/workflows/github-code-scanning/codeql/badge.svg?branch=main)](https://github.com/cagatay-softgineer/SpotifySDK-Research/actions/workflows/github-code-scanning/codeql)
 [![QA Automation](https://github.com/cagatay-softgineer/SpotifySDK-Research/actions/workflows/qa.yml/badge.svg)](https://github.com/cagatay-softgineer/SpotifySDK-Research/actions/workflows/qa.yml)
 [![Code Security Scan](https://github.com/cagatay-softgineer/SpotifySDK-Research/actions/workflows/code-security.yml/badge.svg)](https://github.com/cagatay-softgineer/SpotifySDK-Research/actions/workflows/code-security.yml)
+
+[![Last Commit](https://img.shields.io/github/last-commit/cagatay-softgineer/on-development-app?style=flat&logo=git&logoColor=white&color=0080ff)](https://github.com/cagatay-softgineer/SpotifySDK-Research)
+[![Most Used Language](https://img.shields.io/github/languages/top/cagatay-softgineer/on-development-app?style=flat&color=0080ff)](https://github.com/cagatay-softgineer/SpotifySDK-Research)
+[![Used Languages](https://img.shields.io/github/languages/count/cagatay-softgineer/on-development-app?style=flat&color=0080ff)](https://github.com/cagatay-softgineer/SpotifySDK-Research)
+
 # SpotifySDK-Research
+
+Built With This Technologies
+<br>
+<img alt="Flask" src="https://img.shields.io/badge/Flask-000000.svg?style=flat&amp;logo=Flask&amp;logoColor=white" class="inline-block mx-1" style="margin: 0px 2px;">
+<img alt="JSON" src="https://img.shields.io/badge/JSON-000000.svg?style=flat&amp;logo=JSON&amp;logoColor=white" class="inline-block mx-1" style="margin: 0px 2px;">
+<img alt="Firebase" src="https://img.shields.io/badge/Firebase-DD2C00.svg?style=flat&amp;logo=Firebase&amp;logoColor=white" class="inline-block mx-1" style="margin: 0px 2px;">
+<img alt="Gradle" src="https://img.shields.io/badge/Gradle-02303A.svg?style=flat&amp;logo=Gradle&amp;logoColor=white" class="inline-block mx-1" style="margin: 0px 2px;">
+<img alt="Dart" src="https://img.shields.io/badge/Dart-0175C2.svg?style=flat&amp;logo=Dart&amp;logoColor=white" class="inline-block mx-1" style="margin: 0px 2px;">
+<img alt="Docker" src="https://img.shields.io/badge/Docker-2496ED.svg?style=flat&amp;logo=Docker&amp;logoColor=white" class="inline-block mx-1" style="margin: 0px 2px;">
+<img alt="XML" src="https://img.shields.io/badge/XML-005FAD.svg?style=flat&amp;logo=XML&amp;logoColor=white" class="inline-block mx-1" style="margin: 0px 2px;">
+<img alt="Python" src="https://img.shields.io/badge/Python-3776AB.svg?style=flat&amp;logo=Python&amp;logoColor=white" class="inline-block mx-1" style="margin: 0px 2px;">
+<br>
+<img alt="GitHub%20Actions" src="https://img.shields.io/badge/GitHub%20Actions-2088FF.svg?style=flat&amp;logo=GitHub-Actions&amp;logoColor=white" class="inline-block mx-1" style="margin: 0px 2px;">
+<img alt="Google%20Cloud%20Storage" src="https://img.shields.io/badge/Google%20Cloud%20Storage-AECBFA.svg?style=flat&amp;logo=Google-Cloud-Storage&amp;logoColor=black" class="inline-block mx-1" style="margin: 0px 2px;">
+<img alt="Plotly" src="https://img.shields.io/badge/Plotly-3F4F75.svg?style=flat&amp;logo=Plotly&amp;logoColor=white" class="inline-block mx-1" style="margin: 0px 2px;">
+<img alt="bat" src="https://img.shields.io/badge/bat-31369E.svg?style=flat&amp;logo=bat&amp;logoColor=white" class="inline-block mx-1" style="margin: 0px 2px;">
+<img alt="pandas" src="https://img.shields.io/badge/pandas-150458.svg?style=flat&amp;logo=pandas&amp;logoColor=white" class="inline-block mx-1" style="margin: 0px 2px;">
+<img alt="Kotlin" src="https://img.shields.io/badge/Kotlin-7F52FF.svg?style=flat&amp;logo=Kotlin&amp;logoColor=white" class="inline-block mx-1" style="margin: 0px 2px;">
+<img alt="Pydantic" src="https://img.shields.io/badge/Pydantic-E92063.svg?style=flat&amp;logo=Pydantic&amp;logoColor=white" class="inline-block mx-1" style="margin: 0px 2px;">
+<img alt="YAML" src="https://img.shields.io/badge/YAML-CB171E.svg?style=flat&amp;logo=YAML&amp;logoColor=white" class="inline-block mx-1" style="margin: 0px 2px;">
  
 # Pomodro Backend Server 
 
