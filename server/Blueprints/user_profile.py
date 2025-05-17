@@ -23,7 +23,7 @@ def profile_healthcheck():
     return jsonify({"status": "ok", "service": "Profile Service"}), 200
 
 
-@profile_bp.route("/view", methods=["GET"])
+@profile_bp.route("/view", methods=["POST"])
 @jwt_required()
 @requires_scope("me")
 def view_profile():
