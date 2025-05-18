@@ -248,15 +248,15 @@ Map<String, dynamic> spotify = {
   "padding": "EdgeInsets(0.0, 0.0, 0.0, 0.0)",
   "textStyle": "TextStyle(fontSize: 22.0, color: Color(0xFFFFFFFF))",
   "elevation": 6.0,
-  "buttonWidth": 300.0,
-  "buttonHeight": 60.0,
+  "buttonWidth": 50.0,
+  "buttonHeight": 50.0,
   "borderColor": "Color(0x00000000)",      // Transparent
-  "letterSpacing": 8.0,
+  "letterSpacing": 0.0,
   "blurAmount": 10.0,
   "useGradient": false,                    // No gradient for Logout button
   "gradientStartColor": "Color(0xFF0000FF)", // Ignored as useGradient is false
   "gradientEndColor": "Color(0xFFFF00FF)",   // Ignored as useGradient is false
-  "leadingIcon": "Icons.headset",
+  "leadingIcon": "",
   "trailingIcon": "Icons.link",                    // No trailing icon
   "textAlign": "TextAlign.center",
   "isEnabled": true,
@@ -268,7 +268,7 @@ Map<String, dynamic> spotify = {
   "isLoading": false,
   "fontFamily": "Roboto",
   "backgroundAlpha": 0.9,
-  "iconSize" : 24,
+  "iconSize" : 36,
 };
 
 Map<String, dynamic> spotifyPlay = {
@@ -308,15 +308,15 @@ Map<String, dynamic> appleMusic = {
   "padding": "EdgeInsets(0.0, 0.0, 0.0, 0.0)",
   "textStyle": "TextStyle(fontSize: 22.0, color: Color(0xFFFFFFFF))",
   "elevation": 6.0,
-  "buttonWidth": 300.0,
-  "buttonHeight": 60.0,
+  "buttonWidth": 50.0,
+  "buttonHeight": 50.0,
   "borderColor": "Color(0x00000000)",      // Transparent
-  "letterSpacing": 8.0,
+  "letterSpacing": 0.0,
   "blurAmount": 10.0,
   "useGradient": true,                    // No gradient for Logout button
   "gradientStartColor": "Color(0xFFFF4E6B)", // Ignored as useGradient is false
   "gradientEndColor": "Color(0xFFFF0436)",   // Ignored as useGradient is false
-  "leadingIcon": "Icons.apple",
+  "leadingIcon": "",
   "trailingIcon": "Icons.link",                    // No trailing icon
   "textAlign": "TextAlign.center",
   "isEnabled": true,
@@ -338,15 +338,15 @@ Map<String, dynamic> youtubeMusic = {
   "padding": "EdgeInsets(0.0, 0.0, 0.0, 0.0)",
   "textStyle": "TextStyle(fontSize: 22.0, color: Color(0xFFFFFFFF))",
   "elevation": 6.0,
-  "buttonWidth": 300.0,
-  "buttonHeight": 60.0,
+  "buttonWidth": 50.0,
+  "buttonHeight": 50.0,
   "borderColor": "Color(0x00000000)",      // Transparent
-  "letterSpacing": 8.0,
+  "letterSpacing": 0.0,
   "blurAmount": 10.0,
   "useGradient": true,                    // No gradient for Logout button
   "gradientStartColor": "Color(0xFFe52d27)", // Ignored as useGradient is false
   "gradientEndColor": "Color(0xFFb31217)",   // Ignored as useGradient is false
-  "leadingIcon": "Icons.smart_display_rounded",
+  "leadingIcon": "",
   "trailingIcon": "Icons.link",                    // No trailing icon
   "textAlign": "TextAlign.center",
   "isEnabled": true,

@@ -17,7 +17,7 @@ alias_map = {
     "users": "database_structure/Users/rows",
     "apps": "database_structure/Apps/rows",
     "userlinkedapps": "database_structure/UserLinkedApps/rows",
-    "userprofies": "database_structure/UserProfiles/rows",
+    "userprofiles": "database_structure/UserProfiles/rows",
 }
 
 
@@ -360,12 +360,16 @@ def get_user_profile(user_id: int, alias_map: dict = alias_map):
       FROM UserProfiles
       WHERE user_id = ?
     """
-    col = get_collection("userprofies", alias_map)
-    filt = FieldFilter(field_path="user_id", op_string="==", value=user_id)
-    docs = col.where(filter=filt).stream()
+    col = get_collection("userprofiles", alias_map)
+    filt_user = FieldFilter(
+        field_path="user_id",
+        op_string="==",
+        value=user_id)
+    docs = col.where(filter=filt_user).stream()
     profiles = []
     for doc in docs:
         data = doc.to_dict()
+        print(data)
         profiles.append(
             {
                 "first_name": data.get("first_name"),

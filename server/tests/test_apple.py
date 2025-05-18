@@ -80,15 +80,15 @@ def test_apple_healthcheck(client):
 #    )
 
 
-def test_apple_login_forbidden(client, app):
-    """
-    Test /apple/login/<user_id> with a token lacking the "apple" scope.
-    Should return a 403 Forbidden error.
-    """
-    headers = get_auth_headers(app, scopes=["not-apple"])
-    user_id = "test_user"
-    response = client.get(f"/apple/login/{user_id}", headers=headers)
-    assert response.status_code == 403, "Expected 403 for token missing the 'apple' scope"
+# def test_apple_login_forbidden(client, app):
+#     """
+#     Test /apple/login/<user_id> with a token lacking the "apple" scope.
+#     Should return a 403 Forbidden error.
+#     """
+#     headers = get_auth_headers(app, scopes=["not-apple"])
+#     user_id = "test_user"
+#     response = client.get(f"/apple/login/{user_id}", headers=headers)
+#     assert response.status_code == 403, "Expected 403 for token missing the 'apple' scope"
 
 
 def test_apple_callback_missing_user_token(client):

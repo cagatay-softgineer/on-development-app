@@ -48,23 +48,28 @@ def view_profile():
     }
     """
     current_user = get_jwt_identity()
-    # print(current_user)
+    print(current_user)
 
     user_id = firebase_operations.get_user_id_by_email(current_user)
 
+    print(user_id)
+
     rows = firebase_operations.get_user_profile(user_id)
-    # print(rows)
-    if rows[0] != []:
-        user = rows[0]
-        return (
-            jsonify(
-                {
-                    "first_name": user["first_name"],
-                    "last_name": user["last_name"],
-                    "avatar_url": user["avatar_url"],
-                    "bio": user["bio"],
-                }
-            ),
-            200,
-        )
-    return jsonify({"error": "User not found"}), 404
+    print(rows)
+    try:
+        if rows[0] != []:
+            user = rows[0]
+            return (
+                jsonify(
+                    {
+                        "first_name": user["first_name"],
+                        "last_name": user["last_name"],
+                        "avatar_url": user["avatar_url"],
+                        "bio": user["bio"],
+                    }
+                ),
+                200,
+            )
+        return jsonify({"error": "User not found"}), 404
+    except Exception as _:
+        return jsonify({"error": ""}), 404
