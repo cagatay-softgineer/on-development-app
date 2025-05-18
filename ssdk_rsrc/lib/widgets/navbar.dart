@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:ssdk_rsrc/pages/home_page_old.dart';
 import 'package:ssdk_rsrc/styles/color_palette.dart';
+import 'package:ssdk_rsrc/widgets/glowing_icon.dart';
 
 class CustomBottomNavBar extends StatelessWidget {
   final int currentIndex;
@@ -25,14 +27,15 @@ class CustomBottomNavBar extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             _buildNavItem(
-              icon: Icons.groups_outlined,
+              //icon: Icons.groups_outlined,
+              icon: FontAwesomeIcons.usersRays,
               label: "Community",
               index: 0,
             ),
             // const SizedBox(width: 30), // Space for FAB notch
-            _buildNavItem(icon: Icons.home, label: "Home", index: 1),
+            _buildNavItem(icon: FontAwesomeIcons.house, label: "Home", index: 1),
             // const SizedBox(width: 30), // Space for FAB notch
-            _buildNavItem(icon: Icons.person_outline, label: "User", index: 2),
+            _buildNavItem(icon: FontAwesomeIcons.user, label: "User", index: 2),
           ],
         ),
       ),
@@ -52,7 +55,15 @@ class CustomBottomNavBar extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, color: isSelected ? Colors.amber : Colors.grey),
+            GlowingIconButton(
+              onPressed: () => onTap(index),
+              icon: icon,
+              iconColor:
+                  isSelected ? ColorPalette.gold : ColorPalette.lightGray,
+              iconGlowColor:
+                  isSelected ? ColorPalette.gold : ColorPalette.lightGray,
+            ),
+            // Icon(icon, color: isSelected ? Colors.amber : Colors.grey),
             const SizedBox(height: 4),
             Text(
               label,

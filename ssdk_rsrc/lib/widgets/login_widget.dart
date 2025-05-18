@@ -230,18 +230,12 @@ class StartPageState extends State<StartPage> {
                 // If you also want an error border:
                 errorBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8.0),
-                  borderSide: BorderSide(
-                    color: ColorPalette.youtubeRed,
-                    width: 1.0,
-                  ),
+                  borderSide: BorderSide(color: Youtube.red, width: 1.0),
                 ),
                 // And a focused error border:
                 focusedErrorBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8.0),
-                  borderSide: BorderSide(
-                    color: ColorPalette.youtubeRed,
-                    width: 2.0,
-                  ),
+                  borderSide: BorderSide(color: Youtube.red, width: 2.0),
                 ),
                 contentPadding: EdgeInsets.symmetric(
                   vertical: 12.0,
@@ -287,18 +281,12 @@ class StartPageState extends State<StartPage> {
                 // If you also want an error border:
                 errorBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8.0),
-                  borderSide: BorderSide(
-                    color: ColorPalette.youtubeRed,
-                    width: 1.0,
-                  ),
+                  borderSide: BorderSide(color: Youtube.red, width: 1.0),
                 ),
                 // And a focused error border:
                 focusedErrorBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8.0),
-                  borderSide: BorderSide(
-                    color: ColorPalette.youtubeRed,
-                    width: 2.0,
-                  ),
+                  borderSide: BorderSide(color: Youtube.red, width: 2.0),
                 ),
                 contentPadding: EdgeInsets.symmetric(
                   vertical: 12.0,
@@ -455,50 +443,48 @@ class StartPageState extends State<StartPage> {
                                             floatingActionButtonLocation:
                                                 FloatingActionButtonLocation
                                                     .centerDocked,
-                                            floatingActionButton: 
-                                             Container(
-                                               child: Column(
-                                                 mainAxisSize: MainAxisSize.max,
-                                                 mainAxisAlignment:
-                                                     MainAxisAlignment.center,
-                                                 crossAxisAlignment:
-                                                     CrossAxisAlignment.center,
-                                                 children: [
-                                                   SizedBox(height: 500),
-                                                   Center(
-                                                     child: CustomButton(
-                                                       text: 'Sign In',
-                                                       buttonParams:
-                                                           whiteButtonParams,
-                                                       onPressed: () async {
-                                            
-                                                         final isLoggedIn =
-                                                             await register(
-                                                               context,
-                                                             );
-                                            
-                                                         if (isLoggedIn &&
-                                                             mounted) {
-                                                           Navigator.of(
-                                                               context,
-                                                             ).pop();
-                                            
-                                                           ScaffoldMessenger.of(
-                                                             context,
-                                                           ).showSnackBar(
-                                                             const SnackBar(
-                                                               content: Text(
-                                                                 'Registration Successful!',
-                                                               ),
-                                                             ),
-                                                           );
-                                                         }
-                                                       },
-                                                     ),
-                                                   ),
-                                                 ],
-                                               ),
-                                             ),
+                                            floatingActionButton: Container(
+                                              child: Column(
+                                                mainAxisSize: MainAxisSize.max,
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                children: [
+                                                  SizedBox(height: 500),
+                                                  Center(
+                                                    child: CustomButton(
+                                                      text: 'Sign In',
+                                                      buttonParams:
+                                                          whiteButtonParams,
+                                                      onPressed: () async {
+                                                        final isLoggedIn =
+                                                            await register(
+                                                              context,
+                                                            );
+
+                                                        if (isLoggedIn &&
+                                                            mounted) {
+                                                          Navigator.of(
+                                                            context,
+                                                          ).pop();
+
+                                                          ScaffoldMessenger.of(
+                                                            context,
+                                                          ).showSnackBar(
+                                                            const SnackBar(
+                                                              content: Text(
+                                                                'Registration Successful!',
+                                                              ),
+                                                            ),
+                                                          );
+                                                        }
+                                                      },
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
                                             body: Center(
                                               child: Container(
                                                 margin:
@@ -613,18 +599,20 @@ class StartPageState extends State<StartPage> {
                                                           ),
                                                         ),
                                                         // If you also want an error border:
-                                                        errorBorder: OutlineInputBorder(
-                                                          borderRadius:
-                                                              BorderRadius.circular(
-                                                                8.0,
-                                                              ),
-                                                          borderSide: BorderSide(
-                                                            color:
-                                                                ColorPalette
-                                                                    .youtubeRed,
-                                                            width: 1.0,
-                                                          ),
-                                                        ),
+                                                        errorBorder:
+                                                            OutlineInputBorder(
+                                                              borderRadius:
+                                                                  BorderRadius.circular(
+                                                                    8.0,
+                                                                  ),
+                                                              borderSide:
+                                                                  BorderSide(
+                                                                    color:
+                                                                        Youtube
+                                                                            .red,
+                                                                    width: 1.0,
+                                                                  ),
+                                                            ),
                                                         // And a focused error border:
                                                         focusedErrorBorder:
                                                             OutlineInputBorder(
@@ -632,12 +620,13 @@ class StartPageState extends State<StartPage> {
                                                                   BorderRadius.circular(
                                                                     8.0,
                                                                   ),
-                                                              borderSide: BorderSide(
-                                                                color:
-                                                                    ColorPalette
-                                                                        .youtubeRed,
-                                                                width: 2.0,
-                                                              ),
+                                                              borderSide:
+                                                                  BorderSide(
+                                                                    color:
+                                                                        Youtube
+                                                                            .red,
+                                                                    width: 2.0,
+                                                                  ),
                                                             ),
                                                         contentPadding:
                                                             EdgeInsets.symmetric(
@@ -697,18 +686,20 @@ class StartPageState extends State<StartPage> {
                                                           ),
                                                         ),
                                                         // If you also want an error border:
-                                                        errorBorder: OutlineInputBorder(
-                                                          borderRadius:
-                                                              BorderRadius.circular(
-                                                                8.0,
-                                                              ),
-                                                          borderSide: BorderSide(
-                                                            color:
-                                                                ColorPalette
-                                                                    .youtubeRed,
-                                                            width: 1.0,
-                                                          ),
-                                                        ),
+                                                        errorBorder:
+                                                            OutlineInputBorder(
+                                                              borderRadius:
+                                                                  BorderRadius.circular(
+                                                                    8.0,
+                                                                  ),
+                                                              borderSide:
+                                                                  BorderSide(
+                                                                    color:
+                                                                        Youtube
+                                                                            .red,
+                                                                    width: 1.0,
+                                                                  ),
+                                                            ),
                                                         // And a focused error border:
                                                         focusedErrorBorder:
                                                             OutlineInputBorder(
@@ -716,12 +707,13 @@ class StartPageState extends State<StartPage> {
                                                                   BorderRadius.circular(
                                                                     8.0,
                                                                   ),
-                                                              borderSide: BorderSide(
-                                                                color:
-                                                                    ColorPalette
-                                                                        .youtubeRed,
-                                                                width: 2.0,
-                                                              ),
+                                                              borderSide:
+                                                                  BorderSide(
+                                                                    color:
+                                                                        Youtube
+                                                                            .red,
+                                                                    width: 2.0,
+                                                                  ),
                                                             ),
                                                         contentPadding:
                                                             EdgeInsets.symmetric(

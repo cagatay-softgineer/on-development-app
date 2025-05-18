@@ -1,4 +1,9 @@
+import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:ssdk_rsrc/pages/home_page.dart';
+import 'package:ssdk_rsrc/providers/appsSession.dart';
+import 'package:ssdk_rsrc/providers/userSession.dart';
 import 'package:ssdk_rsrc/styles/button_styles.dart';
 import 'package:ssdk_rsrc/models/linked_app.dart';
 import 'package:ssdk_rsrc/widgets/app_card.dart';
@@ -7,6 +12,8 @@ import 'package:ssdk_rsrc/services/main_api.dart';
 import 'package:ssdk_rsrc/constants/default/user.dart';
 import 'package:ssdk_rsrc/constants/default/apps.dart';
 import 'package:ssdk_rsrc/styles/color_palette.dart';
+import 'package:ssdk_rsrc/widgets/glowing_icon.dart';
+import 'package:ssdk_rsrc/widgets/top_bar.dart';
 
 class AppLinkPage extends StatefulWidget {
   const AppLinkPage({Key? key}) : super(key: key);
@@ -17,24 +24,30 @@ class AppLinkPage extends StatefulWidget {
 
 class AppLinkPageState extends State<AppLinkPage> with WidgetsBindingObserver {
   // Define a list of apps with initial configurations.
+
+  HomePageState homepage = HomePageState();
+
   final List<LinkedApp> linkedApps = [
     LinkedApp(
       name: "Spotify",
       appButtonParams: spotifyButtonParams,
       appPic:
           "https://storage.googleapis.com/pr-newsroom-wp/1/2023/05/Spotify_Primary_Logo_RGB_Green.png",
+      appColor: Spotify.green,
     ),
     LinkedApp(
       name: "AppleMusic",
       appButtonParams: appleMusicButtonParams,
       appPic:
           "https://play-lh.googleusercontent.com/mOkjjo5Rzcpk7BsHrsLWnqVadUK1FlLd2-UlQvYkLL4E9A0LpyODNIQinXPfUMjUrbE=w240-h480-rw",
+      appColor: AppleMusic.pink,
     ),
     LinkedApp(
       name: "YoutubeMusic",
       appButtonParams: youtubeMusicButtonParams,
       appPic:
           "https://upload.wikimedia.org/wikipedia/commons/d/d8/YouTubeMusic_Logo.png",
+      appColor: Youtube.red,
     ),
   ];
 
@@ -59,12 +72,12 @@ class AppLinkPageState extends State<AppLinkPage> with WidgetsBindingObserver {
     if (userEmail == null) {
       return;
     }
+    AppsSession.userEmail = userEmail;
 
     final response = await mainAPI.getAllAppsBinding(userEmail);
 
-    // ignore: unnecessary_null_comparison
-    if (response != null && response.containsKey('apps')) {
-      // Create a mapping of app name to its binding data for ease of lookup.
+    if (response.containsKey('apps')) {
+      // Map app name to app info
       final Map<String, dynamic> appsBindingMap = {};
       for (var app in response['apps']) {
         if (app is Map<String, dynamic> && app.containsKey('app_name')) {
@@ -72,47 +85,45 @@ class AppLinkPageState extends State<AppLinkPage> with WidgetsBindingObserver {
         }
       }
 
-      setState(() {
-        for (var app in linkedApps) {
-          if (appsBindingMap.containsKey(app.name)) {
-            final appData = appsBindingMap[app.name];
-            app.isLinked = appData['user_linked'] ?? false;
-            // app.buttonText = app.isLinked ? "Unlink ${app.name}" : "Link ${app.name}";
+      // Update the session
+      for (var app in AppsSession.linkedApps) {
+        if (appsBindingMap.containsKey(app.name)) {
+          final appData = appsBindingMap[app.name];
+          app.isLinked = appData['user_linked'] ?? false;
 
-            if (app.isLinked &&
-                appData['user_profile'] != null &&
-                appData['user_profile'] is Map) {
-              final profile = appData['user_profile'];
-              if (app.name == "Spotify") {
-                app.userDisplayName =
-                    profile['display_name'] ?? "No Display Name";
-                if (profile['images'] != null &&
-                    profile['images'] is List &&
-                    profile['images'].isNotEmpty) {
-                  app.userPic =
-                      profile['images'][0]['url'] ??
-                      UserConstants.defaultAvatarUrl;
-                } else {
-                  app.userPic = UserConstants.defaultAvatarUrl;
-                }
-              } else if (app.name == "YoutubeMusic") {
-                app.userDisplayName = profile['name'] ?? "No Display Name";
+          if (app.isLinked &&
+              appData['user_profile'] != null &&
+              appData['user_profile'] is Map) {
+            final profile = appData['user_profile'];
+            if (app.name == "Spotify") {
+              app.userDisplayName =
+                  profile['display_name'] ?? "No Display Name";
+              if (profile['images'] != null &&
+                  profile['images'] is List &&
+                  profile['images'].isNotEmpty) {
                 app.userPic =
-                    profile['picture'] ?? UserConstants.defaultAvatarUrl;
+                    profile['images'][0]['url'] ??
+                    UserConstants.defaultAvatarUrl;
               } else {
-                // For AppleMusic or other apps, adjust the logic as necessary.
-                app.userDisplayName = profile['name'] ?? "No Display Name";
-                app.userPic =
-                    profile['picture'] ?? UserConstants.defaultAvatarUrl;
+                app.userPic = UserConstants.defaultAvatarUrl;
               }
+            } else if (app.name == "YoutubeMusic") {
+              app.userDisplayName = profile['name'] ?? "No Display Name";
+              app.userPic =
+                  profile['picture'] ?? UserConstants.defaultAvatarUrl;
             } else {
-              // Reset user information when the app is not linked.
-              app.userDisplayName = "No Display Name";
-              app.userPic = UserConstants.defaultAvatarUrl;
+              app.userDisplayName = profile['name'] ?? "No Display Name";
+              app.userPic =
+                  profile['picture'] ?? UserConstants.defaultAvatarUrl;
             }
+          } else {
+            app.userDisplayName = "User Not Linked";
+            app.userPic = UserConstants.defaultAvatarUrl;
           }
         }
-      });
+      }
+
+      setState(() {}); // Just refresh UI, actual data lives in UserSession now
     }
   }
 
@@ -121,45 +132,99 @@ class AppLinkPageState extends State<AppLinkPage> with WidgetsBindingObserver {
     return Scaffold(
       // appBar: AppBar(title: const Text('Apps')),
       backgroundColor: ColorPalette.backgroundColor,
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Center(
-            child: Column(
-              children: [
-                // const Text(
-                //   'Apps',
-                //   style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
-                // ),
-                const SizedBox(height: 40),
-
-                Image(
-                  color: ColorPalette.gold,
-                  colorBlendMode: BlendMode.srcIn,
-                  width: 200,
-                  height: 200,
-                  image: const NetworkImage(
-                    "https://raw.githubusercontent.com/Yggbranch/assets/refs/heads/main/Aurevia/PNG/Asset%201_1.png",
+      body: SafeArea(
+        child: Column(
+          children: [
+            Expanded(
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(
+                    16.0,
+                  ), // Adds padding around the content
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment:
+                          CrossAxisAlignment.center, // Centers horizontally
+                      children: [
+                        TopBar(
+                          imageUrl:
+                              UserSession.userPIC ??
+                              UserConstants.defaultAvatarUrl,
+                          userName: UserSession.userNAME ?? "",
+                          chainPoints: 0,
+                          storePoints: 0,
+                        ),
+                        SizedBox(height: 50),
+                        Container(
+                          width: 800,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.rectangle,
+                            color: ColorPalette.backgroundColor,
+                            border: BorderDirectional(
+                              bottom: BorderSide(
+                                color: ColorPalette.lightGray,
+                                width: 1,
+                              ),
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                "Linked Apps",
+                                style: TextStyle(
+                                  color: ColorPalette.white,
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.w300,
+                                ),
+                              ),
+                              Align(
+                                alignment: Alignment.centerRight,
+                                child: GlowingIconButton(
+                                  icon: FontAwesomeIcons.arrowsRotate,
+                                  iconColor: ColorPalette.white,
+                                  iconGlowColor: ColorPalette.gold,
+                                  onPressed: _initializeLinkedApps,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(height: 20),
+                        ...AppsSession.linkedApps.map((app) {
+                          return AppCard(
+                            userPic: app.userPic,
+                            userDisplayName: app.userDisplayName,
+                            isLinked: app.isLinked,
+                            appPic: app.appPic,
+                            appColor: app.appColor,
+                            appParams: app.appButtonParams,
+                            appName: app.name,
+                            appText: app.buttonText,
+                            defaultUserPicUrl: UserConstants.defaultAvatarUrl,
+                            defaultAppPicUrl: AppsConstants.defaultAppsUrl,
+                            onReinitializeApps: _initializeLinkedApps,
+                          );
+                        }),
+                        SizedBox(height: 40),
+                        Align(
+                          alignment: Alignment.center,
+                          child: GlowingIconButton(
+                            iconSize: 48,
+                            icon: FontAwesomeIcons.userGear,
+                            iconColor: ColorPalette.white,
+                            iconGlowColor: ColorPalette.gold,
+                            onPressed: _initializeLinkedApps,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-
-                ...linkedApps.map((app) {
-                  return AppCard(
-                    userPic: app.userPic,
-                    userDisplayName: app.userDisplayName,
-                    isLinked: app.isLinked,
-                    appPic: app.appPic,
-                    appParams: app.appButtonParams,
-                    appName: app.name,
-                    appText: app.buttonText,
-                    defaultUserPicUrl: UserConstants.defaultAvatarUrl,
-                    defaultAppPicUrl: AppsConstants.defaultAppsUrl,
-                    onReinitializeApps: _initializeLinkedApps,
-                  );
-                }),
-              ],
+              ),
             ),
-          ),
+          ],
         ),
       ),
     );

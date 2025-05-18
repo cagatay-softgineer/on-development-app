@@ -13,7 +13,6 @@ class NavigationPage extends StatefulWidget {
 }
 
 class NavigationPageState extends State<NavigationPage> {
-
   int _currentIndex = 1;
 
   @override
@@ -33,9 +32,29 @@ class NavigationPageState extends State<NavigationPage> {
       //   onPressed: () => _onTabSelected(1),
       //   child: const Icon(Icons.home),
       // ),
-      bottomNavigationBar: CustomBottomNavBar(
-        currentIndex: _currentIndex,
-        onTap: _onTabSelected,
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          // boxShadow: [
+          //   BoxShadow(
+          //     color: ColorPalette.white.withAlpha(50),
+          //     blurRadius: 30,
+          //     offset: Offset(0, -10),
+          //   ),
+          //   BoxShadow(
+          //     color: ColorPalette.almostBlack,
+          //     blurRadius: 30,
+          //     offset: Offset(0, 10),
+          //   ),
+          // ],
+          shape: BoxShape.rectangle,
+          // borderRadius: BorderRadius.all(Radius.circular(16)),
+          color: ColorPalette.backgroundColor,
+          border: BorderDirectional(top: BorderSide(color: ColorPalette.gold)),
+        ),
+        child: CustomBottomNavBar(
+          currentIndex: _currentIndex,
+          onTap: _onTabSelected,
+        ),
       ),
     );
   }
@@ -52,6 +71,8 @@ class NavigationPageState extends State<NavigationPage> {
         return const ButtonCustomizerApp();
       case 2:
         return const AppLinkPage();
+      case 1:
+        return const HomePage();
       default:
         return const HomePage();
     }

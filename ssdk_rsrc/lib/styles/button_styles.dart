@@ -91,6 +91,127 @@ Map<String, dynamic> whiteButton = {
   "iconSize" : 24,
 };
 
+Map<String, dynamic> chainButton = {
+  "backgroundColor": Transparent.a00_, // Blue
+  "textColor": ColorPalette.white_,       // White
+  "borderRadius": 16.0,
+  "padding": "EdgeInsets(0.0, 0.0, 0.0, 0.0)",
+  "textStyle": "TextStyle(fontSize: 14.0, color: Color(0xFFFFFFFF))",
+  "elevation": 10.0,
+  "buttonWidth": 50.0,
+  "buttonHeight": 50.0,
+  "borderColor": "Color(0x00000000)",      // Transparent
+  "letterSpacing": 0.0,
+  "blurAmount": 5.0,
+  "useGradient": false,
+  "gradientStartColor": "Color(0xFF00AAAA)", // Blue
+  "gradientEndColor": "Color(0x66FF00FF)",   // Purple
+  "leadingIcon": "Icons.link",
+  "trailingIcon": "",
+  "textAlign": "TextAlign.center",
+  "isEnabled": true,
+  "shape": "BoxShape.circle",
+  "hoverColor": "Color(0xFF1E88E5)",
+  "focusColor": "Color(0xFF42A5F5)",
+  "shadowColor": Transparent.a00_,
+  "shadowOffset": "Offset(0.0, 0.0)",
+  "isLoading": false,
+  "fontFamily": "Roboto",
+  "backgroundAlpha": 0.9,
+  "iconSize" : 48,
+};
+
+Map<String, dynamic> chainButtonBG = {
+  "backgroundColor": Transparent.a00_, // Blue
+  "textColor": ColorPalette.gold_,       // White
+  "borderRadius": 16.0,
+  "padding": "EdgeInsets(0.0, 0.0, 0.0, 0.0)",
+  "textStyle": "TextStyle(fontSize: 14.0, color: Color(0xFFFFFFFF))",
+  "elevation": 10.0,
+  "buttonWidth": 50.0,
+  "buttonHeight": 50.0,
+  "borderColor": "Color(0x00000000)",      // Transparent
+  "letterSpacing": 0.0,
+  "blurAmount": 5.0,
+  "useGradient": false,
+  "gradientStartColor": "Color(0xFF00AAAA)", // Blue
+  "gradientEndColor": "Color(0x66FF00FF)",   // Purple
+  "leadingIcon": "Icons.link",
+  "trailingIcon": "",
+  "textAlign": "TextAlign.center",
+  "isEnabled": true,
+  "shape": "BoxShape.circle",
+  "hoverColor": "Color(0xFF1E88E5)",
+  "focusColor": "Color(0xFF42A5F5)",
+  "shadowColor": Transparent.a00_,
+  "shadowOffset": "Offset(0.0, 0.0)",
+  "isLoading": false,
+  "fontFamily": "Roboto",
+  "backgroundAlpha": 0.9,
+  "iconSize" : 48,
+};
+
+Map<String, dynamic> shopButton = {
+  "backgroundColor": Transparent.a00_, // Blue
+  "textColor": ColorPalette.white_,       // White
+  "borderRadius": 16.0,
+  "padding": "EdgeInsets(0.0, 0.0, 0.0, 0.0)",
+  "textStyle": "TextStyle(fontSize: 14.0, color: Color(0xFFFFFFFF))",
+  "elevation": 50.0,
+  "buttonWidth": 50.0,
+  "buttonHeight": 50.0,
+  "borderColor": "Color(0x00000000)",      // Transparent
+  "letterSpacing": 0.0,
+  "blurAmount": 5.0,
+  "useGradient": false,
+  "gradientStartColor": "Color(0xFF00AAAA)", // Blue
+  "gradientEndColor": "Color(0x66FF00FF)",   // Purple
+  "leadingIcon": "Icons.store_rounded",
+  "trailingIcon": "",
+  "textAlign": "TextAlign.center",
+  "isEnabled": true,
+  "shape": "BoxShape.circle",
+  "hoverColor": "Color(0xFF1E88E5)",
+  "focusColor": "Color(0xFF42A5F5)",
+  "shadowColor": Transparent.a00_,
+  "shadowOffset": "Offset(0.0, 0.0)",
+  "isLoading": false,
+  "fontFamily": "Roboto",
+  "backgroundAlpha": 0.9,
+  "iconSize" : 48,
+};
+
+Map<String, dynamic> shopButtonBG = {
+  "backgroundColor": Transparent.a00_, // Blue
+  "textColor": ColorPalette.gold_,       // White
+  "borderRadius": 16.0,
+  "padding": "EdgeInsets(0.0, 0.0, 0.0, 0.0)",
+  "textStyle": "TextStyle(fontSize: 14.0, color: Color(0xFFFFFFFF))",
+  "elevation": 50.0,
+  "buttonWidth": 50.0,
+  "buttonHeight": 50.0,
+  "borderColor": "Color(0x00000000)",      // Transparent
+  "letterSpacing": 0.0,
+  "blurAmount": 5.0,
+  "useGradient": false,
+  "gradientStartColor": "Color(0xFF00AAAA)", // Blue
+  "gradientEndColor": "Color(0x66FF00FF)",   // Purple
+  "leadingIcon": "Icons.store_rounded",
+  "trailingIcon": "",
+  "textAlign": "TextAlign.center",
+  "isEnabled": true,
+  "shape": "BoxShape.circle",
+  "hoverColor": "Color(0xFF1E88E5)",
+  "focusColor": "Color(0xFF42A5F5)",
+  "shadowColor": Transparent.a00_,
+  "shadowOffset": "Offset(0.0, 0.0)",
+  "isLoading": false,
+  "fontFamily": "Roboto",
+  "backgroundAlpha": 0.9,
+  "iconSize" : 50,
+};
+
+
 Map<String, dynamic> closeButton = {
   "backgroundColor": Transparent.a00_, // Blue
   "textColor": ColorPalette.gold_,       // White
@@ -634,6 +755,10 @@ Map<String, dynamic> stopSessionSmall = {
 ButtonParams mainButtonParams = ButtonParams.fromMap(mainButton);
 ButtonParams goldenButtonParams = ButtonParams.fromMap(goldenButton);
 ButtonParams whiteButtonParams = ButtonParams.fromMap(whiteButton);
+ButtonParams chainButtonParams = ButtonParams.fromMap(chainButton);
+ButtonParams shopButtonParams = ButtonParams.fromMap(shopButton);
+ButtonParams chainButtonBGParams = ButtonParams.fromMap(chainButtonBG);
+ButtonParams shopButtonBGParams = ButtonParams.fromMap(shopButtonBG);
 ButtonParams closeButtonParams = ButtonParams.fromMap(closeButton);
 ButtonParams navigateButtonParams = ButtonParams.fromMap(navigateButton);
 ButtonParams logoutButtonParams = ButtonParams.fromMap(logoutButton);

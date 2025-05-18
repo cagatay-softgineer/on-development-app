@@ -126,7 +126,7 @@ body {
   }
   .decoration {
     display: inline-block;
-    float: right;
+    float: none;
   }
   &:hover, &:focus {
     animation-name: glitch;
@@ -168,6 +168,7 @@ body {
   }
   &:active {
     background: none;
+    background-color: red;
     color:yellow;
     .text-decoration {
       animation-name: none;
@@ -180,6 +181,10 @@ body {
     }
   }
 }
+button{
+  background-color: #292929;
+}
+
 
 @keyframes glitch {
   25% {

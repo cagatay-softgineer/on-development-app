@@ -220,6 +220,19 @@ class MainAPI {
     }
   }
 
+  Future<Map<String, dynamic>> getUserProfile() async {
+    final response = await _dio.post(
+          'profile/view',
+    );
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> result = Map<String, dynamic>.from(response.data);
+      return result;
+    } else {
+      throw Exception('Failed to load playlists');
+    }
+  }
+
   Future<List<Playlist>> fetchPlaylists(String? userId, { MusicApp app = MusicApp.Spotify }) async {
     // Determine the endpoint based on the MusicApp
     String endpoint;

@@ -44,7 +44,7 @@ class PlaylistPageState extends State<PlaylistPage> {
       // Fetch Spotify and YouTube playlists concurrently.
       final spotifyPlaylistsFuture =
           mainAPI.fetchPlaylists("$userId", app: MusicApp.Spotify);
-      
+          
       final youtubePlaylistsFuture =
           mainAPI.fetchPlaylists("$userId", app: MusicApp.YouTube);
 

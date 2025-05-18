@@ -1,58 +1,61 @@
 import 'package:flutter/material.dart';
+import 'package:ssdk_rsrc/providers/userSession.dart';
 import 'package:ssdk_rsrc/services/main_api.dart';
 import 'package:ssdk_rsrc/styles/color_palette.dart';
-import 'package:ssdk_rsrc/widgets/adaptive_widgets/buttons.dart';
-import 'package:ssdk_rsrc/widgets/adaptive_widgets/icons.dart';
+import 'package:ssdk_rsrc/constants/default/user.dart';
 import 'package:ssdk_rsrc/utils/authlib.dart';
-import 'package:ssdk_rsrc/widgets/custom_button.dart'; // Ensure the correct path
-import 'package:ssdk_rsrc/styles/button_styles.dart';
+import 'package:ssdk_rsrc/widgets/chain_step.dart';
+import 'package:ssdk_rsrc/widgets/top_bar.dart';
+import 'dart:async';
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+  const HomePage({super.key});
 
   @override
   HomePageState createState() => HomePageState();
 }
 
 class HomePageState extends State<HomePage> {
+  int activeStep = 0;
 
-  Future<void> _showLogoutConfirmation(BuildContext context) async {
-    final shouldLogout = await showDialog<bool>(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Log Out'),
-          content: const Text('Are you sure you want to log out?'),
-          actions: [
-            TextButton(
-              child: const Text('Cancel'),
-              onPressed: () {
-                Navigator.of(context).pop(false); // Çıkış yapma
-              },
-            ),
-            TextButton(
-              child: const Text('Log Out'),
-              onPressed: () {
-                Navigator.of(context).pop(true); // Çıkış yapmayı onayla
-              },
-            ),
-          ],
-        );
-      },
-    );
+  @override
+  void initState() {
+    super.initState();
+    _initializeUserPic();
+  }
 
-    if (shouldLogout == true) {
-      // Kullanıcının giriş bilgilerini temizle
-      AuthService.clearToken();
+  Future<void> _initializeUserPic() async {
+    try {
+      final userId = await AuthService.getUserId();
+      UserSession.userID = userId;
+      UserSession.userPIC;
+      UserSession.userNAME;
 
-      // Kullanıcıyı LoginPage'e yönlendir
-      Navigator.pushNamedAndRemoveUntil(
-        context,
-        '/',
-        (Route<dynamic> route) => false,
-      );
+      // Await the user info response.
+      final userInfo = await mainAPI.getUserProfile();
+
+      // Get avatar_url from API response.
+      final userPic = userInfo['avatar_url'] as String? ?? '';
+      final userName = userInfo['first_name'] as String? ?? '';
+
+      // Validate URL, use default if empty or invalid.
+      final validUserPic =
+          (userPic.isNotEmpty && Uri.tryParse(userPic)?.hasAbsolutePath == true)
+              ? userPic
+              : UserConstants.defaultAvatarUrl;
+
+      setState(() {
+        UserSession.userPIC =
+            validUserPic; // This should be your state variable for the avatar URL.
+        UserSession.userNAME =
+            userName; // This should be your state variable for the avatar URL.
+      });
+    } catch (e) {
+      print("Error fetching user profile: $e");
+      setState(() {
+        UserSession.userPIC = UserConstants.defaultAvatarUrl;
+      });
     }
-    ;
   }
 
   @override
@@ -76,90 +79,62 @@ class HomePageState extends State<HomePage> {
                   ), // Adds padding around the content
                   child: Center(
                     child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment:
                           CrossAxisAlignment.center, // Centers horizontally
                       children: [
-                        SizedBox(height: 20), // Adds space from the top
-                        // CustomButton to Navigate to Button Customizer
-                        CustomButton(
-                          text: "Navigate To\nButton Customizer",
-                          onPressed: () {
-                            Navigator.pushNamed(context, '/button_customizer');
-                          },
-                          buttonParams: navigateButtonParams,
+                        TopBar(
+                          imageUrl:
+                              UserSession.userPIC ??
+                              UserConstants.defaultAvatarUrl,
+                          userName: UserSession.userNAME ?? "",
+                          chainPoints: 0,
+                          storePoints: 0,
                         ),
-                        SizedBox(height: 20), // Adds vertical spacing
-                        // CustomButton for Logout
-                        CustomButton(
-                          text: "Logout",
-                          onPressed: () {
-                            _showLogoutConfirmation(context);
-                          },
-                          buttonParams: logoutButtonParams,
+                        SizedBox(height: 50),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Container(
+                                  width: 300,
+                                  height: 100,
+                                  decoration: BoxDecoration(
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: ColorPalette.white.withAlpha(50),
+                                        blurRadius: 30,
+                                        offset: Offset(0, -10),
+                                      ),
+                                      BoxShadow(
+                                        color: ColorPalette.almostBlack,
+                                        blurRadius: 30,
+                                        offset: Offset(0, 10),
+                                      ),
+                                    ],
+                                    shape: BoxShape.rectangle,
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(16),
+                                    ),
+                                    color: ColorPalette.backgroundColor,
+                                    border: Border.all(color: Transparent.a22),
+                                  ),
+                                  child: Center(
+                                    child: CustomChainStepProgress(
+                                      steps: 7,
+                                      activeStep: activeStep,
+                                      iconSize: 70,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
-                        SizedBox(height: 20), // Adds vertical spacing
-                        // CustomButton for Logout
-                        CustomButton(
-                          text: "Linked Apps",
-                          onPressed: () {
-                            // Implement your logout logic here
-                            // For example, navigate back to the login page
-                            Navigator.pushNamed(context, '/applinks');
-                          },
-                          buttonParams: linkedAppsButtonParams,
-                        ),
-                        SizedBox(height: 20), // Adds vertical spacing
-                        // CustomButton for Logout
-                        CustomButton(
-                          text: "Playlists",
-                          onPressed: () {
-                            // Implement your logout logic here
-                            // For example, navigate back to the login page
-                            Navigator.pushNamed(context, '/playlists');
-                          },
-                          buttonParams: playlistButtonParams,
-                        ),
-                        SizedBox(height: 20), // Adds vertical spacing
-                        // CustomButton for Logout
-                        CustomButton(
-                          text: "Player",
-                          onPressed: () {
-                            // Implement your logout logic here
-                            // For example, navigate back to the login page
-                            Navigator.pushNamed(context, '/player');
-                          },
-                          buttonParams: playerButtonParams,
-                        ),
-                        SizedBox(height: 20), // Adds vertical spacing
-                        // CustomButton for Logout
-                        CustomButton(
-                          text: "Timer",
-                          onPressed: () {
-                            // Implement your logout logic here
-                            // For example, navigate back to the login page
-                            Navigator.pushNamed(context, '/timer');
-                          },
-                          buttonParams: timerButtonParams,
-                        ),
-                        SizedBox(height: 20), // Adds vertical spacing
-                        // CustomButton for Logout
-                        CustomButton(
-                          text: "Custom Timer",
-                          onPressed: () {
-                            // Implement your logout logic here
-                            // For example, navigate back to the login page
-                            Navigator.pushNamed(context, '/custom_timer');
-                          },
-                          buttonParams: timerButtonParams,
-                        ),
-                        SizedBox(height: 20), // Adds vertical spacing
-                        AdaptiveButton(
-                          child: Icon(AdaptiveIcons.home),
-                          onPressed: () async {
-                            await mainAPI.openOurWebSite(context);
-                          },
-                        ),
-                        // Add more widgets or buttons as needed
                       ],
                     ),
                   ),

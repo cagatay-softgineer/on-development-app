@@ -1,13 +1,23 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
     <title>Apple Music Login</title>
-    <!-- Link to the provided CSS -->
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
     <!-- Load MusicKit JS -->
-    <script src="https://js-cdn.music.apple.com/musickit/v3/musickit.js" data-web-components async></script>
-    <meta name="apple-music-developer-token" content="{{developer_token}}" />
+    <script
+      src="https://js-cdn.music.apple.com/musickit/v3/musickit.js"
+      data-web-components
+      async
+    ></script>
+    <meta
+      name="apple-music-developer-token"
+      content="{{ developer_token|e }}"
+    />
     <meta name="apple-music-app-name" content="Pomodoro" />
     <meta name="apple-music-app-build" content="2025.4.2" />
   </head>
@@ -16,41 +26,85 @@
       <h1>Apple Music Login</h1>
       <p>Please click the button below to authorize with Apple Music.</p>
       <div class="center-center">
-        <a id="btn-glitch-fill" class="btn-glitch-fill">
-          <span class="text">// Jack in</span><span class="text-decoration">_</span><span class="decoration">&rArr;</span>
-        </a>
+        <button id="btn-glitch-fill" class="btn-glitch-fill" type="button">
+          <span class="text">// Jack in</span>
+          <span class="text-decoration">_</span>
+          <span class="decoration">&rArr;</span>
+        </button>
       </div>
+      <div
+        id="countdown"
+        style="
+          text-align: center;
+          margin-top: 1rem;
+          color: #e91e63;
+          font-weight: bold;
+        "
+      >
+        Token expires in: <span id="timer"></span>
+        <span style="color: #888; font-weight: normal">(UTC)</span>
       </div>
     </div>
     <script>
-      console.log("{{developer_token}}");
+      // Correct way: don't put quotes around |tojson result!
+      const expiresTime = {{ expires_time }};
+
+      function updateCountdown() {
+        const expiryUTC = new Date(expiresTime * 1000)
+        const nowUTC = new Date()
+        const diff = expiryUTC - nowUTC
+
+        if (diff <= 0) {
+          document.getElementById('timer').textContent = 'Expired!'
+          const btn = document.getElementById('btn-glitch-fill')
+          if (btn) {
+            btn.disabled = true
+            btn.innerText = 'Token Expired'
+          }
+          return
+        }
+        const totalSeconds = Math.floor(diff / 1000)
+        const hours = Math.floor(totalSeconds / 3600)
+        const minutes = Math.floor((totalSeconds % 3600) / 60) % 60
+        const seconds = totalSeconds % 60
+
+        let str = ''
+        if (hours > 0) str += hours + 'h '
+        if (hours > 0 || minutes > 0) str += minutes + 'm '
+        str += seconds + 's'
+        const utcString = expiryUTC.toISOString().replace('T', ' ').substring(0, 19) + ' UTC'
+        document.getElementById('timer').textContent = `${str} (expires at ${utcString})`
+      }
+      setInterval(updateCountdown, 1000)
+      updateCountdown()
+    </script>
+    <script>
       document.addEventListener('musickitloaded', async function () {
-        // Call configure() to configure an instance of MusicKit on the Web.
         try {
           await MusicKit.configure({
-            developerToken: '{{developer_token}}',
+            developerToken: {{ developer_token|tojson }},
             app: {
               name: 'Pomodoro',
-              build: '2025.4.2',
-            },
-          });
-          console.log("configuration is successful.");
+              build: '2025.4.2'
+            }
+          })
+          console.log('MusicKit configuration successful.')
         } catch (err) {
-            console.error('Error during MusicKit configuration:', err);
-            return;
+          console.error('Error during MusicKit configuration:', err)
+          return
         }
-        
-        const music = MusicKit.getInstance();
+        const music = MusicKit.getInstance()
         document.getElementById('btn-glitch-fill').addEventListener('click', async function () {
           try {
-            const userToken = await music.authorize();
-            // Redirect to the callback endpoint with the obtained user token.
-            window.location.href = "/apple/callback?user_token=" + encodeURIComponent(userToken);
+            const userToken = await music.authorize()
+            console.log(userToken)
+            // Use state as a real JSON value if you need, not as a quoted string
+            window.location.href = '/apple/callback?user_token=' + encodeURIComponent(userToken) + '&state=' + encodeURIComponent({{ state|tojson }})
           } catch (err) {
-            console.error("Authorization error:", err);
+            console.error('Authorization error:', err)
           }
-        });
-      });
+        })
+      })
     </script>
   </body>
 </html>

@@ -1,6 +1,5 @@
-# config.py
-from pydantic import BaseSettings, Field
 import secrets
+from pydantic import BaseSettings, Field
 
 
 class Settings(BaseSettings):
@@ -8,13 +7,15 @@ class Settings(BaseSettings):
     spotify_client_id: str = Field(..., env="SPOTIFY_CLIENT_ID")
     spotify_client_secret: str = Field(..., env="SPOTIFY_CLIENT_SECRET")
     auth_redirect_uri: str = Field(..., env="AUTH_REDIRECT_URI")
-    debug_mode: str = Field(default=False, env="DEBUG_MODE")
     salt: str = Field(..., env="SALT")
     musixmatch_API_KEY: str = Field(..., env="MUSIXMATCH_API_KEY")
     google_client_id: str = Field(..., env="GOOGLE_CLIENT_ID")
     google_client_secret: str = Field(..., env="GOOGLE_CLIENT_SECRET")
     google_client_secret_file: str = Field(...,
                                            env="GOOGLE_CLIENT_SECRET_FILE")
+    apple_team_id: str = Field(..., env="APPLE_TEAM_ID")
+    apple_key_id: str = Field(..., env="APPLE_KEY_ID")
+    apple_private_key_path: str = Field(..., env="APPLE_PRIVATE_KEY_PATH")
     SECRET_KEY: str = Field(default_factory=lambda: secrets.token_hex(16))
     apple_developer_token: str = Field(..., env="APPLE_DEVELOPER_TOKEN")
     firebase_json: str = Field(..., env="FIREBASE_CC_JSON")
