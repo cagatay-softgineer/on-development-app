@@ -104,11 +104,11 @@ def test_profile_healthcheck(client):
 #       - get_user_id_by_email returns a fake user ID.
 #       - get_user_profile returns a fake profile list.
 #     """
-# 
+#
 #     # Patch Firebase functions
 #     monkeypatch.setattr("database.firebase_operations.get_user_id_by_email", fake_get_user_id_by_email)
 #     monkeypatch.setattr("database.firebase_operations.get_user_profile", fake_get_user_profile)
-# 
+#
 #     headers = get_me_auth_headers(app, scopes=["me"])
 #     response = client.get("/profile/view", headers=headers)
 #     assert response.status_code == 200, "Expected 200 OK for view_profile request"
