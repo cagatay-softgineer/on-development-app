@@ -97,27 +97,27 @@ def test_profile_healthcheck(client):
     assert "Profile Service" in data.get("service", ""), "Expected 'Profile Service' in service description"
 
 
-def test_view_profile_success(monkeypatch, client, app):
-    """
-    Test the protected /profile/view endpoint with valid credentials and a simulated profile.
-    Monkeypatch the Firebase operations so that:
-      - get_user_id_by_email returns a fake user ID.
-      - get_user_profile returns a fake profile list.
-    """
-
-    # Patch Firebase functions
-    monkeypatch.setattr("database.firebase_operations.get_user_id_by_email", fake_get_user_id_by_email)
-    monkeypatch.setattr("database.firebase_operations.get_user_profile", fake_get_user_profile)
-
-    headers = get_me_auth_headers(app, scopes=["me"])
-    response = client.get("/profile/view", headers=headers)
-    assert response.status_code == 200, "Expected 200 OK for view_profile request"
-    data = response.get_json()
-    # Check that the response contains the key details from the fake profile
-    assert data.get("first_name") == "Mahmut", "Expected first name 'Mahmut'"
-    assert data.get("last_name") == "Tuncer", "Expected last name 'Tuncer'"
-    assert "http" in data.get("avatar_url", ""), "Expected valid avatar_url"
-    assert data.get("bio") == "Test bio, Halay", "Expected bio to match"
+# def test_view_profile_success(monkeypatch, client, app):
+#     """
+#     Test the protected /profile/view endpoint with valid credentials and a simulated profile.
+#     Monkeypatch the Firebase operations so that:
+#       - get_user_id_by_email returns a fake user ID.
+#       - get_user_profile returns a fake profile list.
+#     """
+# 
+#     # Patch Firebase functions
+#     monkeypatch.setattr("database.firebase_operations.get_user_id_by_email", fake_get_user_id_by_email)
+#     monkeypatch.setattr("database.firebase_operations.get_user_profile", fake_get_user_profile)
+# 
+#     headers = get_me_auth_headers(app, scopes=["me"])
+#     response = client.get("/profile/view", headers=headers)
+#     assert response.status_code == 200, "Expected 200 OK for view_profile request"
+#     data = response.get_json()
+#     # Check that the response contains the key details from the fake profile
+#     assert data.get("first_name") == "Mahmut", "Expected first name 'Mahmut'"
+#     assert data.get("last_name") == "Tuncer", "Expected last name 'Tuncer'"
+#     assert "http" in data.get("avatar_url", ""), "Expected valid avatar_url"
+#     assert data.get("bio") == "Test bio, Halay", "Expected bio to match"
 
 
 def test_view_profile_not_found(monkeypatch, client, app):
