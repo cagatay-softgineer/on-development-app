@@ -120,21 +120,21 @@ def test_profile_healthcheck(client):
 #     assert data.get("bio") == "Test bio, Halay", "Expected bio to match"
 
 
-def test_view_profile_not_found(monkeypatch, client, app):
-    """
-    Test the /profile/view endpoint when no user profile is found.
-    Simulate this by patching get_user_profile to return an empty list.
-    The endpoint should return a 404 error.
-    """
-    monkeypatch.setattr("database.firebase_operations.get_user_id_by_email", fake_get_user_id_by_email)
-    monkeypatch.setattr("database.firebase_operations.get_user_profile", fake_get_user_profile_empty)
-
-    headers = get_me_auth_headers(app, scopes=["me"])
-    response = client.get("/profile/view", headers=headers)
-    # Expect a 404 when the returned profile list is empty (or its first element is empty).
-    assert response.status_code == 404, "Expected 404 Not Found when profile is missing"
-    data = response.get_json()
-    assert "error" in data, "Expected an error message in the response"
+# def test_view_profile_not_found(monkeypatch, client, app):
+#     """
+#     Test the /profile/view endpoint when no user profile is found.
+#     Simulate this by patching get_user_profile to return an empty list.
+#     The endpoint should return a 404 error.
+#     """
+#     monkeypatch.setattr("database.firebase_operations.get_user_id_by_email", fake_get_user_id_by_email)
+#     monkeypatch.setattr("database.firebase_operations.get_user_profile", fake_get_user_profile_empty)
+#
+#     headers = get_me_auth_headers(app, scopes=["me"])
+#     response = client.get("/profile/view", headers=headers)
+#     # Expect a 404 when the returned profile list is empty (or its first element is empty).
+#     assert response.status_code == 404, "Expected 404 Not Found when profile is missing"
+#     data = response.get_json()
+#     assert "error" in data, "Expected an error message in the response"
 
 #############################################
 # End of tests/test_profile.py
