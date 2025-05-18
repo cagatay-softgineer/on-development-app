@@ -57,7 +57,7 @@ def login(user_email):
     session['apple_oauth'] = {'state': state, 'user_email': user_email}
 
     DEVELOPER_TOKEN, EXPIRE_TIME = generate_apple_developer_token(expires_in=60)
-    print(EXPIRE_TIME)
+
     # Render a template that includes MusicKit JS and triggers Apple Music authorization.
     # Pass the developer token and user ID to the client.
     return render_template(

@@ -2,6 +2,7 @@ import jwt
 import time
 from config.config import settings  # Make sure your settings are imported correctly
 
+
 def generate_apple_developer_token(expires_in: int = 15777000):
     """
     Generates a new Apple Music developer token using the ES256 algorithm.
