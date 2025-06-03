@@ -71,7 +71,7 @@
 #    headers = get_auth_headers(app, scopes=["apple"])
 #    user_id = "cagatayalkan333@gmail.com"
 #    response = client.get(f"/apple/login/{user_id}", headers=headers)
-# 
+#
 #    # Since the endpoint renders an HTML template, we expect a 200 status.
 #    assert response.status_code == 200, "Expected status 200 for authorized login"
 #    # Check that the response contains the developer token or user_id.
