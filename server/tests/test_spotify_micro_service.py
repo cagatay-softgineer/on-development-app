@@ -121,6 +121,8 @@ def test_playlist_duration_invalid_payload(client, app):
     headers = get_spotify_auth_headers(app, scopes=["spotify"])
     response = client.post("/spotify-micro-service/playlist_duration", json={}, headers=headers)
     assert response.status_code == 400, "Expected 400 error for missing required fields in payload"
+    data = response.get_json()
+    assert "error" in data, "Expected an error message in the response"
 
 
 def test_playlist_duration_exception(monkeypatch, client, app):
