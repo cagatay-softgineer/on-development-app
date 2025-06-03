@@ -70,4 +70,3 @@ replace or mock the networking layer.
 - Keep widgets dumb so that each view only renders data.
 - Introduce a router to centralise navigation, removing manual
   `Navigator` calls from views.
-
