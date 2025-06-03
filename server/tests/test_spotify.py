@@ -135,6 +135,7 @@ def test_spotify_playlists(monkeypatch, client, app):
     """
     # Patch fetch_user_playlists to return fake data.
     monkeypatch.setattr("Blueprints.spotify.fetch_user_playlists", fake_fetch_user_playlists)
+    monkeypatch.setattr("database.firebase_operations.get_user_id_by_email", fake_get_user_id_by_email)
 
     headers = get_spotify_auth_headers(app, scopes=["spotify"])
     payload = {"user_email": "test_user@example.com"}
