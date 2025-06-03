@@ -17,7 +17,7 @@ jobs:
     defaults:
       run:
         working-directory: server
-    env: 
+    env:
         "JWT_SECRET_KEY" : "${{ secrets.JWT_SECRET_KEY }}"
         "SPOTIFY_CLIENT_ID" : "${{ secrets.SPOTIFY_CLIENT_ID }}"
         "SPOTIFY_CLIENT_SECRET" : "${{ secrets.SPOTIFY_CLIENT_SECRET }}"
@@ -51,7 +51,7 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: '3.9'
-        
+
       # 3. Cache pip dependencies
       - name: Cache pip
         uses: actions/cache@v4.2.3
@@ -67,28 +67,35 @@ jobs:
           # Create directories if they don't exist
           mkdir -p server/keys
           mkdir -p server/database
-          
+
           # Write the secret files
           echo "${{ secrets.TEST }}"
 
-      # 5. Install project dependencies
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-
-      # 6. Lint the code
+      # 5. Lint the code
       - name: Lint Code
         run: |
           pip install flake8
           flake8 .
 
+      # 6. Install project dependencies
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
       # 7. Run tests
       - name: Run tests with coverage
         run: |
-          pip install pytest pytest-cov
+          pip install pytest pytest-cov coverage
           export PYTHONPATH=${{ github.workspace }}/server
-          pytest --cov=server --cov-branch --cov-report=xml
+          pytest --cov=server
+
+      # 8. Generate a code coverage report
+      - name: Generate Coverage Report
+        run: |
+          coverage run -m pytest
+          coverage report
+          coverage xml
 
       # 9. List files for debugging to ensure coverage.xml exists
       - name: List files for debug
