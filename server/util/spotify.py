@@ -480,11 +480,16 @@ def get_access_token_from_db(user_id, app_id):
     tuple: A tuple containing the access token and refresh token. If the access token is not found, returns None.
     """
     result = firebase_operations.get_userlinkedapps_access_refresh(user_id, app_id)
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
     if not result:
         logger.error(f"Access token not found for user_id: {user_id}")
         return f"Access token not found for user_id: {user_id}", None
-
-    access_token, refresh_token = result["access_token"], result["refresh_token"]
+    if result[0]:
+        result = result[0]
+        access_token, refresh_token = result["access_token"], result["refresh_token"]
     if test_token(access_token) != 200:
         refresh_access_token_and_update_db(user_id, refresh_token, app_id)
         return get_access_token_from_db(user_id, app_id)

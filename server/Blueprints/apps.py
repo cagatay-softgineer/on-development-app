@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, Response, request, jsonify
 from flask_jwt_extended import jwt_required
 from flask_limiter import Limiter
 from flask_cors import CORS
@@ -7,7 +7,7 @@ from util.spotify import get_current_user_profile
 from Blueprints.google_api import get_google_profile
 from util.models import LinkedAppRequest, UserEmailRequest  # Import the model
 from util.logit import get_logger
-from util.utils import get_email_username
+from util.utils import get_email_username, obfuscate
 import database.firebase_operations as firebase_operations
 from pydantic import ValidationError
 from config.config import settings
@@ -23,7 +23,6 @@ GOOGLE_CLIENT_SECRETS_FILE = settings.google_client_secret
 CORS(apps_bp, resources=settings.CORS_resource_allow_all)
 
 logger = get_logger("logs", "Apps")
-
 
 @apps_bp.before_request
 def log_apps_requests():
@@ -291,35 +290,56 @@ def get_all_apps_binding():
         return jsonify({"error": "User not found."}), 400
 
     apps_status = []
-    # Iterate over all configured applications
     for app_name, app_id in APP_ALIAS_TO_ID.items():
-        response = firebase_operations.get_userlinkedapps_tokens(
-            user_id, app_id)
-        # Check if the response exists and contains access tokens
+        response = firebase_operations.get_userlinkedapps_tokens(user_id, app_id)
+        user_linked = False
+        user_profile = None
+
         if response and response[0].get("access_token"):
             tokens = response[0]["access_token"]
-            # Depending on the application, retrieve the user profile if linked
-            if app_name == "Spotify":
-                user_profile = get_current_user_profile(
-                    tokens[0], user_id, app_id)
-            elif app_name == "AppleMusic":
-                user_profile = {"name": get_email_username(user_email)}
-            elif app_name == "YoutubeMusic":
-                user_profile = get_google_profile(user_email)
-            elif app_name == "Google API":
-                user_profile = "Google API Not Implemented"
-            else:
+            try:
+                if app_name == "Spotify":
+                    user_profile_candidate = get_current_user_profile(tokens[0], user_id, app_id)
+                    if user_profile_candidate is None:
+                        raise Exception("Spotify token/profile fetch failed")
+                    user_linked = True
+                    user_profile = user_profile_candidate
+                elif app_name == "AppleMusic":
+                    user_linked = True
+                    user_profile = {"name": get_email_username(user_email)}
+                elif app_name in ("YoutubeMusic", "Google API"):
+                    profile = get_google_profile(user_email)
+                    # If it's a Flask response (error), handle as failure!
+                    if isinstance(profile, Response):
+                        # Optionally log: logger.warning(f"Google profile for {app_name} is a Response object!")
+                        firebase_operations.delete_userlinkedapps(user_id, app_id)
+                        user_linked = False
+                        user_profile = None
+                    elif isinstance(profile, dict) and profile.get("error"):
+                        firebase_operations.delete_userlinkedapps(user_id, app_id)
+                        user_linked = False
+                        user_profile = None
+                    else:
+                        user_linked = True
+                        user_profile = profile
+                else:
+                    user_profile = None
+                    user_linked = True  # Or False depending on logic
+            except Exception as e:
+                logger.info(f"Deleted {app_name} binding for user {obfuscate(user_email)} due to expired token/profile error.", e)
+                firebase_operations.delete_userlinkedapps(user_id, app_id)
+                user_linked = False
                 user_profile = None
-            apps_status.append(
-                {
-                    "app_name": app_name,
-                    "user_linked": True,
-                    "user_profile": user_profile,
-                }
-            )
-        else:
-            apps_status.append(
-                {"app_name": app_name, "user_linked": False, "user_profile": None}
-            )
 
-    return jsonify({"user_email": user_email, "apps": apps_status}), 200
+        if not user_linked:
+            user_profile = None
+
+        apps_status.append({
+            "app_name": app_name,
+            "user_linked": user_linked,
+            "user_profile": user_profile,
+        })
+    return jsonify({
+        "user_email": user_email,
+        "apps": apps_status
+    }), 200
