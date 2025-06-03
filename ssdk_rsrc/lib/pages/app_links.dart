@@ -1,7 +1,7 @@
-import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:ssdk_rsrc/pages/home_page.dart';
+import 'package:ssdk_rsrc/pages/navigation_page.dart';
 import 'package:ssdk_rsrc/providers/appsSession.dart';
 import 'package:ssdk_rsrc/providers/userSession.dart';
 import 'package:ssdk_rsrc/styles/button_styles.dart';
@@ -25,7 +25,7 @@ class AppLinkPage extends StatefulWidget {
 class AppLinkPageState extends State<AppLinkPage> with WidgetsBindingObserver {
   // Define a list of apps with initial configurations.
 
-  HomePageState homepage = HomePageState();
+  HomePageBody homepage = HomePageBody();
 
   final List<LinkedApp> linkedApps = [
     LinkedApp(
@@ -103,22 +103,22 @@ class AppLinkPageState extends State<AppLinkPage> with WidgetsBindingObserver {
                   profile['images'].isNotEmpty) {
                 app.userPic =
                     profile['images'][0]['url'] ??
-                    UserConstants.defaultAvatarUrl;
+                    UserSession.userPIC ?? UserConstants.defaultAvatarUrl;
               } else {
-                app.userPic = UserConstants.defaultAvatarUrl;
+                app.userPic = UserSession.userPIC ?? UserConstants.defaultAvatarUrl;;
               }
             } else if (app.name == "YoutubeMusic") {
               app.userDisplayName = profile['name'] ?? "No Display Name";
               app.userPic =
-                  profile['picture'] ?? UserConstants.defaultAvatarUrl;
+                  profile['picture'] ?? UserSession.userPIC ?? UserConstants.defaultAvatarUrl;;
             } else {
               app.userDisplayName = profile['name'] ?? "No Display Name";
               app.userPic =
-                  profile['picture'] ?? UserConstants.defaultAvatarUrl;
+                  profile['picture'] ?? UserSession.userPIC ?? UserConstants.defaultAvatarUrl;;
             }
           } else {
             app.userDisplayName = "User Not Linked";
-            app.userPic = UserConstants.defaultAvatarUrl;
+            app.userPic = UserSession.userPIC ?? UserConstants.defaultAvatarUrl;
           }
         }
       }
@@ -152,8 +152,9 @@ class AppLinkPageState extends State<AppLinkPage> with WidgetsBindingObserver {
                               UserSession.userPIC ??
                               UserConstants.defaultAvatarUrl,
                           userName: UserSession.userNAME ?? "",
-                          chainPoints: 0,
+                          chainPoints: UserSession.currentChainStreak ?? 0,
                           storePoints: 0,
+                          onChainTap: () => NavigationPage.of(context).showChain(),
                         ),
                         SizedBox(height: 50),
                         Container(
@@ -207,17 +208,17 @@ class AppLinkPageState extends State<AppLinkPage> with WidgetsBindingObserver {
                             onReinitializeApps: _initializeLinkedApps,
                           );
                         }),
-                        SizedBox(height: 40),
-                        Align(
-                          alignment: Alignment.center,
-                          child: GlowingIconButton(
-                            iconSize: 48,
-                            icon: FontAwesomeIcons.userGear,
-                            iconColor: ColorPalette.white,
-                            iconGlowColor: ColorPalette.gold,
-                            onPressed: _initializeLinkedApps,
-                          ),
-                        ),
+                        // SizedBox(height: 40),
+                        // Align(
+                        //   alignment: Alignment.center,
+                        //   child: GlowingIconButton(
+                        //     iconSize: 48,
+                        //     icon: FontAwesomeIcons.userGear,
+                        //     iconColor: ColorPalette.white,
+                        //     iconGlowColor: ColorPalette.gold,
+                        //     onPressed: _initializeLinkedApps,
+                        //   ),
+                        // ),
                       ],
                     ),
                   ),

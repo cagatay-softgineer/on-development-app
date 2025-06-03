@@ -29,7 +29,7 @@ String extractFirstSmartphoneDeviceId(Map<String, dynamic> response) {
   // Check if 'devices' key exists and is a list
   if (response.containsKey('devices') && response['devices'] is List) {
     List<dynamic> devices = response['devices'];
-    
+
     if (devices.isNotEmpty) {
       // Iterate through devices to find the first Smartphone
       for (var device in devices) {
@@ -61,26 +61,48 @@ Future<void> initializeUserAndPlaylists({
   required Function(String) updateUserId,
   required Function(List<Playlist>) updatePlaylists,
   required Function(bool) updateIsLoading,
+  bool tempLoadYoutube = false,
 }) async {
+  updateIsLoading(true); // Mark as loading at the start
   try {
     final uid = await AuthService.getUserId();
-    updateUserId(uid ?? '');
-    //final fetchedPlaylists = await mainAPI.fetchPlaylists("${uid ?? ''}");
-    final spotifyPlaylistsFuture =
-        mainAPI.fetchPlaylists(uid, app: MusicApp.Spotify);
-    final youtubePlaylistsFuture =
-        mainAPI.fetchPlaylists(uid, app: MusicApp.YouTube);
+    if (uid == null || uid.isEmpty) {
+      print("User ID is null or empty.");
+      updateUserId('');
+      updatePlaylists([]);
+      return;
+    }
 
-    final results = await Future.wait([spotifyPlaylistsFuture, youtubePlaylistsFuture]);
+    updateUserId(uid);
+
+    // Fetch Spotify playlists
+    final spotifyPlaylists = await mainAPI.fetchPlaylists(
+      uid,
+      app: MusicApp.Spotify,
+    );
+
     final mergedPlaylists = <Playlist>[];
-    mergedPlaylists.addAll(results[0]);
-    mergedPlaylists.addAll(results[1]);
-    final fetchedPlaylists = mergedPlaylists;
-    
-    updatePlaylists(fetchedPlaylists);
-    updateIsLoading(false);
-  } catch (e) {
-    print("Error fetching userID or playlists: $e");
+    if (spotifyPlaylists.isNotEmpty) {
+      mergedPlaylists.addAll(spotifyPlaylists);
+    }
+
+    // Optionally fetch YouTube playlists
+    if (tempLoadYoutube) {
+      final youtubePlaylists = await mainAPI.fetchPlaylists(
+        uid,
+        app: MusicApp.YouTube,
+      );
+      if (youtubePlaylists.isNotEmpty) {
+        mergedPlaylists.addAll(youtubePlaylists);
+      }
+    }
+
+    updatePlaylists(mergedPlaylists);
+  } catch (e, stack) {
+    print("Error fetching userID or playlists: $e\n$stack");
+    updateUserId('');
+    updatePlaylists([]);
+  } finally {
     updateIsLoading(false);
   }
 }

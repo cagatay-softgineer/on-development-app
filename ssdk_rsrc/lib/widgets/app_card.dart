@@ -84,44 +84,77 @@ class AppCard extends StatelessWidget {
                         clipBehavior: Clip.none,
                         children: [
                           // User profile image (bottom)
-                          ClipOval(
-                            child: Image.network(
-                              validUserPic,
-                              width: 50,
-                              height: 50,
-                              fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) {
-                                return Image.network(
-                                  defaultUserPicUrl,
+                          isLinked
+                              ? Stack(
+                                clipBehavior: Clip.none,
+                                children: [
+                                  ClipOval(
+                                    child: Image.network(
+                                      validUserPic,
+                                      width: 50,
+                                      height: 50,
+                                      fit: BoxFit.cover,
+                                      errorBuilder: (
+                                        context,
+                                        error,
+                                        stackTrace,
+                                      ) {
+                                        return Image.network(
+                                          defaultUserPicUrl,
+                                          width: 50,
+                                          height: 50,
+                                          fit: BoxFit.cover,
+                                        );
+                                      },
+                                    ),
+                                  ),
+
+                                  Positioned(
+                                    left:
+                                        -10, // or right: -10 to overlap from right
+                                    top:
+                                        0, // adjust as needed for precise overlap
+                                    child: ClipOval(
+                                      child: Image.network(
+                                        validAppPic,
+                                        width: 50,
+                                        height: 50,
+                                        fit: BoxFit.cover,
+                                        errorBuilder: (
+                                          context,
+                                          error,
+                                          stackTrace,
+                                        ) {
+                                          return Image.network(
+                                            defaultAppPicUrl,
+                                            width: 50,
+                                            height: 50,
+                                            fit: BoxFit.cover,
+                                          );
+                                        },
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              )
+                              : ClipOval(
+                                child: Image.network(
+                                  validAppPic,
                                   width: 50,
                                   height: 50,
                                   fit: BoxFit.cover,
-                                );
-                              },
-                            ),
-                          ),
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return Image.network(
+                                      defaultAppPicUrl,
+                                      width: 50,
+                                      height: 50,
+                                      fit: BoxFit.cover,
+                                    );
+                                  },
+                                ),
+                              ),
 
                           // App logo image (top, slightly overlapping)
-                          Positioned(
-                            left: -10, // or right: -10 to overlap from right
-                            top: 0, // adjust as needed for precise overlap
-                            child: ClipOval(
-                              child: Image.network(
-                                validAppPic,
-                                width: 50,
-                                height: 50,
-                                fit: BoxFit.cover,
-                                errorBuilder: (context, error, stackTrace) {
-                                  return Image.network(
-                                    defaultAppPicUrl,
-                                    width: 50,
-                                    height: 50,
-                                    fit: BoxFit.cover,
-                                  );
-                                },
-                              ),
-                            ),
-                          ),
                         ],
                       ),
                       const SizedBox(width: 16),

@@ -233,6 +233,40 @@ class MainAPI {
     }
   }
 
+  Future<Map<String, dynamic>> getChainStatus() async {
+    try {
+      final response = await _dio.post('profile/chain_status');
+      return response.data;
+    } catch (e) {
+      //print('Error fetching chain status: $e');
+      return {'error': true};
+    }
+  }
+
+  Future<Map<String, dynamic>> getPredict(int playlistDuration) async {
+    try {
+      final response = await _dio.post('ml/predict', data: {
+        'data': playlistDuration,
+      });
+      return response.data;
+    } catch (e) {
+      //print('Error fetching chain status: $e');
+      return {'error': true};
+    }
+  }
+
+  Future<Map<String, dynamic>> updateChainStatus(String action) async {
+    try {
+      final response = await _dio.post('profile/chain_status_update', data: {
+        'action': action,
+      });
+      return response.data;
+    } catch (e) {
+      //print('Error updating chain status: $e');
+      return {'error': true};
+    }
+  }
+
   Future<List<Playlist>> fetchPlaylists(String? userId, { MusicApp app = MusicApp.Spotify }) async {
     // Determine the endpoint based on the MusicApp
     String endpoint;

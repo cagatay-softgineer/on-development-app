@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:ssdk_rsrc/enums/enums.dart';
+import 'package:ssdk_rsrc/styles/color_palette.dart';
 import 'package:ssdk_rsrc/widgets/custom_button.dart';
 import 'package:ssdk_rsrc/styles/button_styles.dart';
 import 'dart:async';
@@ -7,9 +9,12 @@ import 'package:ssdk_rsrc/services/main_api.dart';
 import 'package:ssdk_rsrc/models/playlist.dart';
 import 'package:ssdk_rsrc/utils/timer_funcs.dart'; // Timer utilities (e.g. player state functions)
 import 'package:ssdk_rsrc/utils/pomodoro_funcs.dart'; // Pomodoro mixin
+import 'package:ssdk_rsrc/widgets/custom_staus_bar.dart';
+import 'package:ssdk_rsrc/widgets/glowing_text.dart';
 import 'package:ssdk_rsrc/widgets/player_widget.dart'; // Custom player widget
 import 'package:ssdk_rsrc/models/music_player.dart'; // Custom player widget
-import 'package:ssdk_rsrc/utils/spotify_func.dart'; //spotify
+import 'package:ssdk_rsrc/utils/spotify_func.dart';
+import 'package:ssdk_rsrc/widgets/playlist_dropdown.dart'; //spotify
 
 class TimerPage extends StatefulWidget {
   const TimerPage({Key? key}) : super(key: key);
@@ -19,6 +24,8 @@ class TimerPage extends StatefulWidget {
 }
 
 class _TimerPageState extends State<TimerPage> with PomodoroMixin {
+  int _selectedSessionCount =
+      4; // User-selectable, default 4 (same as sessionsBeforeLongBreak)
   String? userID = "";
   List<Playlist> _playlists = [];
   Playlist? _selectedPlaylist;
@@ -26,8 +33,8 @@ class _TimerPageState extends State<TimerPage> with PomodoroMixin {
 
   // User-configurable timer values.
   bool focusMode = false;
-  
-  late final SpotifyPlayerController spotifyPlayerController;
+
+  SpotifyPlayerController? spotifyPlayerController;
   Future<Map<String, dynamic>>? _playerFuture;
   Map<String, dynamic>? _lastPlayerData;
   Timer? _stateCheckTimer;
@@ -38,7 +45,10 @@ class _TimerPageState extends State<TimerPage> with PomodoroMixin {
 
   String get formattedPomodoroTime {
     final minutes = pomodoroRemaining.inMinutes.remainder(60).toString();
-    final seconds = pomodoroRemaining.inSeconds.remainder(60).toString().padLeft(2, '0');
+    final seconds = pomodoroRemaining.inSeconds
+        .remainder(60)
+        .toString()
+        .padLeft(2, '0');
     return '$minutes:$seconds';
   }
 
@@ -71,7 +81,9 @@ class _TimerPageState extends State<TimerPage> with PomodoroMixin {
       initializeUserAndPlaylists(
         updateUserId: (id) => setState(() => userID = id),
         updatePlaylists: (list) => setState(() => _playlists = list),
-        updateIsLoading: (loading) => setState(() => _isLoadingPlaylists = loading),
+        updateIsLoading:
+            (loading) => setState(() => _isLoadingPlaylists = loading),
+        tempLoadYoutube: false,
       );
     });
   }
@@ -92,19 +104,26 @@ class _TimerPageState extends State<TimerPage> with PomodoroMixin {
     _musicPlayerKey.currentState?.switchLayout(PlayerLayoutType.compact);
     // Also pause the player.
     spotifyPlayerController = SpotifyPlayerController(spotifyAPI: spotifyAPI);
-    spotifyPlayerController.stop(userID);
+    spotifyPlayerController!.stop(userID);
   }
 
-  Future<void> pomodoroSessionCheck({required Duration workDuration, required Duration shortBreak, required Duration longBreak}) async {
+  Future<void> pomodoroSessionCheck({
+    required Duration workDuration,
+    required Duration shortBreak,
+    required Duration longBreak,
+    required int sessionsBeforeLongBreak,
+  }) async {
     if (pomodoroTimer == null) {
       await startPomodoroSession(
         workDuration: workDuration,
         shortBreak: shortBreak,
         longBreak: longBreak,
+        sessionsBeforeLongBreak: sessionsBeforeLongBreak,
       );
       // If a playlist is selected, start playing it.
+      _musicPlayerKey.currentState?.switchLayout(PlayerLayoutType.focus);
       spotifyPlayerController = SpotifyPlayerController(spotifyAPI: spotifyAPI);
-      spotifyPlayerController.play(_selectedPlaylist, userID);
+      spotifyPlayerController!.play(_selectedPlaylist, userID);
     } else if (pomodoroTimer!.isActive) {
       await _showStopConfirmation(context);
     } else {
@@ -112,110 +131,288 @@ class _TimerPageState extends State<TimerPage> with PomodoroMixin {
         workDuration: workDuration,
         shortBreak: shortBreak,
         longBreak: longBreak,
+        sessionsBeforeLongBreak: sessionsBeforeLongBreak,
       );
       // If a playlist is selected, start playing it.
+      _musicPlayerKey.currentState?.switchLayout(PlayerLayoutType.focus);
       spotifyPlayerController = SpotifyPlayerController(spotifyAPI: spotifyAPI);
-      spotifyPlayerController.play(_selectedPlaylist, userID);
+      spotifyPlayerController!.play(_selectedPlaylist, userID);
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Pomodoro Timer'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
+      // appBar: AppBar(title: const Text('Pomodoro Timer')),
+      backgroundColor: ColorPalette.backgroundColor,
+      body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
+            padding: const EdgeInsets.all(16.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Text(
-                  isWorkPhase ? 'Work Time' : 'Break Time',
-                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                GlowingText(
+                  text: isWorkPhase ? 'Work Time' : 'Break Time',
+                  fontSize: 60,
+                  fontWeight: FontWeight.bold,
+                  color: ColorPalette.white,
+                  glowColor: ColorPalette.gold,
                 ),
-                Text(
-                  formattedPomodoroTime,
-                  style: const TextStyle(fontSize: 48, fontWeight: FontWeight.bold),
+                GlowingText(
+                  text: formattedPomodoroTime,
+                  fontSize: 48,
+                  fontWeight: FontWeight.bold,
+                  color: ColorPalette.white,
+                  glowColor: ColorPalette.gold,
                 ),
                 const SizedBox(height: 20),
-                _isLoadingPlaylists
-                    ? const CircularProgressIndicator()
-                    : DropdownButton<Playlist>(
-                        hint: const Text("Select Playlist"),
-                        value: _selectedPlaylist,
-                        isExpanded: true,
-                        items: _playlists.map((playlist) {
-                          return DropdownMenuItem<Playlist>(
-                            value: playlist,
-                            child: Row(
-                              children: [
-                                Container(
-                                  width: 40,
-                                  height: 40,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(4),
-                                    image: DecorationImage(
-                                      image: NetworkImage(playlist.playlistImage),
-                                      fit: BoxFit.cover,
+                GestureDetector(
+                  onTap:
+                      _isLoadingPlaylists
+                          ? null
+                          : () async {
+                            await showPlaylistSelectorDialog(
+                              context: context,
+                              playlists: _playlists,
+                              selected: _selectedPlaylist,
+                              onSelected: (selected) async {
+                                setState(() => _selectedPlaylist = selected);
+
+                                // Print playlist duration to console
+                                // ignore: unnecessary_null_comparison
+                                // if (selected != null &&
+                                //     selected.playlistId.isNotEmpty) {
+                                //   final durationData = await mainAPI
+                                //       .getPlaylistDuration(
+                                //         selected.playlistId,
+                                //         MusicApp.Spotify,
+                                //         1,
+                                //       );
+                                //   print(
+                                //     "Selected Playlist Duration: ${durationData}",
+                                //   );
+                                // }
+                              },
+                            );
+                          },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 14,
+                      horizontal: 14,
+                    ),
+                    decoration: BoxDecoration(
+                      color: ColorPalette.backgroundColor,
+                      borderRadius: BorderRadius.circular(32),
+                      boxShadow: [
+                        BoxShadow(
+                          color: ColorPalette.gold.withAlpha(64),
+                          blurRadius: 15,
+                        ),
+                      ],
+                      border: Border.all(color: ColorPalette.white),
+                    ),
+                    child: Row(
+                      children: [
+                        _selectedPlaylist != null
+                            ? ClipRRect(
+                              borderRadius: BorderRadius.circular(6),
+                              child: FadeInImage.assetNetwork(
+                                placeholder:
+                                    'https://raw.githubusercontent.com/Yggbranch/assets/refs/heads/main/Placeholder/PNG/Placeholder-Rectangle%400.5x.png',
+                                image:
+                                    _selectedPlaylist!.playlistImage.isNotEmpty
+                                        ? _selectedPlaylist!.playlistImage
+                                        : 'https://raw.githubusercontent.com/Yggbranch/assets/refs/heads/main/Placeholder/PNG/Placeholder-Rectangle%400.5x.png',
+                                width: 32,
+                                height: 32,
+                                fit: BoxFit.cover,
+                                imageErrorBuilder:
+                                    (_, __, ___) => Container(
+                                      width: 32,
+                                      height: 32,
+                                      color: Colors.black26,
+                                      child: Icon(
+                                        Icons.music_note,
+                                        color: Colors.white60,
+                                      ),
                                     ),
-                                  ),
-                                ),
-                                const SizedBox(width: 8),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        playlist.playlistName,
-                                        style: const TextStyle(fontWeight: FontWeight.bold),
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                      Text(
-                                        playlist.playlistOwner,
-                                        style: const TextStyle(fontSize: 12, color: Colors.grey),
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
+                              ),
+                            )
+                            : Icon(
+                              FontAwesomeIcons.listOl,
+                              //Icons.queue_music,
+                              color: Colors.white60,
+                              size: 32,
                             ),
-                          );
-                        }).toList(),
-                        onChanged: (Playlist? newPlaylist) {
-                          setState(() {
-                            _selectedPlaylist = newPlaylist;
-                          });
-                        },
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            _selectedPlaylist?.playlistName ??
+                                'Select Playlist',
+                            style: TextStyle(
+                              color: ColorPalette.white,
+                              fontWeight: FontWeight.w500,
+                              fontSize: 15,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        Icon(Icons.arrow_drop_down, color: Colors.white54),
+                      ],
+                    ),
+                  ),
+                ),
+                SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text(
+                      'Sessions per cycle: ',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
                       ),
-                const SizedBox(height: 20),
+                    ),
+                    DropdownButton<int>(
+                      value: _selectedSessionCount,
+                      dropdownColor: ColorPalette.backgroundColor,
+                      style: const TextStyle(color: Colors.white),
+                      items:
+                          [2, 3, 4, 5, 6, 8]
+                              .map(
+                                (count) => DropdownMenuItem(
+                                  value: count,
+                                  child: Text('$count'),
+                                ),
+                              )
+                              .toList(),
+                      onChanged: (value) {
+                        if (value != null) {
+                          setState(() {
+                            _selectedSessionCount = value;
+                            // If user changes mid-cycle, reset Pomodoro
+                            sessionCount = 0;
+                          });
+                        }
+                      },
+                    ),
+                  ],
+                ),
                 const SizedBox(height: 20),
                 // Session start buttons.
-                CustomButton(
-                  text: "25/5 Session",
-                  onPressed: () async {
-                    pomodoroSessionCheck(
-                      workDuration: const Duration(minutes: 25),
-                      shortBreak: const Duration(minutes: 5),
-                      longBreak: const Duration(minutes: 30),
-                    );
-                  },
-                  buttonParams: startSessionButtonParams,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    CustomButton(
+                      text: "25/5",
+                      onPressed: () async {
+                        pomodoroSessionCheck(
+                          workDuration: const Duration(minutes: 25),
+                          shortBreak: const Duration(minutes: 5),
+                          longBreak: const Duration(minutes: 10),
+                          sessionsBeforeLongBreak: _selectedSessionCount,
+                        );
+                      },
+                      buttonParams: startSessionSmallButtonParams,
+                    ),
+                    const SizedBox(width: 5),
+                    CustomButton(
+                      text: "40/10",
+                      onPressed: () async {
+                        pomodoroSessionCheck(
+                          workDuration: const Duration(minutes: 40),
+                          shortBreak: const Duration(minutes: 10),
+                          longBreak: const Duration(minutes: 30),
+                          sessionsBeforeLongBreak: _selectedSessionCount,
+                        );
+                      },
+                      buttonParams: startSessionSmallButtonParams,
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 20),
-                CustomButton(
-                  text: "40/10 Session",
-                  onPressed: () async {
-                    pomodoroSessionCheck(
-                      workDuration: const Duration(minutes: 40),
-                      shortBreak: const Duration(minutes: 10),
-                      longBreak: const Duration(minutes: 30),
-                    );
-                  },
-                  buttonParams: startSessionButtonParams,
+                SizedBox(height: 5),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(width: 5),
+                    CustomButton(
+                      text: "DBG",
+                      onPressed: () async {
+                        pomodoroSessionCheck(
+                          workDuration: const Duration(seconds: 1),
+                          shortBreak: const Duration(seconds: 2),
+                          longBreak: const Duration(seconds: 3),
+                          sessionsBeforeLongBreak: _selectedSessionCount,
+                        );
+                      },
+                      buttonParams: startSessionSmallButtonParams,
+                    ),
+                    SizedBox(width: 5),
+                    CustomButton(
+                      text: "AI Predict",
+                      onPressed: () async {
+                        print(_selectedPlaylist!.playlistName);
+                        if (_selectedPlaylist != null &&
+                            _selectedPlaylist!.playlistId.isNotEmpty) {
+                          final durationData = await mainAPI
+                              .getPlaylistDuration(
+                                _selectedPlaylist!.playlistId,
+                                MusicApp.Spotify,
+                                1,
+                              );
+                          int totalMs = durationData['total_duration_ms'];
+
+                          // Call ML endpoint
+                          final mlResult = await mainAPI.getPredict(totalMs);
+                          print("ML Result: $mlResult");
+
+                          // ignore: unnecessary_null_comparison
+                          if (mlResult != null && mlResult['pattern'] != null) {
+                            // Show prediction info and wait for confirmation
+                            final confirmed = await showMLPredictionDialog(
+                              context,
+                              mlResult,
+                              durationData,
+                            );
+
+                            if (confirmed) {
+                              final workSessions =
+                                  (mlResult['work_sessions'] as List)
+                                      .map((v) => Duration(minutes: v))
+                                      .toList();
+                              final shortBreak = Duration(
+                                minutes: mlResult['short_break'] ?? 0,
+                              );
+                              final longBreak = Duration(
+                                minutes: mlResult['long_break'] ?? 0,
+                              );
+                              final sessionsBeforeLongBreak =
+                                  workSessions.length;
+                              setState(() {
+                                _selectedSessionCount = sessionsBeforeLongBreak;
+                              });
+                              await pomodoroSessionCheck(
+                                workDuration: workSessions[0],
+                                shortBreak: shortBreak,
+                                longBreak: longBreak,
+                                sessionsBeforeLongBreak:
+                                    sessionsBeforeLongBreak,
+                              );
+                            } else {
+                              print("User cancelled AI Predict start.");
+                            }
+                          } else {
+                            print("ML Predict failed or pattern missing");
+                          }
+                        } else {
+                          print("No playlist selected!");
+                        }
+                      },
+                      buttonParams: startSessionSmallButtonParams,
+                    ),
+                    const SizedBox(width: 5),
+                  ],
                 ),
                 const SizedBox(height: 20),
                 // Stop Timer button.
@@ -226,37 +423,59 @@ class _TimerPageState extends State<TimerPage> with PomodoroMixin {
                   },
                   buttonParams: stopSessionButtonParams,
                 ),
-                const SizedBox(height: 20),
+                SizedBox(height: 10),
+                Container(
+                  padding: EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Transparent.a00,
+                    borderRadius: BorderRadius.circular(24),
+                    border: BorderDirectional(
+                      bottom: BorderSide(
+                        color: ColorPalette.white.withAlpha(64),
+                      ),
+                    ),
+                  ),
+                  child: CustomStatusBar(
+                    stepCount: _selectedSessionCount,
+                    currentStep:
+                        sessionCount > _selectedSessionCount
+                            ? _selectedSessionCount
+                            : sessionCount,
+                  ),
+                ),
+                // const SizedBox(height: 20),
                 // Change Player Type button.
-                CustomButton(
-                  text: "Change Player Type",
-                  onPressed: () {
-                    if (_musicPlayerKey.currentState != null) {
-                      if (focusMode) {
-                        _musicPlayerKey.currentState!
-                            .switchLayout(PlayerLayoutType.compact);
-                        focusMode = false;
-                      } else {
-                        _musicPlayerKey.currentState!
-                            .switchLayout(PlayerLayoutType.focus);
-                        focusMode = true;
-                      }
-                    }
-                  },
-                  buttonParams: changeLayoutButtonParams,
-                ),
-                const SizedBox(height: 20),
-                CustomButton(
-                  text: "Debug Session",
-                  onPressed: () async {
-                    pomodoroSessionCheck(
-                      workDuration: const Duration(seconds: 10),
-                      shortBreak: const Duration(seconds: 5),
-                      longBreak: const Duration(seconds: 15),
-                    );
-                  },
-                  buttonParams: startSessionButtonParams,
-                ),
+                // CustomButton(
+                //   text: "Change Player Type",
+                //   onPressed: () {
+                //     if (_musicPlayerKey.currentState != null) {
+                //       if (focusMode) {
+                //         _musicPlayerKey.currentState!.switchLayout(
+                //           PlayerLayoutType.compact,
+                //         );
+                //         focusMode = false;
+                //       } else {
+                //         _musicPlayerKey.currentState!.switchLayout(
+                //           PlayerLayoutType.focus,
+                //         );
+                //         focusMode = true;
+                //       }
+                //     }
+                //   },
+                //   buttonParams: changeLayoutButtonParams,
+                // ),
+                // const SizedBox(height: 20),
+                // CustomButton(
+                //   text: "Debug Session",
+                //   onPressed: () async {
+                //     pomodoroSessionCheck(
+                //       workDuration: const Duration(seconds: 10),
+                //       shortBreak: const Duration(seconds: 5),
+                //       longBreak: const Duration(seconds: 15),
+                //     );
+                //   },
+                //   buttonParams: startSessionButtonParams,
+                // ),
               ],
             ),
           ),
@@ -265,69 +484,49 @@ class _TimerPageState extends State<TimerPage> with PomodoroMixin {
       bottomNavigationBar: FutureBuilder<Map<String, dynamic>>(
         future: _playerFuture,
         builder: (context, snapshot) {
+          Widget child;
           if (snapshot.connectionState == ConnectionState.waiting) {
-            if (_lastPlayerData != null) {
-              return Container(
-                height: 210,
-                child: CustomPlayerWidget(
-                  spotifyData: _lastPlayerData!,
-                  userID: userID ?? '',
-                  app: MusicApp.Spotify,
-                  musicPlayerKey: _musicPlayerKey,
-                ),
-              );
-            } else {
-              return Container(
-                height: 210,
-                child: const Center(child: Text('Loading...')),
-              );
-            }
+            child =
+                _lastPlayerData != null
+                    ? CustomPlayerWidget(
+                      spotifyData: _lastPlayerData!,
+                      userID: userID ?? '',
+                      app: MusicApp.Spotify,
+                      musicPlayerKey: _musicPlayerKey,
+                    )
+                    : const Center(child: Text('Loading...'));
           } else if (snapshot.hasError) {
-            if (_lastPlayerData != null) {
-              return Container(
-                height: 210,
-                child: CustomPlayerWidget(
-                  spotifyData: _lastPlayerData!,
-                  userID: userID ?? '',
-                  app: MusicApp.Spotify,
-                  musicPlayerKey: _musicPlayerKey,
-                ),
-              );
-            } else {
-              return Container(
-                height: 210,
-                child: Center(child: Text('Error: ${snapshot.error}')),
-              );
-            }
+            child =
+                _lastPlayerData != null
+                    ? CustomPlayerWidget(
+                      spotifyData: _lastPlayerData!,
+                      userID: userID ?? '',
+                      app: MusicApp.Spotify,
+                      musicPlayerKey: _musicPlayerKey,
+                    )
+                    : Center(child: Text('Error: ${snapshot.error}'));
           } else if (!snapshot.hasData || snapshot.data!['item'] == null) {
-            if (_lastPlayerData != null) {
-              return Container(
-                height: 210,
-                child: CustomPlayerWidget(
-                  spotifyData: _lastPlayerData!,
-                  userID: userID ?? '',
-                  app: MusicApp.Spotify,
-                  musicPlayerKey: _musicPlayerKey,
-                ),
-              );
-            } else {
-              return Container(
-                height: 210,
-                child: const Center(child: Text('No track is currently playing.')),
-              );
-            }
+            child =
+                _lastPlayerData != null
+                    ? CustomPlayerWidget(
+                      spotifyData: _lastPlayerData!,
+                      userID: userID ?? '',
+                      app: MusicApp.Spotify,
+                      musicPlayerKey: _musicPlayerKey,
+                    )
+                    : const Center(
+                      child: Text('No track is currently playing.'),
+                    );
           } else {
             _lastPlayerData = snapshot.data;
-            return Container(
-              height: 210,
-              child: CustomPlayerWidget(
-                spotifyData: snapshot.data!,
-                userID: userID ?? '',
-                app: MusicApp.Spotify,
-                musicPlayerKey: _musicPlayerKey,
-              ),
+            child = CustomPlayerWidget(
+              spotifyData: snapshot.data!,
+              userID: userID ?? '',
+              app: MusicApp.Spotify,
+              musicPlayerKey: _musicPlayerKey,
             );
           }
+          return Container(color: Transparent.a00, height: 250, child: child);
         },
       ),
     );

@@ -2,7 +2,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 // ignore: library_prefixes
 import 'package:app_links/app_links.dart' as deepLink;
+import 'package:showcaseview/showcaseview.dart';
 import 'package:ssdk_rsrc/enums/enums.dart';
+import 'package:ssdk_rsrc/pages/chain_page.dart';
 import 'package:ssdk_rsrc/pages/navigation_page.dart';
 import 'package:ssdk_rsrc/services/main_api.dart';
 import 'package:ssdk_rsrc/styles/color_palette.dart';
@@ -13,14 +15,18 @@ import 'package:ssdk_rsrc/pages/app_links.dart';
 import 'package:ssdk_rsrc/pages/playlist_page.dart';
 import 'package:ssdk_rsrc/pages/player_control_page.dart';
 import 'package:ssdk_rsrc/widgets/skeleton_provider.dart';
-import 'package:ssdk_rsrc/widgets/login_widget.dart';
+import 'package:ssdk_rsrc/widgets/view/login_widget.dart';
 import 'package:ssdk_rsrc/pages/widgets_page.dart';
 
 // import 'package:ssdk_rsrc/pages/login_page.dart';
 // import 'package:ssdk_rsrc/pages/register_page.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    ShowCaseWidget(
+      builder: (context) => MyApp(),
+      ),
+  );
 }
 
 // Global navigator key for navigation from deep link callbacks.
@@ -193,6 +199,7 @@ class _MyAppState extends State<MyApp> {
         '/timer': (context) => TimerPage(),
         '/custom_timer': (context) => CustomTimerPage(),
         '/widget_page': (context) => WidgetShowroomPage(),
+        '/chain_page': (context) => ChainPage(onBack: () {NavigationPage.of(context).hideChain();},),
       },
     );
   }

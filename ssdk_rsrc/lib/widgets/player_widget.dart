@@ -83,21 +83,21 @@ class _CustomPlayerWidgetState extends State<CustomPlayerWidget> {
     }
   }
 
-  @override
-  void didUpdateWidget(CustomPlayerWidget oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    // For Spotify: update repeat and shuffle if data changes.
-    if (widget.app == MusicApp.Spotify && widget.spotifyData != null) {
-      final String newRepeat = widget.spotifyData!["repeat_state"] ?? "off";
-      final bool newShuffle = widget.spotifyData!["shuffle_state"] ?? false;
-      if (_currentRepeatMode != newRepeat || _currentShuffleMode != newShuffle) {
-        setState(() {
-          _currentRepeatMode = newRepeat;
-          _currentShuffleMode = newShuffle;
-        });
-      }
-    }
-  }
+  //@override
+  //void didUpdateWidget(CustomPlayerWidget oldWidget) {
+  //  super.didUpdateWidget(oldWidget);
+  //  // For Spotify: update repeat and shuffle if data changes.
+  //  if (widget.app == MusicApp.Spotify && widget.spotifyData != null) {
+  //    final String newRepeat = widget.spotifyData!["repeat_state"] ?? "off";
+  //    final bool newShuffle = widget.spotifyData!["shuffle_state"] ?? false;
+  //    if (_currentRepeatMode != newRepeat || _currentShuffleMode != newShuffle) {
+  //      setState(() {
+  //        _currentRepeatMode = newRepeat;
+  //        _currentShuffleMode = newShuffle;
+  //      });
+  //    }
+  //  }
+  //}
 
   @override
   void dispose() {
@@ -182,6 +182,8 @@ class _CustomPlayerWidgetState extends State<CustomPlayerWidget> {
         repeatMode: _currentRepeatMode,
         shuffleMode: _currentShuffleMode,
         isDynamic: false,
+        onPomodoroPage: true,
+        currentApp: widget.app,
         onPlayPausePressed: () async {
           final response = await spotifyAPI.getDevices(widget.userID);
           final String deviceId = extractFirstDeviceId(response);
