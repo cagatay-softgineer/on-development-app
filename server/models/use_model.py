@@ -30,4 +30,3 @@ def predict(duration_minutes: float) -> dict:
         "short_break": short_break,
         "long_break": long_break
     }
-
