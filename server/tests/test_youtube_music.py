@@ -177,7 +177,7 @@ def test_fetch_first_video_id(monkeypatch, client, app):
     monkeypatch.setattr("requests.get", fake_requests_get_success)
 
     headers = get_youtube_auth_headers(app, scopes=["youtube"])
-    # Replace "user_email" with "user_id" to match the model
+    # Payload uses "user_email" to identify the user
     payload = {"user_email": "test_user@example.com", "playlist_id": "fake_playlist_id"}
     response = client.post("/youtube-music/fetch_first_video_id", json=payload, headers=headers)
     assert response.status_code == 200, "Expected 200 OK for fetch_first_video_id endpoint"
@@ -195,7 +195,7 @@ def test_playlist_duration_endpoint(monkeypatch, client, app):
     monkeypatch.setattr("util.utils.ms2FormattedDuration", lambda ms: "02:00:00" if ms == 7200000 else "00:00:00")
 
     headers = get_youtube_auth_headers(app, scopes=["youtube"])
-    # Use "user_id" instead of "user_email"
+    # Use "user_email" instead of "user_id"
     payload = {"user_email": "test_user@example.com", "playlist_id": "fake_playlist_id"}
     response = client.post("/youtube-music/playlist_duration", json=payload, headers=headers)
     assert response.status_code == 200, "Expected 200 OK for playlist_duration endpoint"
