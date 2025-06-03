@@ -1,3 +1,7 @@
+import pytest
+
+pytest.skip("Load test requires locust module", allow_module_level=True)
+
 from locust import HttpUser, TaskSet, task, between
 from dotenv import load_dotenv
 import os
