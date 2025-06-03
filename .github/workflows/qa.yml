@@ -84,27 +84,16 @@ jobs:
           flake8 .
 
       # 7. Run tests
-      - name: Run tests from repository root
+      - name: Run tests with coverage
         run: |
-          pip install pytest coverage
+          pip install pytest pytest-cov
           export PYTHONPATH=${{ github.workspace }}/server
-          pytest --maxfail=1 --disable-warnings
+          pytest --cov=. --cov-branch --cov-report=xml --cov-fail-under=80
 
-      # 8. Generate a code coverage report
-      - name: Generate Coverage Report
-        run: |
-          coverage run -m pytest
-          coverage report
-          coverage xml
-
-      # 9. List files for debugging to ensure coverage.xml exists
-      - name: List files for debug
-        run: |
-          find . -type f
 
       # 10. Upload the coverage report as an artifact
       - name: Upload Coverage Report
         uses: actions/upload-artifact@v4.6.2
         with:
           name: coverage-report
-          path: server/coverage.xml
+          path: coverage.xml
