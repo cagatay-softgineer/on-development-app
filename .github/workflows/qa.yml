@@ -88,8 +88,12 @@ jobs:
         run: |
           pip install pytest pytest-cov
           export PYTHONPATH=${{ github.workspace }}/server
-          pytest --cov=. --cov-branch --cov-report=xml --cov-fail-under=80
+          pytest --cov=server --cov-branch --cov-report=xml --cov-fail-under=80
 
+      # 9. List files for debugging to ensure coverage.xml exists
+      - name: List files for debug
+        run: |
+          find . -type f
 
       # 10. Upload the coverage report as an artifact
       - name: Upload Coverage Report

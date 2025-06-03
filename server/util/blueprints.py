@@ -11,6 +11,7 @@ from Blueprints.google_api import google_bp
 from Blueprints.spotify_micro_service import SpotifyMicroService_bp
 from Blueprints.lyrics import lyrics_bp
 from Blueprints.youtube_music import youtubeMusic_bp
+from Blueprints.ml_model import mlModel_bp
 
 
 def register_blueprints(app: Flask, testing=False):
@@ -34,6 +35,7 @@ def register_blueprints(app: Flask, testing=False):
     app.register_blueprint(youtubeMusic_bp, url_prefix="/youtube-music")
     app.register_blueprint(apple_bp, url_prefix="/apple")
     app.register_blueprint(appleMusic_bp, url_prefix="/apple-music")
+    app.register_blueprint(mlModel_bp, url_prefix="/ml")
     app.register_blueprint(
         swaggerui_blueprint,
         url_prefix=app.config["SWAGGER_URL"])

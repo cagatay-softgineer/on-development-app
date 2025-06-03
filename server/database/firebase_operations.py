@@ -1,6 +1,7 @@
 # firebase_commands.py
 
-import datetime
+import datetime as DT
+from dateutil.parser import parse  # If using date parsing from strings
 import os
 import bcrypt
 from google.cloud.firestore_v1.base_query import FieldFilter
@@ -18,6 +19,7 @@ alias_map = {
     "apps": "database_structure/Apps/rows",
     "userlinkedapps": "database_structure/UserLinkedApps/rows",
     "userprofiles": "database_structure/UserProfiles/rows",
+    "userchains": "database_structure/UserChains/rows",
 }
 
 
@@ -188,7 +190,7 @@ def insert_user(email: str, password: str, alias_map: dict = alias_map) -> int:
     user_id = get_next_user_id()
 
     # 4) Prepare timestamp
-    now = datetime.datetime.utcnow()
+    now = DT.datetime.utcnow()
 
     # 5) Create the user document (ID = str(user_id))
     users_col.document(str(user_id)).set({
@@ -308,7 +310,7 @@ def if_not_exists_insert_userlinkedapps(
     filt_app = FieldFilter(field_path="app_id", op_string="==", value=app_id)
     docs = col.where(filter=filt_user).where(filter=filt_app).stream()
     if not list(docs):
-        expires = datetime.datetime.utcnow() + datetime.timedelta(hours=1)
+        expires = DT.datetime.utcnow() + DT.timedelta(hours=1)
         col.add(
             {
                 "user_id": user_id,
@@ -450,7 +452,7 @@ def update_userlinkedapps_tokens(
         value=user_id)
     filt_app = FieldFilter(field_path="app_id", op_string="==", value=app_id)
     docs = col.where(filter=filt_user).where(filter=filt_app).stream()
-    new_expires = datetime.datetime.utcnow() + datetime.timedelta(
+    new_expires = DT.datetime.utcnow() + DT.timedelta(
         seconds=seconds_from_now
     )
     for doc in docs:
@@ -461,3 +463,63 @@ def update_userlinkedapps_tokens(
                 "token_expires_at": new_expires,
             }
         )
+
+
+def get_user_chain_status(user_id: int, alias_map: dict = alias_map):
+    """
+    Retrieve the current chain status for a user.
+    Returns None if no document exists for that user.
+    """
+    col = get_collection("userchains", alias_map)
+    filt = FieldFilter(field_path="user_id", op_string="==", value=user_id)
+    docs = col.where(filter=filt).stream()
+    for doc in docs:
+        data = doc.to_dict()
+        return data  # Return first (and only) doc found
+    return None
+
+
+def upsert_user_chain(user_id: int, action_data: dict, alias_map: dict = alias_map):
+    """
+    Upsert (update or insert) the chain status for a user.
+    """
+    col = get_collection("userchains", alias_map)
+    today = DT.datetime.utcnow().date()
+    filt = FieldFilter(field_path="user_id", op_string="==", value=user_id)
+    docs = list(col.where(filter=filt).stream())
+
+    # CASE 1: Chain does not exist for this user
+    if not docs:
+        doc_data = {
+            "user_id": user_id,
+            "chain_start_date": today.isoformat(),
+            "chain_streak": 1,
+            "max_chain_streak": 1,
+            "last_update_date": DT.datetime.utcnow().isoformat(),
+            "broken": False,
+            "history": [{"date": today.isoformat(), "action": action_data.get("action")}]
+        }
+        # Use user_id as document name to ensure one doc per user (or generate unique doc_id if needed)
+        col.document(str(user_id)).set(doc_data)
+        return doc_data
+
+    # CASE 2: Chain exists, update it
+    doc = docs[0]
+    doc_id = doc.id
+    doc_data = doc.to_dict()
+    last_update = parse(doc_data["last_update_date"]).date()
+    # Check streak continuation
+    if (today - last_update).days == 1:
+        doc_data["chain_streak"] += 1
+        doc_data["max_chain_streak"] = max(doc_data["max_chain_streak"], doc_data["chain_streak"])
+        doc_data["broken"] = False
+    elif (today - last_update).days > 1:
+        doc_data["chain_streak"] = 1
+        doc_data["broken"] = True
+        doc_data["chain_start_date"] = today.isoformat()
+    # else: already updated today (can update history if needed)
+    doc_data["last_update_date"] = DT.datetime.utcnow().isoformat()
+    doc_data.setdefault("history", []).append({"date": today.isoformat(), "action": action_data.get("action")})
+    # Update document
+    col.document(doc_id).set(doc_data)
+    return doc_data

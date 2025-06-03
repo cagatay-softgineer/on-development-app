@@ -1,17 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:ssdk_rsrc/enums/enums.dart';
+import 'package:ssdk_rsrc/pages/app_links.dart';
 import 'package:ssdk_rsrc/pages/home_page_old.dart';
+import 'package:ssdk_rsrc/pages/player_control_page.dart';
 import 'package:ssdk_rsrc/styles/color_palette.dart';
 import 'package:ssdk_rsrc/widgets/glowing_icon.dart';
 
 class CustomBottomNavBar extends StatelessWidget {
   final int currentIndex;
   final Function(int) onTap;
+  final bool isChainPageOpened;
 
   const CustomBottomNavBar({
     super.key,
     required this.currentIndex,
     required this.onTap,
+    this.isChainPageOpened = false,
   });
 
   @override
@@ -28,12 +33,18 @@ class CustomBottomNavBar extends StatelessWidget {
           children: [
             _buildNavItem(
               //icon: Icons.groups_outlined,
-              icon: FontAwesomeIcons.usersRays,
-              label: "Community",
+              //icon: FontAwesomeIcons.usersRays,
+              //label: "Community",
+              icon: FontAwesomeIcons.radio,
+              label: "Player",
               index: 0,
             ),
             // const SizedBox(width: 30), // Space for FAB notch
-            _buildNavItem(icon: FontAwesomeIcons.house, label: "Home", index: 1),
+            _buildNavItem(
+              icon: FontAwesomeIcons.house,
+              label: "Home",
+              index: 1,
+            ),
             // const SizedBox(width: 30), // Space for FAB notch
             _buildNavItem(icon: FontAwesomeIcons.user, label: "User", index: 2),
           ],
@@ -59,16 +70,29 @@ class CustomBottomNavBar extends StatelessWidget {
               onPressed: () => onTap(index),
               icon: icon,
               iconColor:
-                  isSelected ? ColorPalette.gold : ColorPalette.lightGray,
+                  isChainPageOpened
+                      ? ColorPalette.lightGray
+                      : isSelected
+                      ? ColorPalette.white
+                      : ColorPalette.lightGray,
               iconGlowColor:
-                  isSelected ? ColorPalette.gold : ColorPalette.lightGray,
+                  isChainPageOpened
+                      ? ColorPalette.lightGray
+                      : isSelected
+                      ? ColorPalette.gold
+                      : ColorPalette.lightGray,
             ),
             // Icon(icon, color: isSelected ? Colors.amber : Colors.grey),
             const SizedBox(height: 4),
             Text(
               label,
               style: TextStyle(
-                color: isSelected ? Colors.amber : Colors.grey,
+                color:
+                    isChainPageOpened
+                        ? ColorPalette.lightGray
+                        : isSelected
+                        ? ColorPalette.gold
+                        : ColorPalette.lightGray,
                 fontSize: 12,
               ),
             ),
@@ -98,9 +122,9 @@ class _MainScaffoldWithNavState extends State<MainScaffoldWithNav> {
   Widget _getCurrentPage() {
     switch (_currentIndex) {
       case 0:
-        return const HomePage();
+        return const PlayerControlPage(selectedApp: MusicApp.Spotify);
       case 2:
-        return const HomePage();
+        return const AppLinkPage();
       default:
         return const HomePage();
     }

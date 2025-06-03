@@ -8,6 +8,7 @@ class Settings(BaseSettings):
     spotify_client_secret: str = Field(..., env="SPOTIFY_CLIENT_SECRET")
     auth_redirect_uri: str = Field(..., env="AUTH_REDIRECT_URI")
     salt: str = Field(..., env="SALT")
+    debug_mode: str = Field(default=False, env="DEBUG_MODE")
     musixmatch_API_KEY: str = Field(..., env="MUSIXMATCH_API_KEY")
     google_client_id: str = Field(..., env="GOOGLE_CLIENT_ID")
     google_client_secret: str = Field(..., env="GOOGLE_CLIENT_SECRET")

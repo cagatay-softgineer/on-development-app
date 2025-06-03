@@ -86,7 +86,7 @@ class CustomChainStepProgress extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final sized = (iconSize/5 + size);
+    final sized = (iconSize / 5 + size);
     final overlap = sized * 0.64;
 
     return SizedBox(
@@ -97,11 +97,11 @@ class CustomChainStepProgress extends StatelessWidget {
         children: List.generate(steps, (i) {
           final isActive = i + 1 <= activeStep; // or: i + 1 == activeStep;
           return Positioned(
-            left: i * overlap,
-            child: Opacity(
-              opacity: isActive ? 1.0 : 0.22, // Dim inactive chains
-              child: SingleChainIcon(size: iconSize),
-            ),
+              left: i * overlap,
+              child: Opacity(
+                opacity: isActive ? 1.0 : 0.22, // Dim inactive chains
+                child: SingleChainIcon(size: iconSize),
+              ),
           );
         }),
       ),

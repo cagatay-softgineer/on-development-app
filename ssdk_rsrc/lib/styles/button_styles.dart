@@ -648,7 +648,7 @@ Map<String, dynamic> startSession = {
   "gradientStartColor": "Color(0xFF11998e)", // Ignored as useGradient is false
   "gradientEndColor": "Color(0xFF38ef7d)",   // Ignored as useGradient is false
   "leadingIcon": "",
-  "trailingIcon": "Icons.start_outlined",                    // No trailing icon
+  "trailingIcon": "FontAwesomeIcons.hourglassStart",                    // No trailing icon
   "textAlign": "TextAlign.center",
   "isEnabled": true,
   "shape": "BoxShape.rectangle",
@@ -678,7 +678,7 @@ Map<String, dynamic> startSessionSmall = {
   "gradientStartColor": "Color(0xFF11998e)", // Ignored as useGradient is false
   "gradientEndColor": "Color(0xFF38ef7d)",   // Ignored as useGradient is false
   "leadingIcon": "",
-  "trailingIcon": "Icons.start_outlined",                    // No trailing icon
+  "trailingIcon": "Icons.hourglass_bottom",                    // No trailing icon
   "textAlign": "TextAlign.center",
   "isEnabled": true,
   "shape": "BoxShape.rectangle",

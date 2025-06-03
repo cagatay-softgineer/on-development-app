@@ -7,7 +7,7 @@ class ChessPointsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const glowColor = Color(0xFFFFE066); // yellowish glow
+    const glowColor = Color(0x00FFE066); // yellowish glow
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -17,7 +17,7 @@ class ChessPointsWidget extends StatelessWidget {
           children: [
             Icon(
               FontAwesomeIcons.chessKing,
-              color: Colors.white,
+              color: Color(0x00F6F6F6),
               size: 28,
               shadows: [
                 Shadow(blurRadius: 18, color: glowColor, offset: Offset(0, 0)),
@@ -27,7 +27,7 @@ class ChessPointsWidget extends StatelessWidget {
             SizedBox(width: 4),
             Icon(
               FontAwesomeIcons.chessRook,
-              color: Colors.white,
+              color: Color(0x00F6F6F6),
               size: 28,
               shadows: [
                 Shadow(blurRadius: 18, color: glowColor, offset: Offset(0, 0)),
@@ -42,7 +42,7 @@ class ChessPointsWidget extends StatelessWidget {
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.w600,
-            color: Colors.white,
+            color: Color(0x00F6F6F6),
             shadows: [
               Shadow(blurRadius: 12, color: glowColor, offset: Offset(0, 0)),
               Shadow(blurRadius: 24, color: glowColor, offset: Offset(0, 0)),

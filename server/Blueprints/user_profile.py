@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify
+from flask import Blueprint, jsonify, request
 from flask_cors import CORS
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from util.logit import get_logger
@@ -74,3 +74,27 @@ def view_profile():
     except Exception as e:
         logger.error("An error occurred while fetching user profile.", e)
         return jsonify({"error": "An error occurred while fetching user profile."}), 404
+
+
+@profile_bp.route('/chain_status', methods=['POST'])
+@jwt_required()
+@requires_scope("me")
+def get_current_user_chain_status():
+    current_user = get_jwt_identity()
+    user_id = firebase_operations.get_user_id_by_email(current_user)
+    chain_status = firebase_operations.get_user_chain_status(user_id)
+    if chain_status:
+        return jsonify(chain_status), 200
+    return jsonify({"error": "Chain not found"}), 404
+
+
+@profile_bp.route('/chain_status_update', methods=['POST'])
+@jwt_required()
+@requires_scope("me")
+def update_user_chain_status():
+    current_user = get_jwt_identity()
+    user_id = firebase_operations.get_user_id_by_email(current_user)
+    data = request.get_json()
+    # e.g. data = { "action": "completed" }
+    result = firebase_operations.upsert_user_chain(user_id, data)
+    return jsonify(result), 200

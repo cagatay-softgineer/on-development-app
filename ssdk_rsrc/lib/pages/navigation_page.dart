@@ -1,19 +1,37 @@
 import 'package:flutter/material.dart';
+import 'package:ssdk_rsrc/enums/enums.dart';
 import 'package:ssdk_rsrc/pages/app_links.dart';
-import 'package:ssdk_rsrc/pages/button_customizer_app.dart';
+import 'package:ssdk_rsrc/pages/chain_page.dart';
 import 'package:ssdk_rsrc/pages/home_page.dart';
+import 'package:ssdk_rsrc/pages/player_control_page.dart';
 import 'package:ssdk_rsrc/styles/color_palette.dart';
-import 'package:ssdk_rsrc/widgets/navbar.dart';
+import 'package:ssdk_rsrc/widgets/view/navbar.dart';
 
 class NavigationPage extends StatefulWidget {
   const NavigationPage({Key? key}) : super(key: key);
 
   @override
   NavigationPageState createState() => NavigationPageState();
+
+  static NavigationPageState of(BuildContext context) {
+    final state = context.findAncestorStateOfType<NavigationPageState>();
+    if (state == null) throw Exception('No NavigationPage ancestor found in context!');
+    return state;
+  }
 }
 
 class NavigationPageState extends State<NavigationPage> {
   int _currentIndex = 1;
+  // ignore: unused_field
+  bool _showChainPage = false;
+
+  void showChain() {
+    setState(() => _showChainPage = true);
+  }
+
+  void hideChain() {
+    setState(() => _showChainPage = false);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +43,7 @@ class NavigationPageState extends State<NavigationPage> {
       //   automaticallyImplyLeading: false, // Removes the back button
       // ),
       backgroundColor: ColorPalette.backgroundColor,
-      body: _getCurrentPage(),
+      body: _showChainPage ? ChainPage(onBack: hideChain) : _getCurrentPage(),
       // floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       // floatingActionButton: FloatingActionButton(
       //   backgroundColor: Colors.amber,
@@ -54,6 +72,7 @@ class NavigationPageState extends State<NavigationPage> {
         child: CustomBottomNavBar(
           currentIndex: _currentIndex,
           onTap: _onTabSelected,
+          isChainPageOpened: _showChainPage,
         ),
       ),
     );
@@ -62,13 +81,14 @@ class NavigationPageState extends State<NavigationPage> {
   void _onTabSelected(int index) {
     setState(() {
       _currentIndex = index;
+      _showChainPage = false; // Hide chain page if tab is changed
     });
   }
 
   Widget _getCurrentPage() {
     switch (_currentIndex) {
       case 0:
-        return const ButtonCustomizerApp();
+        return const PlayerControlPage(selectedApp: MusicApp.Spotify);
       case 2:
         return const AppLinkPage();
       case 1:
