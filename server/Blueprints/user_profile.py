@@ -72,5 +72,5 @@ def view_profile():
             )
         return jsonify({"error": "User not found"}), 404
     except Exception as e:
-        logger.error("An error occurred while fetching user profile.", e)()
+        logger.error("An error occurred while fetching user profile.", e)
         return jsonify({"error": "An error occurred while fetching user profile."}), 404
