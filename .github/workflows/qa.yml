@@ -90,7 +90,6 @@ jobs:
           export PYTHONPATH=${{ github.workspace }}/server
           pytest --cov=server --cov-branch --cov-report=xml --cov-fail-under=80
 
-
       # 9. List files for debugging to ensure coverage.xml exists
       - name: List files for debug
         run: |
@@ -101,4 +100,4 @@ jobs:
         uses: actions/upload-artifact@v4.6.2
         with:
           name: coverage-report
-          path: server/coverage.xml
+          path: coverage.xml
