@@ -29,11 +29,11 @@ def auth_healthcheck():
     logger.info("mlModel Service healthcheck requested")
     return jsonify({"status": "ok", "service": "mlModel Service"}), 200
 
+
 @mlModel_bp.route("/predict", methods=["POST"])
 def predict_():
     try:
         payload = MLRequest.parse_obj(request.get_json())
     except ValidationError as ve:
         return jsonify({"error": ve.errors()}), 400
-
-    return jsonify(predict(payload.data/60000.0))
+    return jsonify(predict(payload.data / 60000.0))

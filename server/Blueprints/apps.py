@@ -24,6 +24,7 @@ CORS(apps_bp, resources=settings.CORS_resource_allow_all)
 
 logger = get_logger("logs", "Apps")
 
+
 @apps_bp.before_request
 def log_apps_requests():
     logger.info("Apps blueprint request received.")

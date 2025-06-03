@@ -87,6 +87,7 @@ def get_current_user_chain_status():
         return jsonify(chain_status), 200
     return jsonify({"error": "Chain not found"}), 404
 
+
 @profile_bp.route('/chain_status_update', methods=['POST'])
 @jwt_required()
 @requires_scope("me")

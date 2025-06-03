@@ -11,8 +11,10 @@ class LoginRequest(BaseModel):
     email: EmailStr
     password: str
 
+
 class MLRequest(BaseModel):
     data: float
+
 
 class LinkedAppRequest(BaseModel):
     app_name: str

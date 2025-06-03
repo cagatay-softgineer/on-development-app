@@ -7,6 +7,7 @@ device = 'cuda' if torch.cuda.is_available() else 'cpu'
 device = 'cpu'
 model = load_pomodoro_model("models/pomodoro_model.pth", device=device)
 
+
 def predict(duration_minutes: float) -> dict:
     x = torch.tensor([[duration_minutes]], dtype=torch.float32).to(device)
     with torch.no_grad():
@@ -30,5 +31,3 @@ def predict(duration_minutes: float) -> dict:
         "long_break": long_break
     }
 
-# Example usage:
-print(predict(115))

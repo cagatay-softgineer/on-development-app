@@ -464,6 +464,7 @@ def update_userlinkedapps_tokens(
             }
         )
 
+
 def get_user_chain_status(user_id: int, alias_map: dict = alias_map):
     """
     Retrieve the current chain status for a user.
@@ -476,6 +477,7 @@ def get_user_chain_status(user_id: int, alias_map: dict = alias_map):
         data = doc.to_dict()
         return data  # Return first (and only) doc found
     return None
+
 
 def upsert_user_chain(user_id: int, action_data: dict, alias_map: dict = alias_map):
     """
