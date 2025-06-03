@@ -163,7 +163,7 @@ def check_linked_app():
                     jsonify(
                         {
                             "user_linked": True,
-                            "user_profile": "Apple Music Not Implementated",
+                            "user_profile": "Apple Music Not Implemented",
                         }
                     ),
                     200,
@@ -177,7 +177,7 @@ def check_linked_app():
                     jsonify(
                         {
                             "user_linked": True,
-                            "user_profile": "Google API Not Implementated",
+                            "user_profile": "Google API Not Implemented",
                         }
                     ),
                     200,
@@ -307,7 +307,7 @@ def get_all_apps_binding():
             elif app_name == "YoutubeMusic":
                 user_profile = get_google_profile(user_email)
             elif app_name == "Google API":
-                user_profile = "Google API Not Implementated"
+                user_profile = "Google API Not Implemented"
             else:
                 user_profile = None
             apps_status.append(
