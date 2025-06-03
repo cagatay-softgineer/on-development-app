@@ -31,5 +31,6 @@ def test_get_email_username():
     assert get_email_username("user@example.com") == "user"
     assert get_email_username("invalid") is None
 
+
 if __name__ == "__main__":
     pytest.main()
