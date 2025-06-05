@@ -13,7 +13,7 @@ import 'package:ssdk_rsrc/features/custom_timer/view/custom_timer_view.dart';
 import 'package:ssdk_rsrc/features/button_customizer/view/button_customizer_view.dart';
 import 'package:ssdk_rsrc/features/app_links/view/app_links_view.dart';
 import 'package:ssdk_rsrc/features/playlist/view/playlist_view.dart';
-import 'package:ssdk_rsrc/pages/player_control_page.dart';
+import 'package:ssdk_rsrc/features/player_control/view/player_control_view.dart';
 import 'package:ssdk_rsrc/widgets/skeleton_provider.dart';
 import 'package:ssdk_rsrc/features/login/view/login_view.dart';
 import 'package:ssdk_rsrc/features/register/view/register_view.dart';
@@ -196,8 +196,7 @@ class _MyAppState extends State<MyApp> {
         '/applinks': (context) => const AppLinksView(),
         '/register_page': (context) => const RegisterView(),
         '/playlists': (context) => const PlaylistView(),
-        '/player':
-            (context) => PlayerControlPage(selectedApp: MusicApp.Spotify),
+        '/player': (context) => const PlayerControlView(),
         '/timer': (context) => const TimerView(),
         '/custom_timer': (context) => const CustomTimerView(),
         '/widget_page': (context) => const WidgetsShowroomView(),
