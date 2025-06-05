@@ -2,9 +2,8 @@ import 'package:ssdk_rsrc/models/linked_app.dart';
 import 'package:ssdk_rsrc/providers/appsSession.dart';
 import 'package:ssdk_rsrc/providers/userSession.dart';
 import 'package:ssdk_rsrc/utils/authlib.dart';
-import '../../constants/default/apps.dart';
-import '../../constants/default/user.dart';
-import '../interactor/app_links_interactor.dart';
+import 'package:ssdk_rsrc/constants/default/user.dart';
+import 'package:ssdk_rsrc/features/app_links/interactor/app_links_interactor.dart';
 
 class AppLinksPresenter {
   final AppLinksInteractor _interactor = AppLinksInteractor();

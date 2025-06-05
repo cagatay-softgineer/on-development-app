@@ -3,14 +3,12 @@ import 'package:flutter/material.dart';
 // ignore: library_prefixes
 import 'package:app_links/app_links.dart' as deepLink;
 import 'package:showcaseview/showcaseview.dart';
-import 'package:ssdk_rsrc/enums/enums.dart';
 import 'package:ssdk_rsrc/features/chain/view/chain_view.dart';
 import 'package:ssdk_rsrc/features/navigation/view/navigation_view.dart';
 import 'package:ssdk_rsrc/services/main_api.dart';
 import 'package:ssdk_rsrc/styles/color_palette.dart';
 import 'package:ssdk_rsrc/features/timer/view/timer_view.dart';
 import 'package:ssdk_rsrc/features/custom_timer/view/custom_timer_view.dart';
-import 'package:ssdk_rsrc/features/button_customizer/view/button_customizer_view.dart';
 import 'package:ssdk_rsrc/features/app_links/view/app_links_view.dart';
 import 'package:ssdk_rsrc/features/playlist/view/playlist_view.dart';
 import 'package:ssdk_rsrc/features/player_control/view/player_control_view.dart';
@@ -188,7 +186,6 @@ class _MyAppState extends State<MyApp> {
               )
               : LoginView(),
       routes: {
-        '/button_customizer': (context) => const ButtonCustomizerView(),
         // '/login_page': (context) => LoginPage(), Added Into Start Page
         // '/main': (context) => HomePage(),
         '/main': (context) => const NavigationView(),

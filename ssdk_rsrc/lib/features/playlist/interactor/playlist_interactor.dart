@@ -5,7 +5,7 @@ import 'package:ssdk_rsrc/utils/authlib.dart';
 import 'package:ssdk_rsrc/constants/default/user.dart';
 
 class PlaylistInteractor {
-  Future<(String, List<Playlist>)> fetchPlaylists() async {
+  Future<(String?, List<Playlist>)> fetchPlaylists() async {
     final userId = await AuthService.getUserId();
     final spotify = mainAPI.fetchPlaylists("$userId", app: MusicApp.Spotify);
     final youtube = mainAPI.fetchPlaylists("$userId", app: MusicApp.YouTube);

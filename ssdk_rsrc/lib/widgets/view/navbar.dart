@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:ssdk_rsrc/enums/enums.dart';
 import 'package:ssdk_rsrc/features/app_links/view/app_links_view.dart';
 import 'package:ssdk_rsrc/pages/home_page_old.dart';
-import 'package:ssdk_rsrc/pages/player_control_page.dart';
+import 'package:ssdk_rsrc/features/player_control/view/player_control_view.dart';
 import 'package:ssdk_rsrc/styles/color_palette.dart';
 import 'package:ssdk_rsrc/widgets/glowing_icon.dart';
 
@@ -122,7 +121,7 @@ class _MainScaffoldWithNavState extends State<MainScaffoldWithNav> {
   Widget _getCurrentPage() {
     switch (_currentIndex) {
       case 0:
-        return const PlayerControlPage(selectedApp: MusicApp.Spotify);
+        return const PlayerControlView();
       case 2:
         return const AppLinksView();
       default:

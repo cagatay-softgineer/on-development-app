@@ -100,7 +100,7 @@ class _PlaylistViewState extends State<PlaylistView> {
                               getUserPic: presenter.getUserPic,
                               onShuffleChanged: (_) {},
                               onRepeatChanged: (_) {},
-                              onPlayButtonPressed: () => router.openPlayer(context, playlist),
+                              onPlayButtonPressed: () async => router.openPlayer(context, playlist),
                             );
                           },
                         ),

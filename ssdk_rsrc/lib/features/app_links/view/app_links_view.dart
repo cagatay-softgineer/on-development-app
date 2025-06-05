@@ -70,7 +70,7 @@ class _AppLinksViewState extends State<AppLinksView> with WidgetsBindingObserver
                         const SizedBox(height: 50),
                         Container(
                           width: 800,
-                          decoration: const BoxDecoration(
+                          decoration: BoxDecoration(
                             shape: BoxShape.rectangle,
                             color: ColorPalette.backgroundColor,
                             border: BorderDirectional(
@@ -83,7 +83,7 @@ class _AppLinksViewState extends State<AppLinksView> with WidgetsBindingObserver
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              const Text(
+                              Text(
                                 'Linked Apps',
                                 style: TextStyle(
                                   color: ColorPalette.white,

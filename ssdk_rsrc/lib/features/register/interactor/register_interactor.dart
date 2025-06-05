@@ -1,4 +1,4 @@
-import '../../services/main_api.dart';
+import 'package:ssdk_rsrc/services/main_api.dart';
 
 class RegisterInteractor {
   final MainAPI _api = mainAPI;

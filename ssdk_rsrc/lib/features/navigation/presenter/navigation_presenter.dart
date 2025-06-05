@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../app_links/view/app_links_view.dart';
-import '../../chain/view/chain_view.dart';
-import '../../../pages/home_page.dart';
-import '../../../pages/player_control_page.dart';
-import '../../../enums/enums.dart';
+import 'package:ssdk_rsrc/features/app_links/view/app_links_view.dart';
+import 'package:ssdk_rsrc/pages/home_page.dart';
+import 'package:ssdk_rsrc/features/player_control/view/player_control_view.dart';
 
 class NavigationPresenter {
   int currentIndex = 1;
@@ -20,7 +18,7 @@ class NavigationPresenter {
   Widget getCurrentPage() {
     switch (currentIndex) {
       case 0:
-        return const PlayerControlPage(selectedApp: MusicApp.Spotify);
+        return const PlayerControlView();
       case 2:
         return const AppLinksView();
       case 1:

@@ -42,7 +42,7 @@ class _WidgetsShowroomViewState extends State<WidgetsShowroomView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Widget Showroom', style: TextStyle(color: Youtube.white)),
+        title: Text('Widget Showroom', style: TextStyle(color: Youtube.white)),
         backgroundColor: Youtube.almostBlack,
       ),
       backgroundColor: Youtube.almostBlack,
@@ -52,7 +52,7 @@ class _WidgetsShowroomViewState extends State<WidgetsShowroomView> {
             padding: const EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: const [
+              children: [
                 _SectionTitle('Buttons'),
                 Wrap(spacing: 12, runSpacing: 12, children: []),
                 _SectionTitle('Text Styles'),

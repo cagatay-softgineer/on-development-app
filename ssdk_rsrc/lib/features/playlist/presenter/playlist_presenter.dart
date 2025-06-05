@@ -14,7 +14,7 @@ class PlaylistPresenter {
 
   Future<void> loadPlaylists() async {
     final result = await _interactor.fetchPlaylists();
-    userId = result.$1;
+    userId = result.$1!;
     playlists = result.$2;
   }
 

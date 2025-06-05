@@ -102,7 +102,7 @@ class _ChainViewState extends State<ChainView> {
             presenter.isTodayCompleted()
                 ? "Today's completed!"
                 : 'Mark Today Completed!',
-            style: const TextStyle(
+            style: TextStyle(
               fontWeight: FontWeight.bold,
               color: ColorPalette.white,
             ),
