@@ -33,4 +33,3 @@ A suggested mapping is as follows:
 During migration, each module should own a well-defined feature and expose
 interfaces so that the layers remain decoupled. Existing files can be
 refactored gradually, placing new code under directories reflecting the
-VIPER layers.
