@@ -43,6 +43,7 @@ During migration, each module should own a well-defined feature and expose
 interfaces so that the layers remain decoupled. Existing files can be
 refactored gradually, placing new code under directories reflecting the
 VIPER layers.
+An initial module can be found under `features/login`. It implements the login screen using separate `view`, `presenter`, `interactor` and `router` layers.
 
 ## VIPER vs Current Approach
 

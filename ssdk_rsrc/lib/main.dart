@@ -15,7 +15,7 @@ import 'package:ssdk_rsrc/pages/app_links.dart';
 import 'package:ssdk_rsrc/pages/playlist_page.dart';
 import 'package:ssdk_rsrc/pages/player_control_page.dart';
 import 'package:ssdk_rsrc/widgets/skeleton_provider.dart';
-import 'package:ssdk_rsrc/widgets/view/login_widget.dart';
+import 'package:ssdk_rsrc/features/login/view/login_view.dart';
 import 'package:ssdk_rsrc/pages/widgets_page.dart';
 
 // import 'package:ssdk_rsrc/pages/login_page.dart';
@@ -184,7 +184,7 @@ class _MyAppState extends State<MyApp> {
                   ),
                 ),
               )
-              : StartPage(),
+              : LoginView(),
       routes: {
         '/button_customizer': (context) => ButtonCustomizerApp(),
         // '/login_page': (context) => LoginPage(), Added Into Start Page
