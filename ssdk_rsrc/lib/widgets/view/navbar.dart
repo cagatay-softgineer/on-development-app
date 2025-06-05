@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:ssdk_rsrc/enums/enums.dart';
-import 'package:ssdk_rsrc/pages/app_links.dart';
+import 'package:ssdk_rsrc/features/app_links/view/app_links_view.dart';
 import 'package:ssdk_rsrc/pages/home_page_old.dart';
 import 'package:ssdk_rsrc/pages/player_control_page.dart';
 import 'package:ssdk_rsrc/styles/color_palette.dart';
@@ -124,7 +124,7 @@ class _MainScaffoldWithNavState extends State<MainScaffoldWithNav> {
       case 0:
         return const PlayerControlPage(selectedApp: MusicApp.Spotify);
       case 2:
-        return const AppLinkPage();
+        return const AppLinksView();
       default:
         return const HomePage();
     }
