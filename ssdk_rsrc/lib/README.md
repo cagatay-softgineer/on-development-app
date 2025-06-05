@@ -45,6 +45,8 @@ refactored gradually, placing new code under directories reflecting the
 VIPER layers.
 An initial module can be found under `features/login`. It implements the login screen using separate `view`, `presenter`, `interactor` and `router` layers.
 
+Modules under `features/` follow this structure. The first completed example is `features/login`, which implements the login screen using separate `view`, `presenter`, `interactor` and `router` layers. A similar module exists for registration under `features/register`. The button customization demo has also been migrated under `features/button_customizer`. The apps linking page has likewise been ported to `features/app_links`. The widget showcase lives in `features/widgets_showroom`. New navigation and chain tracking screens reside in `features/navigation` and `features/chain`. Playlist browsing has been migrated under `features/playlist`. The pomodoro timer now resides in `features/timer` and the customizable timer in `features/custom_timer`. An onboarding tutorial is provided in `features/overlay_tutorial`.
+
 ## VIPER vs Current Approach
 
 The current approach keeps most logic in the page widgets. VIPER would

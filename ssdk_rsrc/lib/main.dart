@@ -4,19 +4,21 @@ import 'package:flutter/material.dart';
 import 'package:app_links/app_links.dart' as deepLink;
 import 'package:showcaseview/showcaseview.dart';
 import 'package:ssdk_rsrc/enums/enums.dart';
-import 'package:ssdk_rsrc/pages/chain_page.dart';
-import 'package:ssdk_rsrc/pages/navigation_page.dart';
+import 'package:ssdk_rsrc/features/chain/view/chain_view.dart';
+import 'package:ssdk_rsrc/features/navigation/view/navigation_view.dart';
 import 'package:ssdk_rsrc/services/main_api.dart';
 import 'package:ssdk_rsrc/styles/color_palette.dart';
-import 'package:ssdk_rsrc/pages/timer_page.dart';
-import 'package:ssdk_rsrc/pages/custom_timer_page.dart';
-import 'package:ssdk_rsrc/pages/button_customizer_app.dart';
-import 'package:ssdk_rsrc/pages/app_links.dart';
-import 'package:ssdk_rsrc/pages/playlist_page.dart';
+import 'package:ssdk_rsrc/features/timer/view/timer_view.dart';
+import 'package:ssdk_rsrc/features/custom_timer/view/custom_timer_view.dart';
+import 'package:ssdk_rsrc/features/button_customizer/view/button_customizer_view.dart';
+import 'package:ssdk_rsrc/features/app_links/view/app_links_view.dart';
+import 'package:ssdk_rsrc/features/playlist/view/playlist_view.dart';
 import 'package:ssdk_rsrc/pages/player_control_page.dart';
 import 'package:ssdk_rsrc/widgets/skeleton_provider.dart';
 import 'package:ssdk_rsrc/features/login/view/login_view.dart';
-import 'package:ssdk_rsrc/pages/widgets_page.dart';
+import 'package:ssdk_rsrc/features/register/view/register_view.dart';
+import 'package:ssdk_rsrc/features/widgets_showroom/view/widgets_showroom_view.dart';
+import 'package:ssdk_rsrc/features/overlay_tutorial/view/overlay_tutorial_view.dart';
 
 // import 'package:ssdk_rsrc/pages/login_page.dart';
 // import 'package:ssdk_rsrc/pages/register_page.dart';
@@ -186,20 +188,21 @@ class _MyAppState extends State<MyApp> {
               )
               : LoginView(),
       routes: {
-        '/button_customizer': (context) => ButtonCustomizerApp(),
+        '/button_customizer': (context) => const ButtonCustomizerView(),
         // '/login_page': (context) => LoginPage(), Added Into Start Page
         // '/main': (context) => HomePage(),
-        '/main': (context) => NavigationPage(),
+        '/main': (context) => const NavigationView(),
 
-        '/applinks': (context) => AppLinkPage(),
-        // '/register_page': (context) => RegisterPage(), Added Into Start Page
-        '/playlists': (context) => PlaylistPage(),
+        '/applinks': (context) => const AppLinksView(),
+        '/register_page': (context) => const RegisterView(),
+        '/playlists': (context) => const PlaylistView(),
         '/player':
             (context) => PlayerControlPage(selectedApp: MusicApp.Spotify),
-        '/timer': (context) => TimerPage(),
-        '/custom_timer': (context) => CustomTimerPage(),
-        '/widget_page': (context) => WidgetShowroomPage(),
-        '/chain_page': (context) => ChainPage(onBack: () {NavigationPage.of(context).hideChain();},),
+        '/timer': (context) => const TimerView(),
+        '/custom_timer': (context) => const CustomTimerView(),
+        '/widget_page': (context) => const WidgetsShowroomView(),
+        '/chain_page': (context) => ChainView(onBack: () {NavigationView.of(context).hideChain();},),
+        '/tutorial': (context) => const OverlayTutorialView(),
       },
     );
   }

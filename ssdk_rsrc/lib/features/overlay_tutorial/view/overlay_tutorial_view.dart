@@ -1,15 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:showcaseview/showcaseview.dart';
 
-class RegisterPage extends StatefulWidget {
-  const RegisterPage({Key? key}) : super(key: key);
+import '../presenter/overlay_tutorial_presenter.dart';
+import '../router/overlay_tutorial_router.dart';
+
+class OverlayTutorialView extends StatefulWidget {
+  const OverlayTutorialView({Key? key}) : super(key: key);
 
   @override
-  State<RegisterPage> createState() => _RegisterPageState();
+  State<OverlayTutorialView> createState() => _OverlayTutorialViewState();
 }
 
-class _RegisterPageState extends State<RegisterPage> {
-  // Create GlobalKeys for each widget you want to showcase
+class _OverlayTutorialViewState extends State<OverlayTutorialView> {
+  late final OverlayTutorialPresenter presenter;
+  late final OverlayTutorialRouter router;
+
   final GlobalKey _emailKey = GlobalKey();
   final GlobalKey _passwordKey = GlobalKey();
   final GlobalKey _registerBtnKey = GlobalKey();
@@ -17,14 +22,15 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   void initState() {
     super.initState();
-    // Start the tutorial after the first frame
-    WidgetsBinding.instance.addPostFrameCallback(
-      (_) => ShowCaseWidget.of(context).startShowCase([
+    presenter = OverlayTutorialPresenter();
+    router = OverlayTutorialRouter();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ShowCaseWidget.of(context).startShowCase([
         _emailKey,
         _passwordKey,
         _registerBtnKey,
-      ]),
-    );
+      ]);
+    });
   }
 
   @override
@@ -39,7 +45,7 @@ class _RegisterPageState extends State<RegisterPage> {
             Showcase(
               key: _emailKey,
               description: 'Enter your email address here.',
-              child: TextField(
+              child: const TextField(
                 decoration: InputDecoration(
                   hintText: 'Enter your email',
                   prefixIcon: Icon(Icons.person),
@@ -50,7 +56,7 @@ class _RegisterPageState extends State<RegisterPage> {
             Showcase(
               key: _passwordKey,
               description: 'Choose a secure password.',
-              child: TextField(
+              child: const TextField(
                 obscureText: true,
                 decoration: InputDecoration(
                   hintText: 'Enter your password',
@@ -63,7 +69,10 @@ class _RegisterPageState extends State<RegisterPage> {
               key: _registerBtnKey,
               description: 'Tap here to create your account!',
               child: ElevatedButton(
-                onPressed: () {},
+                onPressed: () async {
+                  await presenter.finishTutorial();
+                  router.close(context);
+                },
                 child: const Text("Register"),
               ),
             ),
