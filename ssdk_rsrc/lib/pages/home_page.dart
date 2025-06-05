@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 // ignore: unnecessary_import
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:ssdk_rsrc/features/navigation/view/navigation_view.dart';
+import 'package:ssdk_rsrc/pages/navigation_page.dart';
 import 'package:ssdk_rsrc/providers/userSession.dart';
 import 'package:ssdk_rsrc/services/main_api.dart';
 // ignore: unused_import
@@ -165,7 +165,7 @@ class HomePageBodyState extends State<HomePageBody> {
                                   UserSession.currentChainStreak ??
                                   0, // <--- UPDATED
                               storePoints: 0,
-                              onChainTap: () => NavigationView.of(context).showChain(),
+                              onChainTap: () => NavigationPage.of(context).showChain(),
                             ),
                           ),
                           SizedBox(height: 20),

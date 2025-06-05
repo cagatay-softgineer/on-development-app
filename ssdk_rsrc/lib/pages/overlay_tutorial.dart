@@ -1,20 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:showcaseview/showcaseview.dart';
 
-import '../presenter/overlay_tutorial_presenter.dart';
-import '../router/overlay_tutorial_router.dart';
-
-class OverlayTutorialView extends StatefulWidget {
-  const OverlayTutorialView({Key? key}) : super(key: key);
+class RegisterPage extends StatefulWidget {
+  const RegisterPage({Key? key}) : super(key: key);
 
   @override
-  State<OverlayTutorialView> createState() => _OverlayTutorialViewState();
+  State<RegisterPage> createState() => _RegisterPageState();
 }
 
-class _OverlayTutorialViewState extends State<OverlayTutorialView> {
-  late final OverlayTutorialPresenter presenter;
-  late final OverlayTutorialRouter router;
-
+class _RegisterPageState extends State<RegisterPage> {
+  // Create GlobalKeys for each widget you want to showcase
   final GlobalKey _emailKey = GlobalKey();
   final GlobalKey _passwordKey = GlobalKey();
   final GlobalKey _registerBtnKey = GlobalKey();
@@ -22,15 +17,14 @@ class _OverlayTutorialViewState extends State<OverlayTutorialView> {
   @override
   void initState() {
     super.initState();
-    presenter = OverlayTutorialPresenter();
-    router = OverlayTutorialRouter();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      ShowCaseWidget.of(context).startShowCase([
+    // Start the tutorial after the first frame
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) => ShowCaseWidget.of(context).startShowCase([
         _emailKey,
         _passwordKey,
         _registerBtnKey,
-      ]);
-    });
+      ]),
+    );
   }
 
   @override
@@ -45,7 +39,7 @@ class _OverlayTutorialViewState extends State<OverlayTutorialView> {
             Showcase(
               key: _emailKey,
               description: 'Enter your email address here.',
-              child: const TextField(
+              child: TextField(
                 decoration: InputDecoration(
                   hintText: 'Enter your email',
                   prefixIcon: Icon(Icons.person),
@@ -56,7 +50,7 @@ class _OverlayTutorialViewState extends State<OverlayTutorialView> {
             Showcase(
               key: _passwordKey,
               description: 'Choose a secure password.',
-              child: const TextField(
+              child: TextField(
                 obscureText: true,
                 decoration: InputDecoration(
                   hintText: 'Enter your password',
@@ -69,10 +63,7 @@ class _OverlayTutorialViewState extends State<OverlayTutorialView> {
               key: _registerBtnKey,
               description: 'Tap here to create your account!',
               child: ElevatedButton(
-                onPressed: () async {
-                  await presenter.finishTutorial();
-                  router.close(context);
-                },
+                onPressed: () {},
                 child: const Text("Register"),
               ),
             ),
