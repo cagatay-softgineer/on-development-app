@@ -43,6 +43,7 @@ During migration, each module should own a well-defined feature and expose
 interfaces so that the layers remain decoupled. Existing files can be
 refactored gradually, placing new code under directories reflecting the
 VIPER layers.
+
 Modules under `features/` follow this structure. The first completed example is `features/login`, which implements the login screen using separate `view`, `presenter`, `interactor` and `router` layers. A similar module exists for registration under `features/register`. The button customization demo has also been migrated under `features/button_customizer`. The apps linking page has likewise been ported to `features/app_links`. The widget showcase lives in `features/widgets_showroom`. New navigation and chain tracking screens reside in `features/navigation` and `features/chain`. Playlist browsing has been migrated under `features/playlist`. The pomodoro timer now resides in `features/timer` and the customizable timer in `features/custom_timer`. An onboarding tutorial is provided in `features/overlay_tutorial`. Music playback controls have been refactored into `features/player_control`.
 
 ## VIPER vs Current Approach
@@ -71,4 +72,3 @@ replace or mock the networking layer.
 - Keep widgets dumb so that each view only renders data.
 - Introduce a router to centralise navigation, removing manual
   `Navigator` calls from views.
-
