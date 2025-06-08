@@ -138,14 +138,13 @@ def check_linked_app():
             ),
             400,
         )
-    access_tokens = False
+    access_token = None
     response = firebase_operations.get_userlinkedapps_tokens(user_id, app_id)
     if response and response[0]:
-        access_tokens = response[0]["access_token"]
+        access_token = response[0]["access_token"]
     user_linked = response is not None
-    # print("User access_tokens", access_tokens)
-    if access_tokens:
-        access_token = access_tokens[0]
+    # print("User access_tokens", access_token)
+    if access_token:
 
         if user_linked:
 
@@ -297,10 +296,10 @@ def get_all_apps_binding():
         user_profile = None
 
         if response and response[0].get("access_token"):
-            tokens = response[0]["access_token"]
+            token = response[0]["access_token"]
             try:
                 if app_name == "Spotify":
-                    user_profile_candidate = get_current_user_profile(tokens[0], user_id, app_id)
+                    user_profile_candidate = get_current_user_profile(token, user_id, app_id)
                     if user_profile_candidate is None:
                         raise Exception("Spotify token/profile fetch failed")
                     user_linked = True
