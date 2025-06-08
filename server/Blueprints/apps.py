@@ -138,14 +138,13 @@ def check_linked_app():
             ),
             400,
         )
-    access_tokens = False
+    access_token = None
     response = firebase_operations.get_userlinkedapps_tokens(user_id, app_id)
     if response and response[0]:
-        access_tokens = response[0]["access_token"]
+        access_token = response[0]["access_token"]
     user_linked = response is not None
-    # print("User access_tokens", access_tokens)
-    if access_tokens:
-        access_token = access_tokens[0]
+    # print("User access_tokens", access_token)
+    if access_token:
 
         if user_linked:
 
@@ -292,45 +291,51 @@ def get_all_apps_binding():
 
     apps_status = []
     for app_name, app_id in APP_ALIAS_TO_ID.items():
-        response = firebase_operations.get_userlinkedapps_tokens(user_id, app_id)
         user_linked = False
         user_profile = None
-
-        if response and response[0].get("access_token"):
-            tokens = response[0]["access_token"]
-            try:
-                if app_name == "Spotify":
-                    user_profile_candidate = get_current_user_profile(tokens[0], user_id, app_id)
-                    if user_profile_candidate is None:
-                        raise Exception("Spotify token/profile fetch failed")
-                    user_linked = True
-                    user_profile = user_profile_candidate
-                elif app_name == "AppleMusic":
-                    user_linked = True
-                    user_profile = {"name": get_email_username(user_email)}
-                elif app_name in ("YoutubeMusic", "Google API"):
-                    profile = get_google_profile(user_email)
-                    # If it's a Flask response (error), handle as failure!
-                    if isinstance(profile, Response):
-                        # Optionally log: logger.warning(f"Google profile for {app_name} is a Response object!")
-                        firebase_operations.delete_userlinkedapps(user_id, app_id)
-                        user_linked = False
-                        user_profile = None
-                    elif isinstance(profile, dict) and profile.get("error"):
-                        firebase_operations.delete_userlinkedapps(user_id, app_id)
-                        user_linked = False
-                        user_profile = None
-                    else:
+        try:
+            response = firebase_operations.get_userlinkedapps_tokens(user_id, app_id)
+            if response and response[0].get("access_token"):
+                token = response[0]["access_token"]
+                try:
+                    if app_name == "Spotify":
+                        user_profile_candidate = get_current_user_profile(token, user_id, app_id)
+                        if user_profile_candidate is None:
+                            raise Exception("Spotify token/profile fetch failed")
                         user_linked = True
-                        user_profile = profile
-                else:
+                        user_profile = user_profile_candidate
+                    elif app_name == "AppleMusic":
+                        user_linked = True
+                        user_profile = {"name": get_email_username(user_email)}
+                    elif app_name in ("YoutubeMusic", "Google API"):
+                        profile = get_google_profile(user_email)
+                        # If it's a Flask response (error), handle as failure!
+                        if isinstance(profile, Response) or (isinstance(profile, dict) and profile.get("error")):
+                            firebase_operations.delete_userlinkedapps(user_id, app_id)
+                            user_linked = False
+                            user_profile = None
+                        else:
+                            user_linked = True
+                            user_profile = profile
+                    else:
+                        user_profile = None
+                        user_linked = True  # Or False depending on logic
+                except Exception as e:
+                    logger.info(
+                        f"Deleted {app_name} binding for user {obfuscate(user_email)} due to expired token/profile error.",
+                        e,
+                    )
+                    firebase_operations.delete_userlinkedapps(user_id, app_id)
+                    user_linked = False
                     user_profile = None
-                    user_linked = True  # Or False depending on logic
-            except Exception as e:
-                logger.info(f"Deleted {app_name} binding for user {obfuscate(user_email)} due to expired token/profile error.", e)
+        except Exception as e:
+            logger.warning(f"Error retrieving binding for {app_name}: {e}")
+            try:
                 firebase_operations.delete_userlinkedapps(user_id, app_id)
-                user_linked = False
-                user_profile = None
+            except Exception:
+                pass
+            user_linked = False
+            user_profile = None
 
         if not user_linked:
             user_profile = None
