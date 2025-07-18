@@ -19,7 +19,7 @@ pandas==2.2.3
 pydantic==1.10.18
 pydantic_core==2.23.3
 pyodbc==5.1.0
-Requests==2.32.3
+Requests==2.32.4
 cmd_gui_kit==1.0.0
 termcolor==2.3.0
 python-dotenv==1.0.1
