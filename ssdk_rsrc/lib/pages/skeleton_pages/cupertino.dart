@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class CupertinoLoading extends StatelessWidget {
-  const CupertinoLoading({Key? key}) : super(key: key);
+  const CupertinoLoading({super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:ssdk_rsrc/styles/color_palette.dart';
 import 'package:ssdk_rsrc/widgets/glowing_text.dart';

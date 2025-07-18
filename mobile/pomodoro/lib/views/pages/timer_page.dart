@@ -1,3 +1,5 @@
+// ignore_for_file: library_private_types_in_public_api, avoid_print, use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pomodoro/models/music_app.dart';
@@ -16,7 +18,7 @@ import 'package:pomodoro/utils/spotify_func.dart';
 import 'package:pomodoro/widgets/others/playlist_dropdown.dart'; //spotify
 
 class TimerPage extends StatefulWidget {
-  const TimerPage({Key? key}) : super(key: key);
+  const TimerPage({super.key});
 
   @override
   _TimerPageState createState() => _TimerPageState();

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class FullScreenLinearLoader extends StatelessWidget {
-  const FullScreenLinearLoader({Key? key}) : super(key: key);
+  const FullScreenLinearLoader({super.key});
 
   @override
   Widget build(BuildContext context) {

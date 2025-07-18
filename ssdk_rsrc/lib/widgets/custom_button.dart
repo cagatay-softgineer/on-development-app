@@ -7,11 +7,11 @@ class CustomButton extends StatelessWidget {
   final ButtonParams buttonParams;
 
   const CustomButton({
-    Key? key,
+    super.key,
     required this.text,
     required this.onPressed,
     required this.buttonParams,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

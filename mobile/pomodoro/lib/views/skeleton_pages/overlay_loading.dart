@@ -5,7 +5,7 @@ import 'package:pomodoro/viewmodels/skeleton_viewmodel.dart';
 import 'package:pomodoro/widgets/loading/overlay_loading.dart';
 
 class OverlayLoadingPage extends StatelessWidget {
-  const OverlayLoadingPage({Key? key}) : super(key: key);
+  const OverlayLoadingPage({super.key});
 
   @override
   Widget build(BuildContext context) {

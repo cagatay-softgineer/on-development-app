@@ -5,7 +5,7 @@ import 'package:pomodoro/viewmodels/skeleton_viewmodel.dart';
 import 'package:pomodoro/widgets/loading/skeleton/skeleton_list_loading.dart';
 
 class PullToRefreshPage extends StatelessWidget {
-  const PullToRefreshPage({Key? key}) : super(key: key);
+  const PullToRefreshPage({super.key});
 
   @override
   Widget build(BuildContext context) {

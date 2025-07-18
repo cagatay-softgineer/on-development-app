@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously, avoid_unnecessary_containers
+
 import 'dart:async';
 import 'package:flutter/material.dart';
 // ignore: library_prefixes
@@ -72,11 +74,11 @@ class LoginViewState extends State<LoginView> {
         return false;
       } else {
         final token = response['access_token'];
-        final user_id = response['user_id'];
+        final userId = response['user_id'];
         //print("Saved USER_ID : $user_id");
         if (token != null) {
           await _secureStorage.write(key: 'jwt_token', value: token);
-          await _secureStorage.write(key: 'user_id', value: user_id);
+          await _secureStorage.write(key: 'user_id', value: userId);
 
           await _secureStorage.write(
             key: 'username',
@@ -825,7 +827,6 @@ class LoginViewState extends State<LoginView> {
                 if (isLoggedIn && mounted) {
                   Navigator.pushNamed(context, '/main');
                 }
-                ;
               }, // will be ignored during loading
               buttonParams: whiteButtonParams,
             ),

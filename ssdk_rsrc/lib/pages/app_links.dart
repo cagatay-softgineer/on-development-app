@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:ssdk_rsrc/pages/home_page.dart';
 import 'package:ssdk_rsrc/pages/navigation_page.dart';
-import 'package:ssdk_rsrc/providers/appsSession.dart';
-import 'package:ssdk_rsrc/providers/userSession.dart';
+import 'package:ssdk_rsrc/providers/apps_session.dart';
+import 'package:ssdk_rsrc/providers/user_session.dart';
 import 'package:ssdk_rsrc/styles/button_styles.dart';
 import 'package:ssdk_rsrc/models/linked_app.dart';
 import 'package:ssdk_rsrc/widgets/app_card.dart';
@@ -16,7 +16,7 @@ import 'package:ssdk_rsrc/widgets/glowing_icon.dart';
 import 'package:ssdk_rsrc/widgets/top_bar.dart';
 
 class AppLinkPage extends StatefulWidget {
-  const AppLinkPage({Key? key}) : super(key: key);
+  const AppLinkPage({super.key});
 
   @override
   AppLinkPageState createState() => AppLinkPageState();
@@ -105,16 +105,16 @@ class AppLinkPageState extends State<AppLinkPage> with WidgetsBindingObserver {
                     profile['images'][0]['url'] ??
                     UserSession.userPIC ?? UserConstants.defaultAvatarUrl;
               } else {
-                app.userPic = UserSession.userPIC ?? UserConstants.defaultAvatarUrl;;
+                app.userPic = UserSession.userPIC ?? UserConstants.defaultAvatarUrl;
               }
             } else if (app.name == "YoutubeMusic") {
               app.userDisplayName = profile['name'] ?? "No Display Name";
               app.userPic =
-                  profile['picture'] ?? UserSession.userPIC ?? UserConstants.defaultAvatarUrl;;
+                  profile['picture'] ?? UserSession.userPIC ?? UserConstants.defaultAvatarUrl;
             } else {
               app.userDisplayName = profile['name'] ?? "No Display Name";
               app.userPic =
-                  profile['picture'] ?? UserSession.userPIC ?? UserConstants.defaultAvatarUrl;;
+                  profile['picture'] ?? UserSession.userPIC ?? UserConstants.defaultAvatarUrl;
             }
           } else {
             app.userDisplayName = "User Not Linked";

@@ -3,7 +3,7 @@ import 'package:shimmer/shimmer.dart';
 
 class SkeletonListLoader extends StatelessWidget {
   final int itemCount;
-  const SkeletonListLoader({Key? key, this.itemCount = 6}) : super(key: key);
+  const SkeletonListLoader({super.key, this.itemCount = 6});
 
   Widget _row() => Row(
         children: [

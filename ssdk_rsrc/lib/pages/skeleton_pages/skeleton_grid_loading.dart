@@ -5,10 +5,10 @@ class SkeletonGridLoader extends StatelessWidget {
   final int itemCount;
   final int crossAxisCount;
   const SkeletonGridLoader({
-    Key? key,
+    super.key,
     this.itemCount = 8,
     this.crossAxisCount = 2,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

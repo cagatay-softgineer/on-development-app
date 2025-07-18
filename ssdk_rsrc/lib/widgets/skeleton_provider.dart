@@ -9,13 +9,13 @@ class SkeletonProvider extends InheritedWidget {
   final Duration period;
 
   const SkeletonProvider({
-    Key? key,
+    super.key,
     required this.isLoading,
-    required Widget child,
+    required super.child,
     this.baseColor = const Color(0xFFE0E0E0),
     this.highlightColor = const Color(0xFFF5F5F5),
     this.period = const Duration(milliseconds: 1500),
-  }) : super(key: key, child: child);
+  });
 
   static SkeletonProvider of(BuildContext context) {
     final prov = context.dependOnInheritedWidgetOfExactType<SkeletonProvider>();
@@ -38,11 +38,11 @@ class SkeletonBox extends StatelessWidget {
   final BorderRadius borderRadius;
 
   const SkeletonBox({
-    Key? key,
+    super.key,
     required this.width,
     required this.height,
     this.borderRadius = const BorderRadius.all(Radius.circular(4)),
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -69,10 +69,10 @@ class SkeletonTextField extends StatelessWidget {
   final TextEditingController? controller;
 
   const SkeletonTextField({
-    Key? key,
+    super.key,
     this.decoration = const InputDecoration(),
     this.controller,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -94,13 +94,13 @@ class SkeletonButton extends StatelessWidget {
   final double height;
 
   const SkeletonButton({
-    Key? key,
+    super.key,
     required this.child,
     required this.onPressed,
     this.width = double.infinity,
     this.height = 48,
     this.style,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -120,12 +120,12 @@ class SkeletonImage extends StatelessWidget {
   final BoxFit fit;
 
   const SkeletonImage({
-    Key? key,
+    super.key,
     required this.width,
     required this.height,
     required this.image,
     this.fit = BoxFit.cover,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -151,12 +151,12 @@ class SkeletonText extends StatelessWidget {
   final BorderRadius borderRadius;
 
   const SkeletonText({
-    Key? key,
+    super.key,
     required this.text,
     this.style,
     this.width,
     this.borderRadius = const BorderRadius.all(Radius.circular(4)),
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

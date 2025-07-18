@@ -13,11 +13,11 @@ class PlayerControlPage extends StatelessWidget {
   final List<Track>? songs;
 
   const PlayerControlPage({
-    Key? key,
+    super.key,
     this.selectedPlaylistId,
     required this.selectedApp,
     this.songs,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

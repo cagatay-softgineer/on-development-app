@@ -1,6 +1,8 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:ssdk_rsrc/pages/navigation_page.dart';
-import 'package:ssdk_rsrc/providers/userSession.dart';
+import 'package:ssdk_rsrc/providers/user_session.dart';
 import 'package:ssdk_rsrc/services/main_api.dart';
 import 'package:ssdk_rsrc/styles/color_palette.dart';
 import 'package:ssdk_rsrc/constants/default/user.dart';
@@ -73,7 +75,9 @@ class _ChainPageState extends State<ChainPage> {
       days.add(DateTime(today.year, today.month, d));
     }
     // Pad the last week with nulls
-    while (days.length % 7 != 0) days.add(null);
+    while (days.length % 7 != 0) {
+      days.add(null);
+    }
     return days;
   }
 

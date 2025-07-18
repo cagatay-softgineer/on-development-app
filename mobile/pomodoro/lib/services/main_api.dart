@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print, unnecessary_string_interpolations, unnecessary_brace_in_string_interps, deprecated_member_use, use_build_context_synchronously
+
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:url_launcher/url_launcher.dart';

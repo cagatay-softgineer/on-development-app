@@ -1,3 +1,5 @@
+// ignore_for_file: unnecessary_getters_setters, deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:pomodoro/utils/all_icons.dart';
 // ignore: unused_import

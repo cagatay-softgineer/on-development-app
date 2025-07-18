@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:dio/dio.dart';
 import 'package:pomodoro/services/main_api.dart';
 

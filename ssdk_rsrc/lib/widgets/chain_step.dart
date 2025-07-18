@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:ssdk_rsrc/widgets/glowing_overlapping_circles.dart';
 

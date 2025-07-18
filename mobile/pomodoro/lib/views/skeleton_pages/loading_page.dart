@@ -5,7 +5,7 @@ import 'package:pomodoro/viewmodels/skeleton_viewmodel.dart';
 import 'package:pomodoro/widgets/loading/circular_spinner.dart';
 
 class LoadingPage extends StatelessWidget {
-  const LoadingPage({Key? key}) : super(key: key);
+  const LoadingPage({super.key});
 
   @override
   Widget build(BuildContext context) {

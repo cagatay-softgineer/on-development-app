@@ -1,3 +1,5 @@
+// ignore_for_file: library_private_types_in_public_api, use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:ssdk_rsrc/styles/button_styles.dart';
 import 'package:ssdk_rsrc/services/main_api.dart';
@@ -5,7 +7,7 @@ import 'package:ssdk_rsrc/widgets/custom_button.dart'; // Import the CustomButto
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({Key? key}) : super(key: key);
+  const LoginPage({super.key});
 
   @override
   _LoginPageState createState() => _LoginPageState();
@@ -74,11 +76,11 @@ class _LoginPageState extends State<LoginPage> {
         return false;
       } else {
         final token = response['access_token'];
-        final user_id = response['user_id'];
+        final userId = response['user_id'];
         //print("Saved USER_ID : $user_id");
         if (token != null) {
           await _secureStorage.write(key: 'jwt_token', value: token);
-          await _secureStorage.write(key: 'user_id', value: user_id);
+          await _secureStorage.write(key: 'user_id', value: userId);
           if (_rememberMe) {
           await _secureStorage.write(
               key: 'username', value: emailController.text);

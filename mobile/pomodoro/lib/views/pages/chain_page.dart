@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:pomodoro/data/providers/userSession.dart';
+import 'package:pomodoro/data/providers/user_session.dart';
 import 'package:pomodoro/viewmodels/chain_viewmodel.dart';
 import 'package:pomodoro/resources/themes.dart';
 import 'package:pomodoro/core/constants/user.dart';
@@ -12,7 +12,7 @@ import 'package:pomodoro/widgets/components/chain_day.dart';
 /// Displays the user’s chain (streak) with history calendar.
 class ChainPage extends StatelessWidget {
   final VoidCallback onBack;
-  const ChainPage({Key? key, required this.onBack}) : super(key: key);
+  const ChainPage({super.key, required this.onBack});
 
   @override
   Widget build(BuildContext context) {

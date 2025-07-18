@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:ssdk_rsrc/styles/color_palette.dart';
@@ -143,11 +145,11 @@ class ChainDaySkeletonWidget extends StatelessWidget {
   final bool highlight; // "completed" look or not
 
   const ChainDaySkeletonWidget({
-    Key? key,
+    super.key,
     this.connectLeft = false,
     this.connectRight = false,
     this.highlight = false,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

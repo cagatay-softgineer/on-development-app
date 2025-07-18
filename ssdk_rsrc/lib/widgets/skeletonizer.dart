@@ -22,7 +22,7 @@ class SkeletonFromWidgetPage extends StatelessWidget {
   final Duration period;
 
   const SkeletonFromWidgetPage({
-    Key? key,
+    super.key,
     required this.child,
     required this.isLoading,
     this.useScaffold = true,
@@ -30,7 +30,7 @@ class SkeletonFromWidgetPage extends StatelessWidget {
     this.baseColor = const Color(0xFFE0E0E0),
     this.highlightColor = const Color(0xFFF5F5F5),
     this.period = const Duration(milliseconds: 1500),
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

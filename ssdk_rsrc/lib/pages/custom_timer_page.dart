@@ -1,3 +1,5 @@
+// ignore_for_file: library_private_types_in_public_api, sized_box_for_whitespace
+
 import 'package:flutter/material.dart';
 import 'package:ssdk_rsrc/enums/enums.dart';
 import 'package:ssdk_rsrc/widgets/custom_button.dart';
@@ -12,7 +14,7 @@ import 'package:ssdk_rsrc/widgets/music_player.dart';   // Custom player widget
 import 'package:ssdk_rsrc/widgets/pie_time_selector.dart'; // New PieTimeSelector widget
 
 class CustomTimerPage extends StatefulWidget {
-  const CustomTimerPage({Key? key}) : super(key: key);
+  const CustomTimerPage({super.key});
 
   @override
   _CustomTimerPageState createState() => _CustomTimerPageState();

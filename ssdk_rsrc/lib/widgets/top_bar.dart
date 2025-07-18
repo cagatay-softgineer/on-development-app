@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_unnecessary_containers
+
 import 'package:flutter/material.dart';
 import 'package:ssdk_rsrc/constants/default/user.dart';
 import 'package:ssdk_rsrc/styles/color_palette.dart';

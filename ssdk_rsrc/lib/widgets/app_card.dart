@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use, use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:ssdk_rsrc/models/button_params.dart';
 import 'package:ssdk_rsrc/styles/color_palette.dart';

@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pomodoro/views/pages/navigation_page.dart';
@@ -26,7 +28,7 @@ class HomePage extends StatelessWidget {
 }
 
 class HomePageBody extends StatelessWidget {
-  const HomePageBody({Key? key}) : super(key: key);
+  const HomePageBody({super.key});
 
   @override
   Widget build(BuildContext context) {

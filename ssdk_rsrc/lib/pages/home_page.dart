@@ -1,9 +1,11 @@
+// ignore_for_file: avoid_print
+
 import 'package:flutter/material.dart';
 // ignore: unnecessary_import
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:ssdk_rsrc/pages/navigation_page.dart';
-import 'package:ssdk_rsrc/providers/userSession.dart';
+import 'package:ssdk_rsrc/providers/user_session.dart';
 import 'package:ssdk_rsrc/services/main_api.dart';
 // ignore: unused_import
 import 'package:ssdk_rsrc/styles/button_styles.dart';
@@ -34,7 +36,7 @@ class HomePage extends StatelessWidget {
 }
 
 class HomePageBody extends StatefulWidget {
-  const HomePageBody({Key? key}) : super(key: key);
+  const HomePageBody({super.key});
 
   @override
   HomePageBodyState createState() => HomePageBodyState();

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 
 class SkeletonCardLoader extends StatelessWidget {
-  const SkeletonCardLoader({Key? key}) : super(key: key);
+  const SkeletonCardLoader({super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 
 class SkeletonFormLoader extends StatelessWidget {
-  const SkeletonFormLoader({Key? key}) : super(key: key);
+  const SkeletonFormLoader({super.key});
 
   // ignore: unused_element
   Widget _field(double width) => Padding(

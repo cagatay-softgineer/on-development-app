@@ -1,3 +1,5 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'package:flutter/material.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
@@ -6,10 +8,10 @@ class YouTubeMusicPlayer extends StatefulWidget {
   final String videoName;
 
   const YouTubeMusicPlayer({
-    Key? key,
+    super.key,
     required this.videoId,
     required this.videoName,
-  }) : super(key: key);
+  });
 
   @override
   _YouTubeMusicPlayerState createState() => _YouTubeMusicPlayerState();

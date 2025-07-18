@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print, use_build_context_synchronously
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:ssdk_rsrc/pages/player_control_page.dart';
@@ -129,7 +131,7 @@ class PlaylistPageState extends State<PlaylistPage> {
     final filteredPlaylists = _searchQuery.isEmpty
         ? appFilteredPlaylists
         : appFilteredPlaylists.where((p) {
-            final combined = (p.playlistName + " " + p.playlistOwner).toLowerCase();
+            final combined = ("${p.playlistName} ${p.playlistOwner}").toLowerCase();
             return combined.contains(_searchQuery.toLowerCase());
           }).toList();
 

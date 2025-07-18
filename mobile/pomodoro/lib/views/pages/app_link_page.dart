@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pomodoro/views/pages/home_page.dart';
 import 'package:pomodoro/views/pages/navigation_page.dart';
-import 'package:pomodoro/data/providers/appsSession.dart';
-import 'package:pomodoro/data/providers/userSession.dart';
+import 'package:pomodoro/data/providers/apps_session.dart';
+import 'package:pomodoro/data/providers/user_session.dart';
 import 'package:pomodoro/models/linked_app.dart';
 import 'package:pomodoro/widgets/card/app_card.dart';
 import 'package:pomodoro/utils/authlib.dart';
@@ -15,7 +15,7 @@ import 'package:pomodoro/widgets/icon/glowing_icon.dart';
 import 'package:pomodoro/widgets/components/top_bar.dart';
 
 class AppLinkPage extends StatefulWidget {
-  const AppLinkPage({Key? key}) : super(key: key);
+  const AppLinkPage({super.key});
 
   @override
   AppLinkPageState createState() => AppLinkPageState();
@@ -104,16 +104,16 @@ class AppLinkPageState extends State<AppLinkPage> with WidgetsBindingObserver {
                     profile['images'][0]['url'] ??
                     UserSession.userPIC ?? UserConstants.defaultAvatarUrl;
               } else {
-                app.userPic = UserSession.userPIC ?? UserConstants.defaultAvatarUrl;;
+                app.userPic = UserSession.userPIC ?? UserConstants.defaultAvatarUrl;
               }
             } else if (app.name == "YoutubeMusic") {
               app.userDisplayName = profile['name'] ?? "No Display Name";
               app.userPic =
-                  profile['picture'] ?? UserSession.userPIC ?? UserConstants.defaultAvatarUrl;;
+                  profile['picture'] ?? UserSession.userPIC ?? UserConstants.defaultAvatarUrl;
             } else {
               app.userDisplayName = profile['name'] ?? "No Display Name";
               app.userPic =
-                  profile['picture'] ?? UserSession.userPIC ?? UserConstants.defaultAvatarUrl;;
+                  profile['picture'] ?? UserSession.userPIC ?? UserConstants.defaultAvatarUrl;
             }
           } else {
             app.userDisplayName = "User Not Linked";

@@ -15,12 +15,11 @@ class LoadingPage extends StatelessWidget {
   final SkeletonItemBuilder itemBuilder;
 
   const LoadingPage({
-    Key? key,
+    super.key,
     this.itemCount = 6,
     this.separatorHeight = 16.0,
     SkeletonItemBuilder? itemBuilder,
-  })  : itemBuilder = itemBuilder ?? _defaultRowBuilder,
-        super(key: key);
+  })  : itemBuilder = itemBuilder ?? _defaultRowBuilder;
 
   // The old “circle avatar + two lines” skeleton:
   static Widget _defaultRowBuilder(BuildContext context, int index) {

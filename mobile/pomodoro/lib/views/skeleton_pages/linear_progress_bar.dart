@@ -5,7 +5,7 @@ import 'package:pomodoro/viewmodels/skeleton_viewmodel.dart';
 import 'package:pomodoro/widgets/loading/linear_progress_bar.dart';
 
 class LinearProgressPage extends StatelessWidget {
-  const LinearProgressPage({Key? key}) : super(key: key);
+  const LinearProgressPage({super.key});
 
   @override
   Widget build(BuildContext context) {

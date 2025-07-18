@@ -5,7 +5,7 @@ import 'package:pomodoro/viewmodels/skeleton_viewmodel.dart';
 import 'package:pomodoro/widgets/loading/skeleton/skeleton_form_loading.dart';
 
 class SkeletonFormPage extends StatelessWidget {
-  const SkeletonFormPage({Key? key}) : super(key: key);
+  const SkeletonFormPage({super.key});
 
   @override
   Widget build(BuildContext context) {

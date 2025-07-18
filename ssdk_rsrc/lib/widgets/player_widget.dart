@@ -1,3 +1,5 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'package:flutter/material.dart';
 import 'package:ssdk_rsrc/models/playlist.dart';
 import 'package:ssdk_rsrc/utils/timer_funcs.dart';
@@ -20,13 +22,13 @@ class CustomPlayerWidget extends StatefulWidget {
   final GlobalKey<MusicPlayerWidgetState>? musicPlayerKey;
 
   const CustomPlayerWidget({
-    Key? key,
+    super.key,
     this.spotifyData,
     this.youtubeTrack,
     required this.userID,
     required this.app,
     this.musicPlayerKey,
-  }) : super(key: key);
+  });
 
   @override
   _CustomPlayerWidgetState createState() => _CustomPlayerWidgetState();
@@ -34,8 +36,8 @@ class CustomPlayerWidget extends StatefulWidget {
 
 class _CustomPlayerWidgetState extends State<CustomPlayerWidget> {
   // Common state for Spotify player (repeat & shuffle)
-  String _currentRepeatMode = "off";
-  bool _currentShuffleMode = false;
+  final String _currentRepeatMode = "off";
+  final bool _currentShuffleMode = false;
 
   // YouTube-specific state
   YoutubePlayerController? _youtubeController;

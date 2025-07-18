@@ -1,3 +1,5 @@
+// ignore_for_file: library_private_types_in_public_api, sized_box_for_whitespace, deprecated_member_use
+
 import 'dart:math';
 import 'package:flutter/material.dart';
 
@@ -9,13 +11,13 @@ class PieTimeSelector extends StatefulWidget {
   final ValueChanged<int> onChanged;
 
   const PieTimeSelector({
-    Key? key,
+    super.key,
     required this.label,
     required this.value,
     required this.min,
     required this.max,
     required this.onChanged,
-  }) : super(key: key);
+  });
 
   @override
   _PieTimeSelectorState createState() => _PieTimeSelectorState();

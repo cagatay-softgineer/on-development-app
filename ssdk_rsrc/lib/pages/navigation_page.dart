@@ -8,7 +8,7 @@ import 'package:ssdk_rsrc/styles/color_palette.dart';
 import 'package:ssdk_rsrc/widgets/view/navbar.dart';
 
 class NavigationPage extends StatefulWidget {
-  const NavigationPage({Key? key}) : super(key: key);
+  const NavigationPage({super.key});
 
   @override
   NavigationPageState createState() => NavigationPageState();

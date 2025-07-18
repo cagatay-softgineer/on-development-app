@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:pomodoro/services/main_api.dart';
 import 'package:pomodoro/utils/authlib.dart';
-import 'package:pomodoro/data/providers/userSession.dart';
+import 'package:pomodoro/data/providers/user_session.dart';
 import 'package:pomodoro/core/constants/user.dart';
 import 'package:pomodoro/utils/util.dart';
 

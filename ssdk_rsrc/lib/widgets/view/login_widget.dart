@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously, avoid_unnecessary_containers
+
 import 'dart:async';
 import 'package:flutter/material.dart';
 // ignore: library_prefixes
@@ -8,7 +10,7 @@ import 'package:ssdk_rsrc/widgets/custom_button.dart';
 import 'package:ssdk_rsrc/styles/button_styles.dart';
 
 class StartPage extends StatefulWidget {
-  const StartPage({Key? key}) : super(key: key);
+  const StartPage({super.key});
 
   @override
   StartPageState createState() => StartPageState();
@@ -73,11 +75,11 @@ class StartPageState extends State<StartPage> {
         return false;
       } else {
         final token = response['access_token'];
-        final user_id = response['user_id'];
+        final userId = response['user_id'];
         //print("Saved USER_ID : $user_id");
         if (token != null) {
           await _secureStorage.write(key: 'jwt_token', value: token);
-          await _secureStorage.write(key: 'user_id', value: user_id);
+          await _secureStorage.write(key: 'user_id', value: userId);
 
           await _secureStorage.write(
             key: 'username',
@@ -826,7 +828,6 @@ class StartPageState extends State<StartPage> {
                 if (isLoggedIn && mounted) {
                   Navigator.pushNamed(context, '/main');
                 }
-                ;
               }, // will be ignored during loading
               buttonParams: whiteButtonParams,
             ),

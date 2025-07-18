@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print, deprecated_member_use, use_build_context_synchronously
+
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -400,9 +402,9 @@ if (response.statusCode == 200) {
         endpoint = "apple-music/playlist_duration";
       }
       final response = await _dio.post(
-        '${endpoint}',
+        endpoint,
         data: {
-          "playlist_id": "$playlistId",
+          "playlist_id": playlistId,
           "user_email": "$userId"
         },
         options: Options(sendTimeout: Duration(milliseconds: 20000),

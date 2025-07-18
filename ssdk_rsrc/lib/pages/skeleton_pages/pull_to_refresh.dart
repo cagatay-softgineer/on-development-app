@@ -1,7 +1,9 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'package:flutter/material.dart';
 
 class PullToRefreshPage extends StatefulWidget {
-  const PullToRefreshPage({Key? key}) : super(key: key);
+  const PullToRefreshPage({super.key});
 
   @override
   _PullToRefreshPageState createState() => _PullToRefreshPageState();

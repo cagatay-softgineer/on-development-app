@@ -5,7 +5,7 @@ import 'package:pomodoro/viewmodels/skeleton_viewmodel.dart';
 import 'package:pomodoro/widgets/loading/skeleton/skeleton_grid_loading.dart';
 
 class SkeletonGridPage extends StatelessWidget {
-  const SkeletonGridPage({Key? key}) : super(key: key);
+  const SkeletonGridPage({super.key});
 
   @override
   Widget build(BuildContext context) {

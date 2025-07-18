@@ -1,3 +1,5 @@
+// ignore_for_file: library_private_types_in_public_api, avoid_print
+
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -65,11 +67,11 @@ class PlayerControlPage extends StatefulWidget {
   final List? songs; // For YouTube, this should be List<Track>
 
   const PlayerControlPage({
-    Key? key,
+    super.key,
     this.selectedPlaylistId,
     required this.selectedApp,
     this.songs,
-  }) : super(key: key);
+  });
 
   @override
   _PlayerControlPageState createState() => _PlayerControlPageState();

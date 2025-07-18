@@ -4,7 +4,7 @@ import 'package:ssdk_rsrc/styles/color_palette.dart';
 /// A small helper for section headings
 class _SectionTitle extends StatelessWidget {
   final String text;
-  const _SectionTitle(this.text, {Key? key}) : super(key: key);
+  const _SectionTitle(this.text);
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +23,7 @@ class _SectionTitle extends StatelessWidget {
 }
 
 class WidgetShowroomPage extends StatelessWidget {
-  const WidgetShowroomPage({Key? key}) : super(key: key);
+  const WidgetShowroomPage({super.key});
 
   @override
   Widget build(BuildContext context) {

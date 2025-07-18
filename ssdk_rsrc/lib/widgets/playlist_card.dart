@@ -15,7 +15,7 @@ class PlaylistCard extends StatelessWidget {
   final Future<void> Function() onPlayButtonPressed;
 
   const PlaylistCard({
-    Key? key,
+    super.key,
     required this.playlist,
     required this.shuffleState,
     required this.repeatState,
@@ -23,7 +23,7 @@ class PlaylistCard extends StatelessWidget {
     required this.onRepeatChanged,
     required this.getUserPic,
     required this.onPlayButtonPressed,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -236,7 +236,7 @@ class PlaylistCard extends StatelessWidget {
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      '${playlist.playlistOwner}',
+                      playlist.playlistOwner,
                       style: theme.textTheme.bodySmall?.copyWith(
                         color: Colors.grey.shade600,
                       ),

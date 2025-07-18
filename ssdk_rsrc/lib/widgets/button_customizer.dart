@@ -1,3 +1,5 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'package:flutter/material.dart';
 import 'package:ssdk_rsrc/models/button_params.dart';
 
@@ -5,7 +7,7 @@ class ButtonCustomizer extends StatefulWidget {
   final ButtonParams initialParams;
   final ValueChanged<ButtonParams> onParamsChanged;
 
-  ButtonCustomizer({required this.initialParams, required this.onParamsChanged});
+  const ButtonCustomizer({super.key, required this.initialParams, required this.onParamsChanged});
 
   @override
   _ButtonCustomizerState createState() => _ButtonCustomizerState();
@@ -81,7 +83,7 @@ class _ButtonCustomizerState extends State<ButtonCustomizer> {
                 min: 0.0,
                 max: 1.0,
                 divisions: 10,
-                label: (_currentParams.backgroundAlpha * 100).round().toString() + '%',
+                label: '${(_currentParams.backgroundAlpha * 100).round()}%',
                 onChanged: (value) {
                   setState(() {
                     _currentParams.backgroundAlpha = value; // Update alpha
@@ -210,7 +212,7 @@ class _ButtonCustomizerState extends State<ButtonCustomizer> {
               min: 0,
               max: 5,
               divisions: 5,
-              label: '${_currentParams.letterSpacing.toStringAsFixed(1)}',
+              label: _currentParams.letterSpacing.toStringAsFixed(1),
               onChanged: (value) {
                 setState(() {
                   _currentParams.letterSpacing = value;
@@ -229,7 +231,7 @@ class _ButtonCustomizerState extends State<ButtonCustomizer> {
               min: 0,
               max: 20,
               divisions: 10,
-              label: '${_currentParams.blurAmount.toStringAsFixed(1)}',
+              label: _currentParams.blurAmount.toStringAsFixed(1),
               onChanged: (value) {
                 setState(() {
                   _currentParams.blurAmount = value;

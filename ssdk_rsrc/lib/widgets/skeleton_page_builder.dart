@@ -32,7 +32,7 @@ abstract class SkeletonPageBuilderBase extends StatelessWidget
   final Duration period;
 
   const SkeletonPageBuilderBase({
-    Key? key,
+    super.key,
     this.padding = const EdgeInsets.all(16),
     this.physics,
     this.shrinkWrap = false,
@@ -41,7 +41,7 @@ abstract class SkeletonPageBuilderBase extends StatelessWidget
     this.baseColor = const Color(0xFFE0E0E0),
     this.highlightColor = const Color(0xFFF5F5F5),
     this.period = const Duration(milliseconds: 1500),
-  }) : super(key: key);
+  });
 
   /// Subclasses must implement this to build their layout.
   @protected
@@ -63,32 +63,21 @@ class SkeletonListPage extends SkeletonPageBuilderBase {
   final IndexedWidgetBuilder? separatorBuilder;
   final IndexedWidgetBuilder itemBuilder;
 
-  SkeletonListPage({
-    Key? key,
+  const SkeletonListPage({
+    super.key,
     this.itemCount = 6,
     this.separatorHeight = 16.0,
     this.separatorBuilder,
     IndexedWidgetBuilder? itemBuilder,
-    EdgeInsetsGeometry padding = const EdgeInsets.all(16),
-    ScrollPhysics? physics,
-    bool shrinkWrap = false,
-    bool useScaffold = true,
-    PreferredSizeWidget? appBar,
-    Color baseColor = const Color(0xFFE0E0E0),
-    Color highlightColor = const Color(0xFFF5F5F5),
-    Duration period = const Duration(milliseconds: 1500),
-  })  : itemBuilder = itemBuilder ?? _defaultRowBuilder,
-        super(
-          key: key,
-          padding: padding,
-          physics: physics,
-          shrinkWrap: shrinkWrap,
-          useScaffold: useScaffold,
-          appBar: appBar,
-          baseColor: baseColor,
-          highlightColor: highlightColor,
-          period: period,
-        );
+    super.padding,
+    super.physics,
+    super.shrinkWrap,
+    super.useScaffold,
+    super.appBar,
+    super.baseColor,
+    super.highlightColor,
+    super.period,
+  })  : itemBuilder = itemBuilder ?? _defaultRowBuilder;
 
   static Widget _defaultRowBuilder(BuildContext context, int index) {
     return Row(
@@ -139,33 +128,22 @@ class SkeletonGridPage extends SkeletonPageBuilderBase {
   final IndexedWidgetBuilder itemBuilder;
 
   SkeletonGridPage({
-    Key? key,
+    super.key,
     this.itemCount = 8,
     this.crossAxisCount = 2,
     this.mainAxisSpacing = 12.0,
     this.crossAxisSpacing = 12.0,
     this.childAspectRatio = 1.0,
     IndexedWidgetBuilder? itemBuilder,
-    EdgeInsetsGeometry padding = const EdgeInsets.all(16),
-    ScrollPhysics? physics,
-    bool shrinkWrap = false,
-    bool useScaffold = true,
-    PreferredSizeWidget? appBar,
-    Color baseColor = const Color(0xFFE0E0E0),
-    Color highlightColor = const Color(0xFFF5F5F5),
-    Duration period = const Duration(milliseconds: 1500),
-  })  : itemBuilder = itemBuilder ?? ((_, __) => const SizedBox.shrink()),
-        super(
-          key: key,
-          padding: padding,
-          physics: physics,
-          shrinkWrap: shrinkWrap,
-          useScaffold: useScaffold,
-          appBar: appBar,
-          baseColor: baseColor,
-          highlightColor: highlightColor,
-          period: period,
-        );
+    super.padding,
+    super.physics,
+    super.shrinkWrap,
+    super.useScaffold,
+    super.appBar,
+    super.baseColor,
+    super.highlightColor,
+    super.period,
+  })  : itemBuilder = itemBuilder ?? ((_, __) => const SizedBox.shrink());
 
   @override
   Widget buildContent(BuildContext context) {
@@ -192,29 +170,19 @@ class SkeletonCustomPage extends SkeletonPageBuilderBase {
   final int itemCount;
   final IndexedWidgetBuilder itemBuilder;
 
-  SkeletonCustomPage({
-    Key? key,
+  const SkeletonCustomPage({
+    super.key,
     required this.itemCount,
     required this.itemBuilder,
-    EdgeInsetsGeometry padding = const EdgeInsets.all(16),
-    ScrollPhysics? physics,
-    bool shrinkWrap = false,
-    bool useScaffold = true,
-    PreferredSizeWidget? appBar,
-    Color baseColor = const Color(0xFFE0E0E0),
-    Color highlightColor = const Color(0xFFF5F5F5),
-    Duration period = const Duration(milliseconds: 1500),
-  }) : super(
-          key: key,
-          padding: padding,
-          physics: physics,
-          shrinkWrap: shrinkWrap,
-          useScaffold: useScaffold,
-          appBar: appBar,
-          baseColor: baseColor,
-          highlightColor: highlightColor,
-          period: period,
-        );
+    super.padding,
+    super.physics,
+    super.shrinkWrap,
+    super.useScaffold,
+    super.appBar,
+    super.baseColor,
+    super.highlightColor,
+    super.period,
+  });
 
   @override
   Widget buildContent(BuildContext context) {
@@ -240,8 +208,8 @@ class SkeletonFormPage extends SkeletonPageBuilderBase {
   final double formButtonHeight;
   final double formButtonSpacing;
 
-  SkeletonFormPage({
-    Key? key,
+  const SkeletonFormPage({
+    super.key,
     this.formFieldCount = 4,
     this.formFieldWidths,
     this.formFieldHeight = 20.0,
@@ -250,25 +218,15 @@ class SkeletonFormPage extends SkeletonPageBuilderBase {
     this.formButtonWidths,
     this.formButtonHeight = 48.0,
     this.formButtonSpacing = 16.0,
-    EdgeInsetsGeometry padding = const EdgeInsets.all(16),
-    ScrollPhysics? physics,
-    bool shrinkWrap = false,
-    bool useScaffold = true,
-    PreferredSizeWidget? appBar,
-    Color baseColor = const Color(0xFFE0E0E0),
-    Color highlightColor = const Color(0xFFF5F5F5),
-    Duration period = const Duration(milliseconds: 1500),
-  }) : super(
-          key: key,
-          padding: padding,
-          physics: physics,
-          shrinkWrap: shrinkWrap,
-          useScaffold: useScaffold,
-          appBar: appBar,
-          baseColor: baseColor,
-          highlightColor: highlightColor,
-          period: period,
-        );
+    super.padding,
+    super.physics,
+    super.shrinkWrap,
+    super.useScaffold,
+    super.appBar,
+    super.baseColor,
+    super.highlightColor,
+    super.period,
+  });
 
   @override
   Widget buildContent(BuildContext context) {
