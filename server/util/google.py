@@ -1,3 +1,4 @@
+from flask import jsonify
 import requests
 from config.config import settings
 from util.logit import get_logger
@@ -88,3 +89,72 @@ def refresh_access_token_and_update_db_for_Google(user_id, refresh_token):
             f"Failed to refresh Google access token: {response.status_code} - {response.text}"
         )
         return None
+
+
+def get_google_profile(user_email):
+    """
+    Endpoint to retrieve the current user's Google profile information.
+    It expects that the user is already bound (i.e., tokens are stored in the database).
+
+    Parameters:
+    user_email (str): The email of the user for whom the Google profile needs to be fetched.
+
+    Returns:
+    dict or jsonify object:
+        - If the user's email is missing or not found in the session, returns a jsonify object with an error message.
+        - If the user's ID or Google app ID is not found, returns a jsonify object with an error message.
+        - If no token is found for the user and app, returns a jsonify object with an error message.
+        - If the Google profile retrieval fails, returns a jsonify object with an error message.
+        - Otherwise, returns the user's Google profile information.
+    """
+
+    try:
+        # print(user_email)
+        if not user_email:
+            return jsonify({"error": "Missing user_email in session."}), 400
+
+        # Retrieve user_id based on email
+        user_id = firebase_operations.get_user_id_by_email(user_email)
+        if not user_id:
+            return jsonify({"error": "User not found."}), 404
+
+        # print(user_id)
+
+        # Retrieve the Google app id (assumes your app is registered with the
+        # name "Google")
+        app_id_data = firebase_operations.get_app_id_by_name("Google")
+        if not app_id_data:
+            return jsonify({"error": "Google app not configured."}), 400
+        app_id = app_id_data
+
+        # print(app_id)
+
+        # Retrieve stored token details
+        tokens_data = firebase_operations.get_userlinkedapps_tokens(
+            user_id, app_id)
+        if not tokens_data or not tokens_data[0]:
+            return (
+                jsonify(
+                    {"error": "No token found. Please bind your account first."}),
+                400,
+            )
+
+        # Assuming tokens_data returns a dictionary with keys "access_token" and "refresh_token"
+        # print(tokens_data)
+        # print(tokens_data[0])
+        # print(tokens_data[0]["access_token"])
+        access_token = tokens_data[0]["access_token"]
+        # print(access_token)
+
+        # Get the user's Google profile using the helper function
+        profile = get_current_user_profile_google(access_token, user_id)
+        # print(profile)
+        if profile is None:
+            return jsonify(
+                {"error": "Failed to fetch Google user profile."}), 500
+
+        return profile
+
+    except Exception as e:
+        logger.error("Error fetching Google user profile: %s", e)
+        return jsonify({"error": "Failed to fetch Google user profile."}), 500

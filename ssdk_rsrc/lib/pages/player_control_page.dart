@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:ssdk_rsrc/constants/default/apple_playlist.dart';
 import 'package:ssdk_rsrc/constants/default/spotify_playlist.dart';
 import 'package:ssdk_rsrc/models/playlist.dart';
-import 'package:ssdk_rsrc/models/music_player.dart'; // Contains MusicPlayerWidget and Track model
+import 'package:ssdk_rsrc/widgets/music_player.dart'; // Contains MusicPlayerWidget and Track model
 import 'package:ssdk_rsrc/services/main_api.dart';
 import 'package:ssdk_rsrc/styles/color_palette.dart';
 import 'package:ssdk_rsrc/utils/authlib.dart';

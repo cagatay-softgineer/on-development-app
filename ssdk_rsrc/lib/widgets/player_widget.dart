@@ -3,7 +3,7 @@ import 'package:ssdk_rsrc/models/playlist.dart';
 import 'package:ssdk_rsrc/utils/timer_funcs.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 import 'package:ssdk_rsrc/enums/enums.dart';
-import 'package:ssdk_rsrc/models/music_player.dart'; // Contains Track and MusicPlayerWidget
+import 'package:ssdk_rsrc/widgets/music_player.dart'; // Contains Track and MusicPlayerWidget
 import 'package:ssdk_rsrc/services/main_api.dart';
 
 /// A unified custom player widget that supports both Spotify and YouTube.

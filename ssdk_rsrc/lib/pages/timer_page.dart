@@ -12,12 +12,12 @@ import 'package:ssdk_rsrc/utils/pomodoro_funcs.dart'; // Pomodoro mixin
 import 'package:ssdk_rsrc/widgets/custom_staus_bar.dart';
 import 'package:ssdk_rsrc/widgets/glowing_text.dart';
 import 'package:ssdk_rsrc/widgets/player_widget.dart'; // Custom player widget
-import 'package:ssdk_rsrc/models/music_player.dart'; // Custom player widget
+import 'package:ssdk_rsrc/widgets/music_player.dart'; // Custom player widget
 import 'package:ssdk_rsrc/utils/spotify_func.dart';
 import 'package:ssdk_rsrc/widgets/playlist_dropdown.dart'; //spotify
 
 class TimerPage extends StatefulWidget {
-  const TimerPage({Key? key}) : super(key: key);
+  const TimerPage({super.key});
 
   @override
   _TimerPageState createState() => _TimerPageState();

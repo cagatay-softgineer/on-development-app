@@ -8,7 +8,7 @@ import 'package:ssdk_rsrc/models/playlist.dart';
 import 'package:ssdk_rsrc/utils/timer_funcs.dart';       // Timer utilities (player state functions)
 import 'package:ssdk_rsrc/utils/pomodoro_funcs.dart';    // Pomodoro mixin
 import 'package:ssdk_rsrc/widgets/player_widget.dart';   // Custom player widget
-import 'package:ssdk_rsrc/models/music_player.dart';   // Custom player widget
+import 'package:ssdk_rsrc/widgets/music_player.dart';   // Custom player widget
 import 'package:ssdk_rsrc/widgets/pie_time_selector.dart'; // New PieTimeSelector widget
 
 class CustomTimerPage extends StatefulWidget {

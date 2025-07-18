@@ -1,13 +1,14 @@
-from flask import Blueprint, Response, request, jsonify
+from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required
 from flask_limiter import Limiter
 from flask_cors import CORS
 from flask_limiter.util import get_remote_address
+from util.utils import get_email_username
+from util.bind_apps import _json_safe
 from util.spotify import get_current_user_profile
-from Blueprints.google_api import get_google_profile
-from util.models import LinkedAppRequest, UserEmailRequest  # Import the model
+from util.google import get_google_profile
+from util.models import LinkedAppRequest  # Import the model
 from util.logit import get_logger
-from util.utils import get_email_username, obfuscate
 import database.firebase_operations as firebase_operations
 from pydantic import ValidationError
 from config.config import settings
@@ -138,13 +139,14 @@ def check_linked_app():
             ),
             400,
         )
-    access_token = None
+    access_tokens = False
     response = firebase_operations.get_userlinkedapps_tokens(user_id, app_id)
     if response and response[0]:
-        access_token = response[0]["access_token"]
+        access_tokens = response[0]["access_token"]
     user_linked = response is not None
-    # print("User access_tokens", access_token)
-    if access_token:
+    # print("User access_tokens", access_tokens)
+    if access_tokens:
+        access_token = access_tokens[0]
 
         if user_linked:
 
@@ -252,117 +254,58 @@ def unlink_app():
 @requires_scope("apps")
 def get_all_apps_binding():
     """
-    Retrieves the binding state for all available applications for a given user.
-
-    Expects a JSON payload with:
-        - user_email: The email address of the user.
-
-    Returns a JSON response containing the user's email and a list of applications,
-    each with its name, binding state (true/false), and user profile data if linked.
-
-    Example Response:
-    {
-        "user_email": "user@example.com",
-        "apps": [
-            {
-                "app_name": "Spotify",
-                "user_linked": true,
-                "user_profile": { ... }
-            },
-            {
-                "app_name": "AppleMusic",
-                "user_linked": false,
-                "user_profile": null
-            },
-            ...
-        ]
-    }
+    Returns binding state + profile for each configured app.
+    Sanitises every profile so jsonify never chokes.
     """
     try:
-        payload = UserEmailRequest.parse_obj(request.get_json())
-    except ValidationError as ve:
-        return jsonify({"error": ve.errors()}), 400
-    user_email = payload.user_email
+        data = request.get_json(force=True)
+        user_email = data.get("user_email")
+        if not user_email:
+            return jsonify({"error": "User email is required."}), 400
+    except Exception:
+        return jsonify({"error": "Invalid JSON payload."}), 400
 
-    # Retrieve user ID using Firebase operations
     user_id = firebase_operations.get_user_id_by_email(user_email)
     if not user_id:
         return jsonify({"error": "User not found."}), 400
 
     apps_status = []
+
     for app_name, app_id in APP_ALIAS_TO_ID.items():
-        user_linked = False
-        user_profile = None
+        tokens_doc = firebase_operations.get_userlinkedapps_tokens(user_id, app_id)
 
-        if response and response[0].get("access_token"):
-            token = response[0]["access_token"]
-            try:
-                if app_name == "Spotify":
-                    user_profile_candidate = get_current_user_profile(token, user_id, app_id)
-                    if user_profile_candidate is None:
-                        raise Exception("Spotify token/profile fetch failed")
-                    user_linked = True
-                    user_profile = user_profile_candidate
-                elif app_name == "AppleMusic":
-                    user_linked = True
-                    user_profile = {"name": get_email_username(user_email)}
-                elif app_name in ("YoutubeMusic", "Google API"):
-                    profile = get_google_profile(user_email)
-                    # If it's a Flask response (error), handle as failure!
-                    if isinstance(profile, Response):
-                        # Optionally log: logger.warning(f"Google profile for {app_name} is a Response object!")
-                        firebase_operations.delete_userlinkedapps(user_id, app_id)
-                        user_linked = False
-                        user_profile = None
-                    elif isinstance(profile, dict) and profile.get("error"):
-                        firebase_operations.delete_userlinkedapps(user_id, app_id)
-                        user_linked = False
-                        user_profile = None
-                    else:
-                        user_linked = True
-                        user_profile = user_profile_candidate
-                    elif app_name == "AppleMusic":
-                        user_linked = True
-                        user_profile = {"name": get_email_username(user_email)}
-                    elif app_name in ("YoutubeMusic", "Google API"):
-                        profile = get_google_profile(user_email)
-                        # If it's a Flask response (error), handle as failure!
-                        if isinstance(profile, Response) or (isinstance(profile, dict) and profile.get("error")):
-                            firebase_operations.delete_userlinkedapps(user_id, app_id)
-                            user_linked = False
-                            user_profile = None
-                        else:
-                            user_linked = True
-                            user_profile = profile
-                    else:
-                        user_profile = None
-                        user_linked = True  # Or False depending on logic
-                except Exception as e:
-                    logger.info(
-                        f"Deleted {app_name} binding for user {obfuscate(user_email)} due to expired token/profile error.",
-                        e,
-                    )
-                    firebase_operations.delete_userlinkedapps(user_id, app_id)
-                    user_linked = False
-                    user_profile = None
-        except Exception as e:
-            logger.warning(f"Error retrieving binding for {app_name}: {e}")
-            try:
-                firebase_operations.delete_userlinkedapps(user_id, app_id)
-            except Exception:
-                pass
-            user_linked = False
-            user_profile = None
+        if tokens_doc and tokens_doc[0].get("access_token"):
+            tokens = tokens_doc[0]["access_token"]
 
-        if not user_linked:
-            user_profile = None
+            # ---- per-provider profile retrieval --------------------------------
+            if app_name == "Spotify":
+                profile = get_current_user_profile(tokens[0], user_id, app_id)
 
-        apps_status.append({
-            "app_name": app_name,
-            "user_linked": user_linked,
-            "user_profile": user_profile,
-        })
-    return jsonify({
-        "user_email": user_email,
-        "apps": apps_status
-    }), 200
+            elif app_name == "AppleMusic":
+                profile = {"name": get_email_username(user_email)}
+
+            elif app_name in ("YoutubeMusic", "Google API"):
+                # may return Flask Response on failure
+                profile = get_google_profile(user_email)
+
+            else:
+                profile = None
+            # --------------------------------------------------------------------
+
+            apps_status.append(
+                {
+                    "app_name": app_name,
+                    "user_linked": True,
+                    "user_profile": _json_safe(profile),
+                }
+            )
+        else:
+            apps_status.append(
+                {
+                    "app_name": app_name,
+                    "user_linked": False,
+                    "user_profile": None,
+                }
+            )
+
+    return jsonify({"user_email": user_email, "apps": apps_status}), 200
