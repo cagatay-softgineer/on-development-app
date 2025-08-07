@@ -103,18 +103,24 @@ class AppLinkPageState extends State<AppLinkPage> with WidgetsBindingObserver {
                   profile['images'].isNotEmpty) {
                 app.userPic =
                     profile['images'][0]['url'] ??
-                    UserSession.userPIC ?? UserConstants.defaultAvatarUrl;
+                    UserSession.userPIC ??
+                    UserConstants.defaultAvatarUrl;
               } else {
-                app.userPic = UserSession.userPIC ?? UserConstants.defaultAvatarUrl;
+                app.userPic =
+                    UserSession.userPIC ?? UserConstants.defaultAvatarUrl;
               }
             } else if (app.name == "YoutubeMusic") {
               app.userDisplayName = profile['name'] ?? "No Display Name";
               app.userPic =
-                  profile['picture'] ?? UserSession.userPIC ?? UserConstants.defaultAvatarUrl;
+                  profile['picture'] ??
+                  UserSession.userPIC ??
+                  UserConstants.defaultAvatarUrl;
             } else {
               app.userDisplayName = profile['name'] ?? "No Display Name";
               app.userPic =
-                  profile['picture'] ?? UserSession.userPIC ?? UserConstants.defaultAvatarUrl;
+                  profile['picture'] ??
+                  UserSession.userPIC ??
+                  UserConstants.defaultAvatarUrl;
             }
           } else {
             app.userDisplayName = "User Not Linked";
@@ -154,7 +160,8 @@ class AppLinkPageState extends State<AppLinkPage> with WidgetsBindingObserver {
                           userName: UserSession.userNAME ?? "",
                           chainPoints: UserSession.currentChainStreak ?? 0,
                           storePoints: 0,
-                          onChainTap: () => NavigationPage.of(context).showChain(),
+                          onChainTap:
+                              () => NavigationPage.of(context).showChain(),
                         ),
                         SizedBox(height: 50),
                         Container(

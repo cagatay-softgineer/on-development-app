@@ -13,7 +13,8 @@ class CustomCenterGlowTrackShape extends SliderTrackShape {
     // This centers the track in the container vertically, and stretches horizontally
     final double trackHeight = 4.0;
     final double trackLeft = offset.dx + 4;
-    final double trackTop = offset.dy + (parentBox.size.height - trackHeight) / 2;
+    final double trackTop =
+        offset.dy + (parentBox.size.height - trackHeight) / 2;
     final double trackWidth = parentBox.size.width - 8;
     return Rect.fromLTWH(trackLeft, trackTop, trackWidth, trackHeight);
   }
@@ -40,9 +41,10 @@ class CustomCenterGlowTrackShape extends SliderTrackShape {
     ).shift(offset);
 
     // Draw inactive (full) track - very thin, grayish
-    final Paint inactivePaint = Paint()
-      ..color = sliderTheme.inactiveTrackColor ?? ColorPalette.lightGray
-      ..strokeCap = StrokeCap.round;
+    final Paint inactivePaint =
+        Paint()
+          ..color = sliderTheme.inactiveTrackColor ?? ColorPalette.lightGray
+          ..strokeCap = StrokeCap.round;
     canvas.drawRRect(
       RRect.fromRectAndRadius(trackRect, Radius.circular(2)),
       inactivePaint,
@@ -57,9 +59,10 @@ class CustomCenterGlowTrackShape extends SliderTrackShape {
         activeWidth,
         trackRect.height,
       );
-      final Paint activePaint = Paint()
-        ..color = sliderTheme.activeTrackColor ?? ColorPalette.white
-        ..strokeCap = StrokeCap.round;
+      final Paint activePaint =
+          Paint()
+            ..color = sliderTheme.activeTrackColor ?? ColorPalette.white
+            ..strokeCap = StrokeCap.round;
       canvas.drawRRect(
         RRect.fromRectAndRadius(activeRect, Radius.circular(2)),
         activePaint,
@@ -82,40 +85,42 @@ class CustomCenterGlowTrackShape extends SliderTrackShape {
       width: inlightWidth,
       height: inlightHeight,
     );
-    final Paint goldPaint = Paint()
-      ..shader = LinearGradient(
-        begin: Alignment.centerLeft,
-        end: Alignment.centerRight,
-        colors: [
-          ColorPalette.gold.withAlpha((255 * 0.44).toInt()),
-          ColorPalette.gold.withAlpha((255 * 0.44).toInt()),
-          ColorPalette.gold.withAlpha((255 * 0.44).toInt()),
-          ColorPalette.gold.withAlpha((255 * 0.44).toInt()),
-          ColorPalette.gold.withAlpha((255 * 0.44).toInt()),
-          ColorPalette.gold.withAlpha((255 * 0.44).toInt()),
-          ColorPalette.gold.withAlpha((255 * 0.44).toInt()),
-          ColorPalette.gold.withAlpha((255 * 0.44).toInt()),
-          ColorPalette.gold.withAlpha((255 * 0.44).toInt()),
-        ],
-        stops: [0.0, 0.15, 0.25,0.35, 0.5, 0.65, 0.75, 0.85,1.0],
-      ).createShader(highlightRect);
-    final Paint darkPaint = Paint()
-      ..shader = LinearGradient(
-        begin: Alignment.centerLeft,
-        end: Alignment.centerRight,
-        colors: [
-          ColorPalette.backgroundColor,
-          ColorPalette.backgroundColor,
-          ColorPalette.backgroundColor,
-          ColorPalette.backgroundColor,
-          ColorPalette.backgroundColor,
-          ColorPalette.backgroundColor,
-          ColorPalette.backgroundColor,
-          ColorPalette.backgroundColor,
-          ColorPalette.backgroundColor,
-        ],
-        stops: [0.0, 0.15, 0.25,0.35, 0.5, 0.65, 0.75, 0.85,1.0],
-      ).createShader(highlightRect);
+    final Paint goldPaint =
+        Paint()
+          ..shader = LinearGradient(
+            begin: Alignment.centerLeft,
+            end: Alignment.centerRight,
+            colors: [
+              ColorPalette.gold.withAlpha((255 * 0.44).toInt()),
+              ColorPalette.gold.withAlpha((255 * 0.44).toInt()),
+              ColorPalette.gold.withAlpha((255 * 0.44).toInt()),
+              ColorPalette.gold.withAlpha((255 * 0.44).toInt()),
+              ColorPalette.gold.withAlpha((255 * 0.44).toInt()),
+              ColorPalette.gold.withAlpha((255 * 0.44).toInt()),
+              ColorPalette.gold.withAlpha((255 * 0.44).toInt()),
+              ColorPalette.gold.withAlpha((255 * 0.44).toInt()),
+              ColorPalette.gold.withAlpha((255 * 0.44).toInt()),
+            ],
+            stops: [0.0, 0.15, 0.25, 0.35, 0.5, 0.65, 0.75, 0.85, 1.0],
+          ).createShader(highlightRect);
+    final Paint darkPaint =
+        Paint()
+          ..shader = LinearGradient(
+            begin: Alignment.centerLeft,
+            end: Alignment.centerRight,
+            colors: [
+              ColorPalette.backgroundColor,
+              ColorPalette.backgroundColor,
+              ColorPalette.backgroundColor,
+              ColorPalette.backgroundColor,
+              ColorPalette.backgroundColor,
+              ColorPalette.backgroundColor,
+              ColorPalette.backgroundColor,
+              ColorPalette.backgroundColor,
+              ColorPalette.backgroundColor,
+            ],
+            stops: [0.0, 0.15, 0.25, 0.35, 0.5, 0.65, 0.75, 0.85, 1.0],
+          ).createShader(highlightRect);
     canvas.drawRRect(
       RRect.fromRectAndRadius(highlightRect, Radius.circular(4)),
       goldPaint,
@@ -147,8 +152,8 @@ class CustomGlowThumbShape extends SliderComponentShape {
     required Size sizeWithOverflow,
   }) {
     final Canvas canvas = context.canvas;
-    final Paint paint = Paint()
-      ..color = ColorPalette.backgroundColor.withAlpha(0);
+    final Paint paint =
+        Paint()..color = ColorPalette.backgroundColor.withAlpha(0);
     canvas.drawCircle(center, 6, paint); // Small, subtle thumb
   }
 }

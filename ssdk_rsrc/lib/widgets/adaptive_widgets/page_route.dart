@@ -18,8 +18,11 @@ class AdaptivePageRoute<T> extends PageRoute<T> {
   bool get maintainState => true;
 
   @override
-  Widget buildPage(BuildContext context, Animation<double> animation,
-      Animation<double> secondaryAnimation) {
+  Widget buildPage(
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+  ) {
     final result = builder(context);
     return Semantics(
       scopesRoute: true,
@@ -38,8 +41,12 @@ class AdaptivePageRoute<T> extends PageRoute<T> {
   Duration get transitionDuration => const Duration(milliseconds: 200);
 
   @override
-  Widget buildTransitions(BuildContext context, Animation<double> animation,
-      Animation<double> secondaryAnimation, Widget child) {
+  Widget buildTransitions(
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+    Widget child,
+  ) {
     return child;
   }
 

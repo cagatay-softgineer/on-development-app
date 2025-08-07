@@ -133,19 +133,28 @@ class _CustomPlayerWidgetState extends State<CustomPlayerWidget> {
               children: [
                 Text(
                   widget.youtubeTrack!.trackName,
-                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 const SizedBox(height: 8),
                 // Display a progress bar if duration is available.
                 LinearProgressIndicator(
-                  value: _youtubeTotalDuration.inSeconds > 0
-                      ? _youtubeCurrentPosition.inSeconds / _youtubeTotalDuration.inSeconds
-                      : 0,
+                  value:
+                      _youtubeTotalDuration.inSeconds > 0
+                          ? _youtubeCurrentPosition.inSeconds /
+                              _youtubeTotalDuration.inSeconds
+                          : 0,
                 ),
                 const SizedBox(height: 8),
-                Text("Current: ${_youtubeCurrentPosition.inSeconds} sec / Total: ${_youtubeTotalDuration.inSeconds} sec"),
+                Text(
+                  "Current: ${_youtubeCurrentPosition.inSeconds} sec / Total: ${_youtubeTotalDuration.inSeconds} sec",
+                ),
                 IconButton(
-                  icon: Icon(_youtubeIsPlaying ? Icons.pause : Icons.play_arrow),
+                  icon: Icon(
+                    _youtubeIsPlaying ? Icons.pause : Icons.play_arrow,
+                  ),
                   onPressed: _toggleYoutubePlayPause,
                 ),
               ],
@@ -156,20 +165,28 @@ class _CustomPlayerWidgetState extends State<CustomPlayerWidget> {
     } else if (widget.app == MusicApp.Spotify) {
       // Spotify branch: use spotifyData to build MusicPlayerWidget.
       if (widget.spotifyData == null || widget.spotifyData!['item'] == null) {
-        return const Center(child: Text("No Spotify track is currently playing."));
+        return const Center(
+          child: Text("No Spotify track is currently playing."),
+        );
       }
       final data = widget.spotifyData!;
       final track = data['item'];
       final album = track['album'];
-      final String albumArtUrl = (album['images'] as List).isNotEmpty
-          ? album['images'][0]['url']
-          : 'https://via.placeholder.com/300';
+      final String albumArtUrl =
+          (album['images'] as List).isNotEmpty
+              ? album['images'][0]['url']
+              : 'https://via.placeholder.com/300';
       final String songTitle = track['name'] ?? 'Song Title';
-      final String artistName = (track['artists'] as List).isNotEmpty
-          ? track['artists'][0]['name']
-          : 'Artist Name';
-      final Duration currentPosition = Duration(milliseconds: data['progress_ms'] ?? 0);
-      final Duration totalDuration = Duration(milliseconds: track['duration_ms'] ?? 0);
+      final String artistName =
+          (track['artists'] as List).isNotEmpty
+              ? track['artists'][0]['name']
+              : 'Artist Name';
+      final Duration currentPosition = Duration(
+        milliseconds: data['progress_ms'] ?? 0,
+      );
+      final Duration totalDuration = Duration(
+        milliseconds: track['duration_ms'] ?? 0,
+      );
       final bool isPlaying = data['is_playing'] ?? false;
 
       return MusicPlayerWidget(
@@ -209,7 +226,10 @@ class _CustomPlayerWidgetState extends State<CustomPlayerWidget> {
           final response = await spotifyAPI.getDevices(widget.userID);
           final String deviceId = extractFirstDeviceId(response);
           await spotifyAPI.seekToPosition(
-              widget.userID, deviceId, newPosition.inMilliseconds.toString());
+            widget.userID,
+            deviceId,
+            newPosition.inMilliseconds.toString(),
+          );
         },
         onRepeatPressed: () async {
           final response = await spotifyAPI.getDevices(widget.userID);

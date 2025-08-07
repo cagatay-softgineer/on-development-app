@@ -8,9 +8,7 @@ class CupertinoLoading extends StatelessWidget {
   Widget build(BuildContext context) {
     return const Scaffold(
       backgroundColor: Colors.white,
-      body: Center(
-        child: CupertinoActivityIndicator(radius: 20),
-      ),
+      body: Center(child: CupertinoActivityIndicator(radius: 20)),
     );
   }
 }

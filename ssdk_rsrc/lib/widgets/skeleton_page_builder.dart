@@ -8,11 +8,11 @@ mixin _ShimmerConfig {
   Duration get period;
 
   Widget applyShimmer(Widget child) => Shimmer.fromColors(
-        baseColor: baseColor,
-        highlightColor: highlightColor,
-        period: period,
-        child: child,
-      );
+    baseColor: baseColor,
+    highlightColor: highlightColor,
+    period: period,
+    child: child,
+  );
 }
 
 /// Base class: handles padding, scrolling, scaffold/appbar.
@@ -50,9 +50,7 @@ abstract class SkeletonPageBuilderBase extends StatelessWidget
   @override
   Widget build(BuildContext context) {
     final content = buildContent(context);
-    return useScaffold
-        ? Scaffold(appBar: appBar, body: content)
-        : content;
+    return useScaffold ? Scaffold(appBar: appBar, body: content) : content;
   }
 }
 
@@ -77,7 +75,7 @@ class SkeletonListPage extends SkeletonPageBuilderBase {
     super.baseColor,
     super.highlightColor,
     super.period,
-  })  : itemBuilder = itemBuilder ?? _defaultRowBuilder;
+  }) : itemBuilder = itemBuilder ?? _defaultRowBuilder;
 
   static Widget _defaultRowBuilder(BuildContext context, int index) {
     return Row(
@@ -85,17 +83,31 @@ class SkeletonListPage extends SkeletonPageBuilderBase {
         Container(
           width: 48,
           height: 48,
-          decoration:
-              const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            shape: BoxShape.circle,
+          ),
         ),
         const SizedBox(width: 12),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: const [
-              SizedBox(height: 14, width: double.infinity, child: DecoratedBox(decoration: BoxDecoration(color: Colors.white))),
+              SizedBox(
+                height: 14,
+                width: double.infinity,
+                child: DecoratedBox(
+                  decoration: BoxDecoration(color: Colors.white),
+                ),
+              ),
               SizedBox(height: 8),
-              SizedBox(height: 14, width: 100, child: DecoratedBox(decoration: BoxDecoration(color: Colors.white))),
+              SizedBox(
+                height: 14,
+                width: 100,
+                child: DecoratedBox(
+                  decoration: BoxDecoration(color: Colors.white),
+                ),
+              ),
             ],
           ),
         ),
@@ -112,8 +124,7 @@ class SkeletonListPage extends SkeletonPageBuilderBase {
       itemCount: itemCount,
       separatorBuilder:
           separatorBuilder ?? (_, __) => SizedBox(height: separatorHeight),
-      itemBuilder: (ctx, idx) =>
-          applyShimmer(itemBuilder(ctx, idx)),
+      itemBuilder: (ctx, idx) => applyShimmer(itemBuilder(ctx, idx)),
     );
   }
 }
@@ -143,7 +154,7 @@ class SkeletonGridPage extends SkeletonPageBuilderBase {
     super.baseColor,
     super.highlightColor,
     super.period,
-  })  : itemBuilder = itemBuilder ?? ((_, __) => const SizedBox.shrink());
+  }) : itemBuilder = itemBuilder ?? ((_, __) => const SizedBox.shrink());
 
   @override
   Widget buildContent(BuildContext context) {
@@ -152,15 +163,13 @@ class SkeletonGridPage extends SkeletonPageBuilderBase {
       physics: physics,
       shrinkWrap: shrinkWrap,
       itemCount: itemCount,
-      gridDelegate:
-          SliverGridDelegateWithFixedCrossAxisCount(
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: crossAxisCount,
         mainAxisSpacing: mainAxisSpacing,
         crossAxisSpacing: crossAxisSpacing,
         childAspectRatio: childAspectRatio,
       ),
-      itemBuilder: (ctx, idx) =>
-          applyShimmer(itemBuilder(ctx, idx)),
+      itemBuilder: (ctx, idx) => applyShimmer(itemBuilder(ctx, idx)),
     );
   }
 }
@@ -191,8 +200,7 @@ class SkeletonCustomPage extends SkeletonPageBuilderBase {
       physics: physics,
       shrinkWrap: shrinkWrap,
       itemCount: itemCount,
-      itemBuilder: (ctx, idx) =>
-          applyShimmer(itemBuilder(ctx, idx)),
+      itemBuilder: (ctx, idx) => applyShimmer(itemBuilder(ctx, idx)),
     );
   }
 }
@@ -240,9 +248,10 @@ class SkeletonFormPage extends SkeletonPageBuilderBase {
           for (var i = 0; i < formFieldCount; i++) ...[
             applyShimmer(
               FractionallySizedBox(
-                widthFactor: (formFieldWidths != null && i < formFieldWidths!.length)
-                    ? formFieldWidths![i]
-                    : 1.0,
+                widthFactor:
+                    (formFieldWidths != null && i < formFieldWidths!.length)
+                        ? formFieldWidths![i]
+                        : 1.0,
                 child: Container(
                   height: formFieldHeight,
                   decoration: BoxDecoration(
@@ -252,8 +261,7 @@ class SkeletonFormPage extends SkeletonPageBuilderBase {
                 ),
               ),
             ),
-            if (i < formFieldCount - 1)
-              SizedBox(height: formFieldSpacing),
+            if (i < formFieldCount - 1) SizedBox(height: formFieldSpacing),
           ],
 
           SizedBox(height: formFieldSpacing),
@@ -262,9 +270,10 @@ class SkeletonFormPage extends SkeletonPageBuilderBase {
           for (var j = 0; j < formButtonCount; j++) ...[
             applyShimmer(
               FractionallySizedBox(
-                widthFactor: (formButtonWidths != null && j < formButtonWidths!.length)
-                    ? formButtonWidths![j]
-                    : 1.0,
+                widthFactor:
+                    (formButtonWidths != null && j < formButtonWidths!.length)
+                        ? formButtonWidths![j]
+                        : 1.0,
                 child: Container(
                   height: formButtonHeight,
                   decoration: BoxDecoration(
@@ -274,8 +283,7 @@ class SkeletonFormPage extends SkeletonPageBuilderBase {
                 ),
               ),
             ),
-            if (j < formButtonCount - 1)
-              SizedBox(height: formButtonSpacing),
+            if (j < formButtonCount - 1) SizedBox(height: formButtonSpacing),
           ],
         ],
       ),

@@ -31,10 +31,7 @@ class _YouTubeMusicPlayerState extends State<YouTubeMusicPlayer> {
     currentVideoName = widget.videoName;
     _controller = YoutubePlayerController(
       initialVideoId: currentVideoId,
-      flags: const YoutubePlayerFlags(
-        autoPlay: true,
-        mute: false,
-      ),
+      flags: const YoutubePlayerFlags(autoPlay: true, mute: false),
     )..addListener(_listener);
   }
 

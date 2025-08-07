@@ -142,10 +142,7 @@ class GradientPallette {
   static LinearGradient goldenGlitter = LinearGradient(
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
-    colors: [
-      ColorPalette.gold,
-      ColorPalette.white,
-    ],
+    colors: [ColorPalette.gold, ColorPalette.white],
   );
 
   static MeshGradient test = MeshGradient(

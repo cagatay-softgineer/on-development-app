@@ -11,7 +11,11 @@ class SpotifyPlayerController {
     if (selectedPlaylist != null && userID != null && userID.isNotEmpty) {
       final response = await spotifyAPI.getDevices(userID);
       final deviceId = _extractFirstDeviceId(response);
-      await spotifyAPI.playPlaylist(selectedPlaylist.playlistId, userID, deviceId);
+      await spotifyAPI.playPlaylist(
+        selectedPlaylist.playlistId,
+        userID,
+        deviceId,
+      );
     }
   }
 

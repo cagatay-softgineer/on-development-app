@@ -22,11 +22,7 @@ import 'package:ssdk_rsrc/pages/widgets_page.dart';
 // import 'package:ssdk_rsrc/pages/register_page.dart';
 
 void main() {
-  runApp(
-    ShowCaseWidget(
-      builder: (context) => MyApp(),
-      ),
-  );
+  runApp(ShowCaseWidget(builder: (context) => MyApp()));
 }
 
 // Global navigator key for navigation from deep link callbacks.
@@ -199,9 +195,13 @@ class _MyAppState extends State<MyApp> {
         '/timer': (context) => TimerPage(),
         '/custom_timer': (context) => CustomTimerPage(),
         '/widget_page': (context) => WidgetShowroomPage(),
-        '/chain_page': (context) => ChainPage(onBack: () {NavigationPage.of(context).hideChain();},),
+        '/chain_page':
+            (context) => ChainPage(
+              onBack: () {
+                NavigationPage.of(context).hideChain();
+              },
+            ),
       },
     );
   }
 }
-

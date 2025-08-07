@@ -40,10 +40,12 @@ class TopBar extends StatelessWidget {
         Column(
           children: [
             GestureDetector(
-              onTap: onChainTap ?? () {
-                // fallback: can still use Navigator.pushNamed if not provided
-                Navigator.pushNamed(context, '/chain_page');
-              },
+              onTap:
+                  onChainTap ??
+                  () {
+                    // fallback: can still use Navigator.pushNamed if not provided
+                    Navigator.pushNamed(context, '/chain_page');
+                  },
               child: GlowingOverlappingCircles(points: chainPoints),
             ),
           ],

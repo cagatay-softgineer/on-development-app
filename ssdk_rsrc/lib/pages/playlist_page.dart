@@ -21,7 +21,7 @@ class PlaylistPageState extends State<PlaylistPage> {
   List<Playlist> playlists = [];
   final Map<String, String> _userPicCache = {}; // Cache for user images
   String? userID = "";
-  
+
   // Use a FutureBuilder for initialization.
   late Future<void> _initializationFuture;
 
@@ -44,16 +44,26 @@ class PlaylistPageState extends State<PlaylistPage> {
       final userId = await AuthService.getUserId();
       userID = userId;
       // Fetch Spotify and YouTube playlists concurrently.
-      final spotifyPlaylistsFuture =
-          mainAPI.fetchPlaylists("$userId", app: MusicApp.Spotify);
-          
-      final youtubePlaylistsFuture =
-          mainAPI.fetchPlaylists("$userId", app: MusicApp.YouTube);
+      final spotifyPlaylistsFuture = mainAPI.fetchPlaylists(
+        "$userId",
+        app: MusicApp.Spotify,
+      );
 
-       final applePlaylistsFuture =
-          mainAPI.fetchPlaylists("$userId", app: MusicApp.Apple);
+      final youtubePlaylistsFuture = mainAPI.fetchPlaylists(
+        "$userId",
+        app: MusicApp.YouTube,
+      );
 
-      final results = await Future.wait([spotifyPlaylistsFuture, youtubePlaylistsFuture, applePlaylistsFuture]);
+      final applePlaylistsFuture = mainAPI.fetchPlaylists(
+        "$userId",
+        app: MusicApp.Apple,
+      );
+
+      final results = await Future.wait([
+        spotifyPlaylistsFuture,
+        youtubePlaylistsFuture,
+        applePlaylistsFuture,
+      ]);
       final mergedPlaylists = <Playlist>[];
       mergedPlaylists.addAll(results[0]);
       mergedPlaylists.addAll(results[1]);
@@ -69,19 +79,18 @@ class PlaylistPageState extends State<PlaylistPage> {
 
   Future<String> getUserPic(Playlist playlist) async {
     // For YouTube, if the playlist already includes a channelImage, use it.
-    if (playlist.app == MusicApp.YouTube){
-      if(playlist.channelImage != null && playlist.channelImage!.isNotEmpty) {
+    if (playlist.app == MusicApp.YouTube) {
+      if (playlist.channelImage != null && playlist.channelImage!.isNotEmpty) {
         return playlist.channelImage!;
-        }
-      else{
+      } else {
         return UserConstants.defaultAvatarUrl;
       }
     }
 
-    if (playlist.app == MusicApp.Apple){
-        return UserConstants.defaultAvatarUrl;
-      }
-  
+    if (playlist.app == MusicApp.Apple) {
+      return UserConstants.defaultAvatarUrl;
+    }
+
     final ownerId = playlist.playlistOwnerID;
     if (_userPicCache.containsKey(ownerId)) {
       print("Cache hit for $ownerId");
@@ -114,26 +123,28 @@ class PlaylistPageState extends State<PlaylistPage> {
   @override
   Widget build(BuildContext context) {
     // Filter playlists by app.
-    final appFilteredPlaylists = selectedAppFilter == "all"
-        ? playlists
-        : playlists.where((p) {
-            if (selectedAppFilter == "spotify") {
-              return p.app == MusicApp.Spotify;
-            } else if (selectedAppFilter == "youtube") {
-              return p.app == MusicApp.YouTube;
-            }
-            else if (selectedAppFilter == "apple") {
-              return p.app == MusicApp.Apple;
-            }
-            return true;
-          }).toList();
+    final appFilteredPlaylists =
+        selectedAppFilter == "all"
+            ? playlists
+            : playlists.where((p) {
+              if (selectedAppFilter == "spotify") {
+                return p.app == MusicApp.Spotify;
+              } else if (selectedAppFilter == "youtube") {
+                return p.app == MusicApp.YouTube;
+              } else if (selectedAppFilter == "apple") {
+                return p.app == MusicApp.Apple;
+              }
+              return true;
+            }).toList();
     // Filter by search query (playlist name or owner name).
-    final filteredPlaylists = _searchQuery.isEmpty
-        ? appFilteredPlaylists
-        : appFilteredPlaylists.where((p) {
-            final combined = ("${p.playlistName} ${p.playlistOwner}").toLowerCase();
-            return combined.contains(_searchQuery.toLowerCase());
-          }).toList();
+    final filteredPlaylists =
+        _searchQuery.isEmpty
+            ? appFilteredPlaylists
+            : appFilteredPlaylists.where((p) {
+              final combined =
+                  ("${p.playlistName} ${p.playlistOwner}").toLowerCase();
+              return combined.contains(_searchQuery.toLowerCase());
+            }).toList();
 
     return FutureBuilder<void>(
       future: _initializationFuture,
@@ -202,75 +213,88 @@ class PlaylistPageState extends State<PlaylistPage> {
               ),
               // Display filtered playlists.
               Expanded(
-                child: filteredPlaylists.isEmpty
-                    ? const Center(
-                        child: Text(
-                          'No playlists for selected filter',
-                          style: TextStyle(color: Colors.black),
-                        ),
-                      )
-                    : ListView.builder(
-                        itemCount: filteredPlaylists.length,
-                        itemBuilder: (context, index) {
-                          final playlist = filteredPlaylists[index];
-                          final shuffleState = shuffleStates[index] ?? false;
-                          final repeatState = repeatStates[index] ?? "off";
-                
-                          return PlaylistCard(
-                            playlist: playlist,
-                            shuffleState: shuffleState,
-                            repeatState: repeatState,
-                            getUserPic: getUserPic,
-                            onShuffleChanged: (bool? value) {
-                              setState(() {
-                                shuffleStates[index] = value ?? false;
-                              });
-                            },
-                            onRepeatChanged: (String? newValue) {
-                              setState(() {
-                                repeatStates[index] = newValue ?? "off";
-                              });
-                            },
-                            onPlayButtonPressed: () async {
-                              // For YouTube, use our backend endpoint to fetch all playlist tracks.
-                              if (playlist.app == MusicApp.YouTube) {
-                                try {
-                                  // Assuming AuthService provides the user's email.
-                                  final userEmail = await AuthService.getUserId();
-                                  // Call your custom backend endpoint.
-                                  final List<Track> songs = await mainAPI.fetchPlaylistTracks(userEmail, playlist.playlistId);
-                                  print('Playlist ID: ${playlist.playlistId}');
-                                  print('App: ${playlist.app}');
+                child:
+                    filteredPlaylists.isEmpty
+                        ? const Center(
+                          child: Text(
+                            'No playlists for selected filter',
+                            style: TextStyle(color: Colors.black),
+                          ),
+                        )
+                        : ListView.builder(
+                          itemCount: filteredPlaylists.length,
+                          itemBuilder: (context, index) {
+                            final playlist = filteredPlaylists[index];
+                            final shuffleState = shuffleStates[index] ?? false;
+                            final repeatState = repeatStates[index] ?? "off";
+
+                            return PlaylistCard(
+                              playlist: playlist,
+                              shuffleState: shuffleState,
+                              repeatState: repeatState,
+                              getUserPic: getUserPic,
+                              onShuffleChanged: (bool? value) {
+                                setState(() {
+                                  shuffleStates[index] = value ?? false;
+                                });
+                              },
+                              onRepeatChanged: (String? newValue) {
+                                setState(() {
+                                  repeatStates[index] = newValue ?? "off";
+                                });
+                              },
+                              onPlayButtonPressed: () async {
+                                // For YouTube, use our backend endpoint to fetch all playlist tracks.
+                                if (playlist.app == MusicApp.YouTube) {
+                                  try {
+                                    // Assuming AuthService provides the user's email.
+                                    final userEmail =
+                                        await AuthService.getUserId();
+                                    // Call your custom backend endpoint.
+                                    final List<Track> songs = await mainAPI
+                                        .fetchPlaylistTracks(
+                                          userEmail,
+                                          playlist.playlistId,
+                                        );
+                                    print(
+                                      'Playlist ID: ${playlist.playlistId}',
+                                    );
+                                    print('App: ${playlist.app}');
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder:
+                                            (context) => PlayerControlPage(
+                                              selectedPlaylistId:
+                                                  playlist.playlistId,
+                                              selectedApp: playlist.app,
+                                              songs:
+                                                  songs, // songs is now a List<Playlist>
+                                            ),
+                                      ),
+                                    );
+                                  } catch (e) {
+                                    print('Error fetching playlist tracks: $e');
+                                    // Optionally, show an error message.
+                                  }
+                                } else {
+                                  // For Spotify, navigate as before.
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => PlayerControlPage(
-                                        selectedPlaylistId: playlist.playlistId,
-                                        selectedApp: playlist.app,
-                                        songs: songs, // songs is now a List<Playlist>
-                                      ),
+                                      builder:
+                                          (context) => PlayerControlPage(
+                                            selectedPlaylistId:
+                                                playlist.playlistId,
+                                            selectedApp: playlist.app,
+                                          ),
                                     ),
                                   );
-                                } catch (e) {
-                                  print('Error fetching playlist tracks: $e');
-                                  // Optionally, show an error message.
                                 }
-                              } else {
-                                // For Spotify, navigate as before.
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => PlayerControlPage(
-                                      selectedPlaylistId: playlist.playlistId,
-                                      selectedApp: playlist.app,
-                                    ),
-                                  ),
-                                );
-                              }
-                            },
-                          );
-                        },
-                      ),
+                              },
+                            );
+                          },
+                        ),
               ),
             ],
           ),

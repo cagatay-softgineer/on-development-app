@@ -4,4 +4,3 @@ class UserSession {
   static String? userNAME;
   static int? currentChainStreak;
 }
-

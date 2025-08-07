@@ -19,7 +19,7 @@ class LoadingPage extends StatelessWidget {
     this.itemCount = 6,
     this.separatorHeight = 16.0,
     SkeletonItemBuilder? itemBuilder,
-  })  : itemBuilder = itemBuilder ?? _defaultRowBuilder;
+  }) : itemBuilder = itemBuilder ?? _defaultRowBuilder;
 
   // The old “circle avatar + two lines” skeleton:
   static Widget _defaultRowBuilder(BuildContext context, int index) {
@@ -57,11 +57,7 @@ class LoadingPage extends StatelessWidget {
               Shimmer.fromColors(
                 baseColor: Colors.grey.shade300,
                 highlightColor: Colors.grey.shade100,
-                child: Container(
-                  height: 14,
-                  width: 100,
-                  color: Colors.white,
-                ),
+                child: Container(height: 14, width: 100, color: Colors.white),
               ),
             ],
           ),

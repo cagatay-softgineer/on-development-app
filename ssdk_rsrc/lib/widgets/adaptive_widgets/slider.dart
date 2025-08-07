@@ -12,16 +12,17 @@ class AdaptiveSlider extends StatelessWidget {
   final String? label;
   final bool vertical;
   final void Function(double)? onChanged;
-  const AdaptiveSlider(
-      {required this.value,
-      this.disabled = false,
-      this.onChanged,
-      this.min = 0,
-      this.max = 1,
-      this.divisions,
-      this.label,
-      this.vertical = false,
-      super.key});
+  const AdaptiveSlider({
+    required this.value,
+    this.disabled = false,
+    this.onChanged,
+    this.min = 0,
+    this.max = 1,
+    this.divisions,
+    this.label,
+    this.vertical = false,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {

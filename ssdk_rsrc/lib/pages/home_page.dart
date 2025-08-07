@@ -167,7 +167,8 @@ class HomePageBodyState extends State<HomePageBody> {
                                   UserSession.currentChainStreak ??
                                   0, // <--- UPDATED
                               storePoints: 0,
-                              onChainTap: () => NavigationPage.of(context).showChain(),
+                              onChainTap:
+                                  () => NavigationPage.of(context).showChain(),
                             ),
                           ),
                           SizedBox(height: 20),
@@ -345,7 +346,12 @@ class HomePageBodyState extends State<HomePageBody> {
                                                 description:
                                                     "Start your Pomodoro session.",
                                                 child: GlowingIconButton(
-                                                  onPressed: () {Navigator.pushNamed(context, '/timer');},
+                                                  onPressed: () {
+                                                    Navigator.pushNamed(
+                                                      context,
+                                                      '/timer',
+                                                    );
+                                                  },
                                                   icon: FontAwesomeIcons.play,
                                                   iconColor:
                                                       ColorPalette
@@ -362,7 +368,12 @@ class HomePageBodyState extends State<HomePageBody> {
                                                 description:
                                                     "Access more features and settings.",
                                                 child: GlowingIconButton(
-                                                  onPressed: () {Navigator.pushNamed(context, '/timer');},
+                                                  onPressed: () {
+                                                    Navigator.pushNamed(
+                                                      context,
+                                                      '/timer',
+                                                    );
+                                                  },
                                                   icon: FontAwesomeIcons.gear,
                                                   iconColor:
                                                       ColorPalette

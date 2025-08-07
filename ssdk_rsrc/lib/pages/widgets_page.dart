@@ -28,7 +28,10 @@ class WidgetShowroomPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Widget Showroom',style: TextStyle(color: Youtube.white)),backgroundColor: Youtube.almostBlack,),
+      appBar: AppBar(
+        title: Text('Widget Showroom', style: TextStyle(color: Youtube.white)),
+        backgroundColor: Youtube.almostBlack,
+      ),
       backgroundColor: Youtube.almostBlack,
       body: Stack(
         children: [
@@ -62,11 +65,12 @@ class WidgetShowroomPage extends StatelessWidget {
                 ),
 
                 const _SectionTitle('Text Styles'),
+
                 // const Text('Headline 1', style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Colors.white)),
                 // const Text('Headline 2', style: TextStyle(fontSize: 28, fontWeight: FontWeight.w600, color: Colors.white70)),
                 // const Text('Body text – lorem ipsum dolor sit amet.', style: TextStyle(fontSize: 16, color: Colors.white60)),
-
                 const _SectionTitle('Form Fields & Toggles'),
+
                 // TextField(
                 //   decoration: InputDecoration(
                 //     filled: true,
@@ -97,8 +101,8 @@ class WidgetShowroomPage extends StatelessWidget {
                 //     ],
                 //   ),
                 // ),
-
                 const _SectionTitle('Cards & Lists'),
+
                 // Card(
                 //   color: Colors.white.withOpacity(0.9),
                 //   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -109,27 +113,19 @@ class WidgetShowroomPage extends StatelessWidget {
                 //     trailing: const Icon(Icons.chevron_right),
                 //   ),
                 // ),
-
                 const _SectionTitle('MeshGradient Demo'),
-                SizedBox(
-                  height: 400,
-                  child: GradientPallette.instagram,
-                ),
+                SizedBox(height: 400, child: GradientPallette.instagram),
                 SizedBox(
                   height: 400,
                   child: GradientPallette.animatedInstagram,
                 ),
-                SizedBox(
-                  height: 400,
-                  child: GradientPallette.animatedTest,
-                ),
-                SizedBox(
-                  height: 400,
-                  child: GradientPallette.test,
-                ),
+                SizedBox(height: 400, child: GradientPallette.animatedTest),
+                SizedBox(height: 400, child: GradientPallette.test),
                 Container(
                   height: 400,
-                  decoration: BoxDecoration(gradient:  GradientPallette.goldenOrder)
+                  decoration: BoxDecoration(
+                    gradient: GradientPallette.goldenOrder,
+                  ),
                 ),
                 const SizedBox(height: 24),
               ],

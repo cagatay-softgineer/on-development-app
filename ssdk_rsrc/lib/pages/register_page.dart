@@ -12,7 +12,6 @@ class RegisterPage extends StatefulWidget {
   _RegisterPageState createState() => _RegisterPageState();
 }
 
-
 class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
@@ -78,25 +77,30 @@ class _RegisterPageState extends State<RegisterPage> {
                 children: [
                   const SizedBox(height: 100),
                   const Text(
-                        'Welcome',
-                        style: TextStyle(
-                            fontFamily: 'Montserrat',
-                            fontSize: 28,
-                            fontWeight: FontWeight.bold,
-                            color: Color.fromARGB(255, 0, 0, 0)),
-                      ),
+                    'Welcome',
+                    style: TextStyle(
+                      fontFamily: 'Montserrat',
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                      color: Color.fromARGB(255, 0, 0, 0),
+                    ),
+                  ),
                   const SizedBox(height: 100),
-                  // Email Input
 
+                  // Email Input
                   const SizedBox(height: 5),
                   TextField(
                     controller: emailController,
                     decoration: InputDecoration(
-                      prefixIcon:
-                          const Icon(Icons.person, color: Color(0x89FFFFFF)),
+                      prefixIcon: const Icon(
+                        Icons.person,
+                        color: Color(0x89FFFFFF),
+                      ),
                       hintText: 'Enter your email',
                       hintStyle: const TextStyle(
-                          fontFamily: 'Montserrat', color: Color(0x89FFFFFF)),
+                        fontFamily: 'Montserrat',
+                        color: Color(0x89FFFFFF),
+                      ),
                       filled: true,
                       fillColor: const Color(0xFF292929),
                       border: OutlineInputBorder(
@@ -104,11 +108,13 @@ class _RegisterPageState extends State<RegisterPage> {
                       ),
                     ),
                     style: const TextStyle(
-                        fontFamily: 'Montserrat', color: Color(0xFFF6F6F6)),
+                      fontFamily: 'Montserrat',
+                      color: Color(0xFFF6F6F6),
+                    ),
                   ),
                   const SizedBox(height: 30),
-                  // Password Input
 
+                  // Password Input
                   const SizedBox(height: 5),
                   TextField(
                     controller: passwordController,
@@ -117,7 +123,9 @@ class _RegisterPageState extends State<RegisterPage> {
                       prefixIcon: const Icon(Icons.lock, color: Colors.white54),
                       hintText: 'Enter your password',
                       hintStyle: const TextStyle(
-                          fontFamily: 'Montserrat', color: Colors.white54),
+                        fontFamily: 'Montserrat',
+                        color: Colors.white54,
+                      ),
                       filled: true,
                       fillColor: const Color(0xFF292929),
                       border: OutlineInputBorder(
@@ -125,26 +133,30 @@ class _RegisterPageState extends State<RegisterPage> {
                       ),
                     ),
                     style: const TextStyle(
-                        fontFamily: 'Montserrat', color: Colors.white),
+                      fontFamily: 'Montserrat',
+                      color: Colors.white,
+                    ),
                   ),
                   const SizedBox(height: 20),
 
                   // Log In Button
                   CustomButton(
-                text: "Register", // Corrected typo
-                onPressed: () async {
-                  mainButtonParams.isLoading = true;
-                  final isLoggedIn = await register(context);
-                  mainButtonParams.isLoading = false;
+                    text: "Register", // Corrected typo
+                    onPressed: () async {
+                      mainButtonParams.isLoading = true;
+                      final isLoggedIn = await register(context);
+                      mainButtonParams.isLoading = false;
                       if (isLoggedIn && mounted) {
-                  Navigator.pushNamed(context, '/');
-                  ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Registration Successful!')),
-        );
+                        Navigator.pushNamed(context, '/');
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Registration Successful!'),
+                          ),
+                        );
                       }
-                },
-                buttonParams: mainButtonParams,
-              ),
+                    },
+                    buttonParams: mainButtonParams,
+                  ),
                 ],
               ),
             ),

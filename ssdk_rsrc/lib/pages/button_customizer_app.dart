@@ -28,7 +28,9 @@ class _ButtonCustomizerAppState extends State<ButtonCustomizerApp> {
         children: [
           // Button Preview Section with spacing
           Positioned(
-            top: MediaQuery.of(context).size.height * 0.25, // Adjust vertical position
+            top:
+                MediaQuery.of(context).size.height *
+                0.25, // Adjust vertical position
             left: 0,
             right: 0,
             child: Center(
@@ -43,8 +45,8 @@ class _ButtonCustomizerAppState extends State<ButtonCustomizerApp> {
           // Sliding Panel for Button Customization
           DraggableScrollableSheet(
             initialChildSize: 0.4, // Initial size of the panel
-            minChildSize: 0.2,     // Minimum size of the panel
-            maxChildSize: 0.9,     // Maximum size of the panel
+            minChildSize: 0.2, // Minimum size of the panel
+            maxChildSize: 0.9, // Maximum size of the panel
             builder: (BuildContext context, ScrollController scrollController) {
               return Container(
                 decoration: const BoxDecoration(

@@ -152,4 +152,3 @@ def load_JSONs():
         json.dump(json_data, file, indent=2)
 
     print(f"JSON file has been successfully written to: {file_path}")
-

@@ -15,13 +15,8 @@ class OverlayLoading extends StatelessWidget {
     return Stack(
       children: [
         child,
-        if (isLoading)
-          ModalBarrier(
-            color: Colors.black38,
-            dismissible: false,
-          ),
-        if (isLoading)
-          const Center(child: CircularProgressIndicator()),
+        if (isLoading) ModalBarrier(color: Colors.black38, dismissible: false),
+        if (isLoading) const Center(child: CircularProgressIndicator()),
       ],
     );
   }

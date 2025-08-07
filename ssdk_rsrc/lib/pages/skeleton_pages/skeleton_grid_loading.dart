@@ -24,16 +24,17 @@ class SkeletonGridLoader extends StatelessWidget {
             childAspectRatio: 1,
           ),
           itemCount: itemCount,
-          itemBuilder: (_, __) => Shimmer.fromColors(
-            baseColor: Colors.grey.shade300,
-            highlightColor: Colors.grey.shade100,
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(8),
+          itemBuilder:
+              (_, __) => Shimmer.fromColors(
+                baseColor: Colors.grey.shade300,
+                highlightColor: Colors.grey.shade100,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
               ),
-            ),
-          ),
         ),
       ),
     );

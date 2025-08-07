@@ -48,7 +48,7 @@ class ChessPointsWidget extends StatelessWidget {
               Shadow(blurRadius: 24, color: glowColor, offset: Offset(0, 0)),
             ],
           ),
-        )
+        ),
       ],
     );
   }

@@ -7,10 +7,7 @@ class FullScreenLinearLoader extends StatelessWidget {
   Widget build(BuildContext context) {
     return const Scaffold(
       body: Center(
-        child: SizedBox(
-          width: 200,
-          child: LinearProgressIndicator(),
-        ),
+        child: SizedBox(width: 200, child: LinearProgressIndicator()),
       ),
     );
   }

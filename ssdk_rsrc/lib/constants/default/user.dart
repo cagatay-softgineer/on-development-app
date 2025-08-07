@@ -6,7 +6,8 @@ class UserConstants {
   static const String defaultRole = 'user';
 
   /// Default avatar URL.
-  static const String defaultAvatarUrl = 'https://raw.githubusercontent.com/Yggbranch/assets/refs/heads/main/Badges/WebP/Asset%201%400.5x.webp';
+  static const String defaultAvatarUrl =
+      'https://raw.githubusercontent.com/Yggbranch/assets/refs/heads/main/Badges/WebP/Asset%201%400.5x.webp';
 
   /// Default language setting for the user.
   static const String defaultLanguage = 'en';

@@ -9,7 +9,8 @@ import 'package:ssdk_rsrc/widgets/glowing_text.dart';
 class CustomStatusBar extends StatelessWidget {
   final int stepCount;
   final int currentStep; // 0-based
-  final List<int>? barStates; // Optional, custom states for each bar: 0=not started, 1=started, 2=finished
+  final List<int>?
+  barStates; // Optional, custom states for each bar: 0=not started, 1=started, 2=finished
 
   const CustomStatusBar({
     super.key,

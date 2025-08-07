@@ -42,10 +42,7 @@ class PlaylistCard extends StatelessWidget {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
             gradient: LinearGradient(
-              colors: [
-                Colors.white,
-                Colors.grey.shade100,
-              ],
+              colors: [Colors.white, Colors.grey.shade100],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
@@ -70,7 +67,11 @@ class PlaylistCard extends StatelessWidget {
                           width: 75,
                           height: 75,
                           color: Colors.grey.shade300,
-                          child: const Icon(Icons.image, size: 40, color: Colors.white),
+                          child: const Icon(
+                            Icons.image,
+                            size: 40,
+                            color: Colors.white,
+                          ),
                         );
                       },
                     ),
@@ -111,23 +112,30 @@ class PlaylistCard extends StatelessWidget {
                           children: [
                             Expanded(
                               child: FutureBuilder<Map<String, dynamic>>(
-                                future: mainAPI.getPlaylistDuration(playlist.playlistId, playlist.app, playlist.playlistTrackCount),
+                                future: mainAPI.getPlaylistDuration(
+                                  playlist.playlistId,
+                                  playlist.app,
+                                  playlist.playlistTrackCount,
+                                ),
                                 builder: (context, snapshot) {
-                                  if (snapshot.connectionState == ConnectionState.waiting) {
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.waiting) {
                                     return Text(
                                       "Loading duration...",
-                                      style: theme.textTheme.bodySmall?.copyWith(
-                                        color: Colors.grey.shade600,
-                                      ),
+                                      style: theme.textTheme.bodySmall
+                                          ?.copyWith(
+                                            color: Colors.grey.shade600,
+                                          ),
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                     );
                                   } else if (snapshot.hasError) {
                                     return Text(
                                       "Error loading duration",
-                                      style: theme.textTheme.bodySmall?.copyWith(
-                                        color: Colors.grey.shade600,
-                                      ),
+                                      style: theme.textTheme.bodySmall
+                                          ?.copyWith(
+                                            color: Colors.grey.shade600,
+                                          ),
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                     );
@@ -137,18 +145,20 @@ class PlaylistCard extends StatelessWidget {
                                     if (data['error'] == true) {
                                       return Text(
                                         data['message'] ?? "Unavailable",
-                                        style: theme.textTheme.bodySmall?.copyWith(
-                                          color: Colors.grey.shade600,
-                                        ),
+                                        style: theme.textTheme.bodySmall
+                                            ?.copyWith(
+                                              color: Colors.grey.shade600,
+                                            ),
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
                                       );
                                     } else {
                                       return Text(
                                         "${data['formatted_duration']}",
-                                        style: theme.textTheme.bodySmall?.copyWith(
-                                          color: Colors.grey.shade600,
-                                        ),
+                                        style: theme.textTheme.bodySmall
+                                            ?.copyWith(
+                                              color: Colors.grey.shade600,
+                                            ),
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
                                       );
@@ -156,9 +166,10 @@ class PlaylistCard extends StatelessWidget {
                                   } else {
                                     return Text(
                                       "Unknown",
-                                      style: theme.textTheme.bodySmall?.copyWith(
-                                        color: Colors.grey.shade600,
-                                      ),
+                                      style: theme.textTheme.bodySmall
+                                          ?.copyWith(
+                                            color: Colors.grey.shade600,
+                                          ),
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                     );
@@ -218,11 +229,17 @@ class PlaylistCard extends StatelessWidget {
                           height: 40,
                           child: CircularProgressIndicator(strokeWidth: 2),
                         );
-                      } else if (snapshot.hasError || !snapshot.hasData || snapshot.data == null) {
+                      } else if (snapshot.hasError ||
+                          !snapshot.hasData ||
+                          snapshot.data == null) {
                         return CircleAvatar(
                           radius: 20,
                           backgroundColor: Colors.grey.shade300,
-                          child: const Icon(Icons.error, color: Colors.red, size: 20),
+                          child: const Icon(
+                            Icons.error,
+                            color: Colors.red,
+                            size: 20,
+                          ),
                         );
                       } else {
                         return CircleAvatar(

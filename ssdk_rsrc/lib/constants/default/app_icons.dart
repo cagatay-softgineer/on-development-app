@@ -23,11 +23,23 @@ class AppIcons {
   static Icon getAppIcon(MusicApp app) {
     switch (app) {
       case MusicApp.Spotify:
-        return const Icon(spotifyIcon, color: spotifyIconColor, size: spotifyIconSize);
+        return const Icon(
+          spotifyIcon,
+          color: spotifyIconColor,
+          size: spotifyIconSize,
+        );
       case MusicApp.YouTube:
-        return const Icon(youtubeIcon, color: youtubeIconColor, size: youtubeIconSize);
+        return const Icon(
+          youtubeIcon,
+          color: youtubeIconColor,
+          size: youtubeIconSize,
+        );
       case MusicApp.Apple:
-        return const Icon(appleIcon, color: appleIconColor, size: appleIconSize);
+        return const Icon(
+          appleIcon,
+          color: appleIconColor,
+          size: appleIconSize,
+        );
     }
   }
 }

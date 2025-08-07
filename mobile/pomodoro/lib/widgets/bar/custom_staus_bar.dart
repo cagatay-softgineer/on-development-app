@@ -35,7 +35,7 @@ class CustomStatusBar extends StatelessWidget {
         return ColorPalette.white;
       case 0:
       default:
-        return ColorPalette.white.withOpacity(0.3);
+        return ColorPalette.white.withAlpha((255*0.3) as int);
     }
   }
 

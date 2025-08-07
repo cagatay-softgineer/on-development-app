@@ -9,8 +9,12 @@ class AdaptiveButton extends fluent_ui.StatelessWidget {
   final Widget child;
   final void Function()? onPressed;
   final Color? color;
-  const AdaptiveButton(
-      {super.key, required this.child, required this.onPressed, this.color});
+  const AdaptiveButton({
+    super.key,
+    required this.child,
+    required this.onPressed,
+    this.color,
+  });
 
   @override
   Widget build(fluent_ui.BuildContext context) {
@@ -19,15 +23,12 @@ class AdaptiveButton extends fluent_ui.StatelessWidget {
         key: key,
         onPressed: onPressed,
         style: fluent_ui.ButtonStyle(
-            backgroundColor: WidgetStateProperty.all(color)),
+          backgroundColor: WidgetStateProperty.all(color),
+        ),
         child: child,
       );
     }
-    return TextButton(
-      key: key,
-      onPressed: onPressed,
-      child: child,
-    );
+    return TextButton(key: key, onPressed: onPressed, child: child);
   }
 }
 
@@ -77,8 +78,12 @@ class AdaptiveOutlinedButton extends fluent_ui.StatelessWidget {
   final Widget child;
   final void Function()? onPressed;
   final Color? color;
-  const AdaptiveOutlinedButton(
-      {super.key, required this.child, required this.onPressed, this.color});
+  const AdaptiveOutlinedButton({
+    super.key,
+    required this.child,
+    required this.onPressed,
+    this.color,
+  });
 
   @override
   Widget build(fluent_ui.BuildContext context) {
@@ -96,10 +101,11 @@ class AdaptiveOutlinedButton extends fluent_ui.StatelessWidget {
       key: key,
       onPressed: onPressed,
       style: ButtonStyle(
-          backgroundColor:
-              color != null ? WidgetStateProperty.all(color) : null,
-          foregroundColor:
-              WidgetStateProperty.all(Theme.of(context).colorScheme.primary)),
+        backgroundColor: color != null ? WidgetStateProperty.all(color) : null,
+        foregroundColor: WidgetStateProperty.all(
+          Theme.of(context).colorScheme.primary,
+        ),
+      ),
       child: child,
     );
   }
@@ -124,10 +130,12 @@ class AdaptiveIconButton extends StatelessWidget {
       return fluent_ui.IconButton(
         key: key,
         onPressed: onPressed,
-        style: isSelected == true
-            ? fluent_ui.ButtonStyle(
-                backgroundColor: WidgetStateProperty.all(color))
-            : null,
+        style:
+            isSelected == true
+                ? fluent_ui.ButtonStyle(
+                  backgroundColor: WidgetStateProperty.all(color),
+                )
+                : null,
         icon: icon,
       );
     }

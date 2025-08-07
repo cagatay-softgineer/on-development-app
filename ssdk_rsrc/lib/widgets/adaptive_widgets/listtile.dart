@@ -48,17 +48,18 @@ class AdaptiveListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
-    final TextStyle titleStyle = mediumTextStyle(context, bold: false).copyWith(
-      fontSize: dense ? 14.0 : 16.0,
-    );
+    final TextStyle titleStyle = mediumTextStyle(
+      context,
+      bold: false,
+    ).copyWith(fontSize: dense ? 14.0 : 16.0);
 
-    final TextStyle subtitleStyle = subtitleTextStyle(context).copyWith(
-      fontSize: dense ? 12.0 : 14.0,
-    );
+    final TextStyle subtitleStyle = subtitleTextStyle(
+      context,
+    ).copyWith(fontSize: dense ? 12.0 : 14.0);
 
-    final TextStyle descriptionStyle = smallTextStyle(context).copyWith(
-      fontSize: dense ? 12.0 : 14.0,
-    );
+    final TextStyle descriptionStyle = smallTextStyle(
+      context,
+    ).copyWith(fontSize: dense ? 12.0 : 14.0);
 
     return Container(
       margin: margin,
@@ -74,12 +75,14 @@ class AdaptiveListTile extends StatelessWidget {
           child: ClipRRect(
             borderRadius: BorderRadius.circular(4),
             child: Container(
-              padding: contentPadding ??
+              padding:
+                  contentPadding ??
                   const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
               decoration: BoxDecoration(
-                color: selected
-                    ? theme.colorScheme.primary.withOpacity(0.1)
-                    : backgroundColor,
+                color:
+                    selected
+                        ? theme.colorScheme.primary.withOpacity(0.1)
+                        : backgroundColor,
               ),
               child: Column(
                 children: [
@@ -87,10 +90,11 @@ class AdaptiveListTile extends StatelessWidget {
                     children: [
                       if (leading != null) ...[
                         IconTheme(
-                            data: Theme.of(context)
-                                .iconTheme
-                                .copyWith(size: dense ? 24 : 28),
-                            child: leading!),
+                          data: Theme.of(
+                            context,
+                          ).iconTheme.copyWith(size: dense ? 24 : 28),
+                          child: leading!,
+                        ),
                         const SizedBox(width: 16.0),
                       ],
                       Expanded(

@@ -4,7 +4,6 @@ import 'package:dio/dio.dart';
 import 'package:ssdk_rsrc/services/main_api.dart';
 
 class SpotifyAPI {
-    
   final Dio _dio = Dio(
     BaseOptions(
       baseUrl: 'https://api.spotify.com/',
@@ -27,7 +26,9 @@ class SpotifyAPI {
 
       if (response.statusCode == 200 && response.data is Map<String, dynamic>) {
         // Parse the response data
-        final Map<String, dynamic> result = Map<String, dynamic>.from(response.data);
+        final Map<String, dynamic> result = Map<String, dynamic>.from(
+          response.data,
+        );
 
         // Check if 'devices' key exists and is an empty list
         if (result.containsKey('devices') && result['devices'] is List) {
@@ -36,7 +37,8 @@ class SpotifyAPI {
           if (devices.isEmpty) {
             return {
               'error': true,
-              'message': 'No devices found. Please make sure you have an active Spotify device.',
+              'message':
+                  'No devices found. Please make sure you have an active Spotify device.',
               'status_code': 200, // Keep the status code for reference
             };
           }
@@ -65,7 +67,8 @@ class SpotifyAPI {
       if (e.type == DioExceptionType.connectionTimeout) {
         return {
           'error': true,
-          'message': 'Connection timed out. Please check your internet connection.',
+          'message':
+              'Connection timed out. Please check your internet connection.',
           'status_code': e.response?.statusCode,
         };
       } else if (e.type == DioExceptionType.receiveTimeout) {
@@ -77,7 +80,8 @@ class SpotifyAPI {
       } else if (e.type == DioExceptionType.badResponse) {
         // Handle bad responses (non-2xx status codes)
         String errorMessage = 'Failed to retrieve devices.';
-        if (e.response?.data != null && e.response?.data is Map<String, dynamic>) {
+        if (e.response?.data != null &&
+            e.response?.data is Map<String, dynamic>) {
           if (e.response!.data.containsKey('error')) {
             errorMessage = e.response!.data['error']['message'] ?? errorMessage;
           }
@@ -107,8 +111,12 @@ class SpotifyAPI {
     }
   }
 
-  Future<bool> setRepeatMode(String? userId, String? deviceId, String? state) async {
-    // State can be 
+  Future<bool> setRepeatMode(
+    String? userId,
+    String? deviceId,
+    String? state,
+  ) async {
+    // State can be
     //track, context or off.
     //track will repeat the current track.
     //context will repeat the current context.
@@ -117,12 +125,8 @@ class SpotifyAPI {
     try {
       final response = await _dio.put(
         'v1/me/player/repeat?state=$state&device_id=$deviceId',
-        options: Options(
-          headers: {
-            'Authorization': 'Bearer $token',
-          },
-        ),
-        );
+        options: Options(headers: {'Authorization': 'Bearer $token'}),
+      );
 
       if (response.statusCode == 204 || response.statusCode == 200) {
         // Successfully started playback
@@ -137,20 +141,20 @@ class SpotifyAPI {
     }
   }
 
-  Future<bool> setShuffleMode(String? userId, String? deviceId, bool? state) async {
-    // State can be 
+  Future<bool> setShuffleMode(
+    String? userId,
+    String? deviceId,
+    bool? state,
+  ) async {
+    // State can be
     //true, false
 
     final token = await mainAPI.getToken(userId);
     try {
       final response = await _dio.put(
         'v1/me/player/shuffle?state=$state&device_id=$deviceId',
-        options: Options(
-          headers: {
-            'Authorization': 'Bearer $token',
-          },
-        ),
-        );
+        options: Options(headers: {'Authorization': 'Bearer $token'}),
+      );
 
       if (response.statusCode == 204 || response.statusCode == 200) {
         // Successfully started playback
@@ -165,24 +169,26 @@ class SpotifyAPI {
     }
   }
 
-  Future<bool> playPlaylist(String? playlistId, String? userId, String? deviceId) async {
+  Future<bool> playPlaylist(
+    String? playlistId,
+    String? userId,
+    String? deviceId,
+  ) async {
     final token = await mainAPI.getToken(userId);
     try {
       final response = await _dio.put(
         'v1/me/player/play?device_id=$deviceId',
         data: {
-      "context_uri": "spotify:playlist:$playlistId",
-      "offset": {
-        "position": 0
-      },
-      "position_ms": 0
-    },
+          "context_uri": "spotify:playlist:$playlistId",
+          "offset": {"position": 0},
+          "position_ms": 0,
+        },
         options: Options(
           headers: {
             'Authorization': 'Bearer $token', // JWT token ekle
           },
         ),
-        );
+      );
 
       if (response.statusCode == 204) {
         // Successfully started playback
@@ -207,7 +213,7 @@ class SpotifyAPI {
             'Authorization': 'Bearer $token', // JWT token ekle
           },
         ),
-        );
+      );
 
       if (response.statusCode == 204) {
         // Successfully started playback
@@ -232,7 +238,7 @@ class SpotifyAPI {
             'Authorization': 'Bearer $token', // JWT token ekle
           },
         ),
-        );
+      );
 
       if (response.statusCode == 204) {
         // Successfully started playback
@@ -257,7 +263,7 @@ class SpotifyAPI {
             'Authorization': 'Bearer $token', // JWT token ekle
           },
         ),
-        );
+      );
 
       if (response.statusCode == 204) {
         // Successfully started playback
@@ -273,54 +279,58 @@ class SpotifyAPI {
   }
 
   Future<bool> skipToPrevious(String? userId, String? deviceId) async {
-      final token = await mainAPI.getToken(userId);
-      try {
-        final response = await _dio.post(
-          'v1/me/player/previous?device_id=$deviceId',
-          options: Options(
-            headers: {
-              'Authorization': 'Bearer $token', // JWT token ekle
-            },
-          ),
-          );
+    final token = await mainAPI.getToken(userId);
+    try {
+      final response = await _dio.post(
+        'v1/me/player/previous?device_id=$deviceId',
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token', // JWT token ekle
+          },
+        ),
+      );
 
-        if (response.statusCode == 204) {
-          // Successfully started playback
-          return true;
-        } else {
-          print('Failed to play playlist: ${response.statusCode}');
-          return false;
-        }
-      } catch (e) {
-        print('Error playing playlist: $e');
+      if (response.statusCode == 204) {
+        // Successfully started playback
+        return true;
+      } else {
+        print('Failed to play playlist: ${response.statusCode}');
         return false;
       }
+    } catch (e) {
+      print('Error playing playlist: $e');
+      return false;
     }
+  }
 
-  Future<bool> seekToPosition(String? userId, String? deviceId, String? positionMs) async {
-      final token = await mainAPI.getToken(userId);
-      try {
-        final response = await _dio.put(
-          'v1/me/player/seek?position_ms=$positionMs&device_id=$deviceId',
-          options: Options(
-            headers: {
-              'Authorization': 'Bearer $token', // JWT token ekle
-            },
-          ),
-          );
+  Future<bool> seekToPosition(
+    String? userId,
+    String? deviceId,
+    String? positionMs,
+  ) async {
+    final token = await mainAPI.getToken(userId);
+    try {
+      final response = await _dio.put(
+        'v1/me/player/seek?position_ms=$positionMs&device_id=$deviceId',
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token', // JWT token ekle
+          },
+        ),
+      );
 
-        if (response.statusCode == 204) {
-          // Successfully started playback
-          return true;
-        } else {
-          print('Failed to play playlist: ${response.statusCode}');
-          return false;
-        }
-      } catch (e) {
-        print('Error playing playlist: $e');
+      if (response.statusCode == 204) {
+        // Successfully started playback
+        return true;
+      } else {
+        print('Failed to play playlist: ${response.statusCode}');
         return false;
       }
+    } catch (e) {
+      print('Error playing playlist: $e');
+      return false;
     }
+  }
 
   Future<Map<String, dynamic>> getPlayer(String? userId) async {
     final token = await mainAPI.getToken(userId);
@@ -336,7 +346,9 @@ class SpotifyAPI {
 
       if (response.statusCode == 200 && response.data is Map<String, dynamic>) {
         // Parse the response data
-        final Map<String, dynamic> result = Map<String, dynamic>.from(response.data);
+        final Map<String, dynamic> result = Map<String, dynamic>.from(
+          response.data,
+        );
 
         // Include the status code in the response
         result['status_code'] = response.statusCode;
@@ -361,7 +373,8 @@ class SpotifyAPI {
       if (e.type == DioExceptionType.connectionTimeout) {
         return {
           'error': true,
-          'message': 'Connection timed out. Please check your internet connection.',
+          'message':
+              'Connection timed out. Please check your internet connection.',
           'status_code': e.response?.statusCode,
         };
       } else if (e.type == DioExceptionType.receiveTimeout) {
@@ -373,7 +386,8 @@ class SpotifyAPI {
       } else if (e.type == DioExceptionType.badResponse) {
         // Handle bad responses (non-2xx status codes)
         String errorMessage = 'Failed to retrieve player information.';
-        if (e.response?.data != null && e.response?.data is Map<String, dynamic>) {
+        if (e.response?.data != null &&
+            e.response?.data is Map<String, dynamic>) {
           if (e.response!.data.containsKey('error')) {
             errorMessage = e.response!.data['error']['message'] ?? errorMessage;
           }
@@ -401,5 +415,4 @@ class SpotifyAPI {
       };
     }
   }
-
 }

@@ -107,7 +107,11 @@ class SkeletonButton extends StatelessWidget {
     final prov = SkeletonProvider.of(context);
     if (prov.isLoading) {
       // match typical button size ~48
-      return SkeletonBox(width: width, height: height, borderRadius: const BorderRadius.all(Radius.circular(8)));
+      return SkeletonBox(
+        width: width,
+        height: height,
+        borderRadius: const BorderRadius.all(Radius.circular(8)),
+      );
     }
     return ElevatedButton(onPressed: onPressed, style: style, child: child);
   }
@@ -131,7 +135,11 @@ class SkeletonImage extends StatelessWidget {
   Widget build(BuildContext context) {
     final prov = SkeletonProvider.of(context);
     if (prov.isLoading) {
-      return SkeletonBox(width: width, height: height, borderRadius: BorderRadius.circular(8));
+      return SkeletonBox(
+        width: width,
+        height: height,
+        borderRadius: BorderRadius.circular(8),
+      );
     }
     return Image(image: image, width: width, height: height, fit: fit);
   }
@@ -178,10 +186,7 @@ class SkeletonText extends StatelessWidget {
         ),
       );
     } else {
-      return Text(
-        text,
-        style: style,
-      );
+      return Text(text, style: style);
     }
   }
 }

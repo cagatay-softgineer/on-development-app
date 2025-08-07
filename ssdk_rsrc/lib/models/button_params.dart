@@ -41,10 +41,11 @@ class ButtonParams {
     Color backgroundColor = Colors.blue,
     Color textColor = Colors.white,
     double borderRadius = 8.0,
-    EdgeInsetsGeometry padding =
-        const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
-    TextStyle textStyle =
-        const TextStyle(fontSize: 16, color: Colors.white),
+    EdgeInsetsGeometry padding = const EdgeInsets.symmetric(
+      vertical: 12,
+      horizontal: 24,
+    ),
+    TextStyle textStyle = const TextStyle(fontSize: 16, color: Colors.white),
     double elevation = 4.0,
     double buttonWidth = 200.0,
     double buttonHeight = 50.0,
@@ -67,33 +68,33 @@ class ButtonParams {
     String fontFamily = 'Roboto',
     double backgroundAlpha = 1.0, // Default opacity
     double iconSize = 12,
-  })  : _backgroundColor = backgroundColor,
-        _textColor = textColor,
-        _borderRadius = borderRadius,
-        _padding = padding,
-        _textStyle = textStyle,
-        _elevation = elevation,
-        _buttonWidth = buttonWidth,
-        _buttonHeight = buttonHeight,
-        _borderColor = borderColor,
-        _letterSpacing = letterSpacing,
-        _blurAmount = blurAmount,
-        _useGradient = useGradient,
-        _gradientStartColor = gradientStartColor,
-        _gradientEndColor = gradientEndColor,
-        _leadingIcon = leadingIcon,
-        _trailingIcon = trailingIcon,
-        _textAlign = textAlign,
-        _isEnabled = isEnabled,
-        _shape = shape,
-        _hoverColor = hoverColor,
-        _focusColor = focusColor,
-        _shadowColor = shadowColor,
-        _shadowOffset = shadowOffset,
-        _isLoading = isLoading,
-        _fontFamily = fontFamily,
-        _backgroundAlpha = backgroundAlpha,
-        _iconSize = iconSize;
+  }) : _backgroundColor = backgroundColor,
+       _textColor = textColor,
+       _borderRadius = borderRadius,
+       _padding = padding,
+       _textStyle = textStyle,
+       _elevation = elevation,
+       _buttonWidth = buttonWidth,
+       _buttonHeight = buttonHeight,
+       _borderColor = borderColor,
+       _letterSpacing = letterSpacing,
+       _blurAmount = blurAmount,
+       _useGradient = useGradient,
+       _gradientStartColor = gradientStartColor,
+       _gradientEndColor = gradientEndColor,
+       _leadingIcon = leadingIcon,
+       _trailingIcon = trailingIcon,
+       _textAlign = textAlign,
+       _isEnabled = isEnabled,
+       _shape = shape,
+       _hoverColor = hoverColor,
+       _focusColor = focusColor,
+       _shadowColor = shadowColor,
+       _shadowOffset = shadowOffset,
+       _isLoading = isLoading,
+       _fontFamily = fontFamily,
+       _backgroundAlpha = backgroundAlpha,
+       _iconSize = iconSize;
 
   // ==================== Getters ====================
 
@@ -307,8 +308,8 @@ class ButtonParams {
       shadowOffset: _parseOffset(jsonData['shadowOffset']),
       isLoading: jsonData['isLoading'] as bool,
       fontFamily: jsonData['fontFamily'] as String,
-      backgroundAlpha : (jsonData['backgroundAlpha'] as num).toDouble(),
-      iconSize : (jsonData['iconSize'] as num).toDouble(),
+      backgroundAlpha: (jsonData['backgroundAlpha'] as num).toDouble(),
+      iconSize: (jsonData['iconSize'] as num).toDouble(),
     );
   }
 
@@ -316,33 +317,33 @@ class ButtonParams {
 
   /// Named constructor to create a ButtonParams object from a Map
   ButtonParams.fromMap(Map<String, dynamic> jsonData)
-      : _backgroundColor = _parseColor(jsonData['backgroundColor']),
-        _textColor = _parseColor(jsonData['textColor']),
-        _borderRadius = (jsonData['borderRadius'] as num).toDouble(),
-        _padding = _parseEdgeInsets(jsonData['padding']),
-        _textStyle = _parseTextStyle(jsonData['textStyle']),
-        _elevation = (jsonData['elevation'] as num).toDouble(),
-        _buttonWidth = (jsonData['buttonWidth'] as num).toDouble(),
-        _buttonHeight = (jsonData['buttonHeight'] as num).toDouble(),
-        _borderColor = _parseColor(jsonData['borderColor']),
-        _letterSpacing = (jsonData['letterSpacing'] as num).toDouble(),
-        _blurAmount = (jsonData['blurAmount'] as num).toDouble(),
-        _useGradient = jsonData['useGradient'] as bool,
-        _gradientStartColor = _parseColor(jsonData['gradientStartColor']),
-        _gradientEndColor = _parseColor(jsonData['gradientEndColor']),
-        _leadingIcon = _parseIconData(jsonData['leadingIcon']),
-        _trailingIcon = _parseIconData(jsonData['trailingIcon']),
-        _textAlign = _parseTextAlign(jsonData['textAlign']),
-        _isEnabled = jsonData['isEnabled'] as bool,
-        _shape = _parseBoxShape(jsonData['shape']),
-        _hoverColor = _parseColor(jsonData['hoverColor']),
-        _focusColor = _parseColor(jsonData['focusColor']),
-        _shadowColor = _parseColor(jsonData['shadowColor']),
-        _shadowOffset = _parseOffset(jsonData['shadowOffset']),
-        _isLoading = jsonData['isLoading'] as bool,
-        _fontFamily = jsonData['fontFamily'] as String,
-        _backgroundAlpha = (jsonData['backgroundAlpha'] as num).toDouble(),
-        _iconSize = (jsonData['iconSize'] as num).toDouble();
+    : _backgroundColor = _parseColor(jsonData['backgroundColor']),
+      _textColor = _parseColor(jsonData['textColor']),
+      _borderRadius = (jsonData['borderRadius'] as num).toDouble(),
+      _padding = _parseEdgeInsets(jsonData['padding']),
+      _textStyle = _parseTextStyle(jsonData['textStyle']),
+      _elevation = (jsonData['elevation'] as num).toDouble(),
+      _buttonWidth = (jsonData['buttonWidth'] as num).toDouble(),
+      _buttonHeight = (jsonData['buttonHeight'] as num).toDouble(),
+      _borderColor = _parseColor(jsonData['borderColor']),
+      _letterSpacing = (jsonData['letterSpacing'] as num).toDouble(),
+      _blurAmount = (jsonData['blurAmount'] as num).toDouble(),
+      _useGradient = jsonData['useGradient'] as bool,
+      _gradientStartColor = _parseColor(jsonData['gradientStartColor']),
+      _gradientEndColor = _parseColor(jsonData['gradientEndColor']),
+      _leadingIcon = _parseIconData(jsonData['leadingIcon']),
+      _trailingIcon = _parseIconData(jsonData['trailingIcon']),
+      _textAlign = _parseTextAlign(jsonData['textAlign']),
+      _isEnabled = jsonData['isEnabled'] as bool,
+      _shape = _parseBoxShape(jsonData['shape']),
+      _hoverColor = _parseColor(jsonData['hoverColor']),
+      _focusColor = _parseColor(jsonData['focusColor']),
+      _shadowColor = _parseColor(jsonData['shadowColor']),
+      _shadowOffset = _parseOffset(jsonData['shadowOffset']),
+      _isLoading = jsonData['isLoading'] as bool,
+      _fontFamily = jsonData['fontFamily'] as String,
+      _backgroundAlpha = (jsonData['backgroundAlpha'] as num).toDouble(),
+      _iconSize = (jsonData['iconSize'] as num).toDouble();
 
   // ==================== Helper Methods ====================
 
@@ -358,7 +359,8 @@ class ButtonParams {
 
   static EdgeInsetsGeometry _parseEdgeInsets(String paddingString) {
     final regex = RegExp(
-        r'EdgeInsets\((\d+.?\d*), (\d+.?\d*), (\d+.?\d*), (\d+.?\d*)\)');
+      r'EdgeInsets\((\d+.?\d*), (\d+.?\d*), (\d+.?\d*), (\d+.?\d*)\)',
+    );
     final match = regex.firstMatch(paddingString);
     if (match != null) {
       return EdgeInsets.fromLTRB(
@@ -374,7 +376,8 @@ class ButtonParams {
   static TextStyle _parseTextStyle(String textStyleString) {
     // Basic parsing for fontSize and color
     final regex = RegExp(
-        r'TextStyle\(fontSize: (\d+.?\d*), color: Color\(0x([0-9A-Fa-f]{8})\)\)');
+      r'TextStyle\(fontSize: (\d+.?\d*), color: Color\(0x([0-9A-Fa-f]{8})\)\)',
+    );
     final match = regex.firstMatch(textStyleString);
     if (match != null) {
       final fontSize = double.parse(match.group(1)!);
@@ -396,13 +399,13 @@ class ButtonParams {
     return Offset.zero;
   }
 
-  
   static IconData? _parseIconData(String iconString) {
     try {
       if (iconString == 'None' || iconString.trim().isEmpty) {
         return null;
       }
-      return iconMapping[iconString] ?? Icons.help; // Return Icons.help if not found
+      return iconMapping[iconString] ??
+          Icons.help; // Return Icons.help if not found
     } catch (e) {
       // Log the error for debugging purposes
       //print('Error parsing icon: $e');
@@ -424,6 +427,8 @@ class ButtonParams {
   }
 
   static BoxShape _parseBoxShape(String shapeString) {
-    return shapeString == 'BoxShape.circle' ? BoxShape.circle : BoxShape.rectangle;
+    return shapeString == 'BoxShape.circle'
+        ? BoxShape.circle
+        : BoxShape.rectangle;
   }
 }

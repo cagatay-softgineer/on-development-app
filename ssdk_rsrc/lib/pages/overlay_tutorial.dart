@@ -19,11 +19,9 @@ class _RegisterPageState extends State<RegisterPage> {
     super.initState();
     // Start the tutorial after the first frame
     WidgetsBinding.instance.addPostFrameCallback(
-      (_) => ShowCaseWidget.of(context).startShowCase([
-        _emailKey,
-        _passwordKey,
-        _registerBtnKey,
-      ]),
+      (_) => ShowCaseWidget.of(
+        context,
+      ).startShowCase([_emailKey, _passwordKey, _registerBtnKey]),
     );
   }
 

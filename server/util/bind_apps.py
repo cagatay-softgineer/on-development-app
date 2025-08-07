@@ -8,6 +8,7 @@ from typing import Tuple
 
 logger = get_logger("logs", "Bind Apps")
 
+
 def _fetch_binding_state(
     *,
     app_name: str,

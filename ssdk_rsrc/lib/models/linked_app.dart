@@ -12,8 +12,8 @@ class LinkedApp {
   bool isLinked;
 
   LinkedApp({
-    required this.name,          // Name must be provided
-    required this.appColor,      // Color must be provided and is final
+    required this.name, // Name must be provided
+    required this.appColor, // Color must be provided and is final
     this.buttonText = "",
     this.userPic = "",
     this.appPic = "",

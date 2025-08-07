@@ -488,13 +488,7 @@ class _PlayerControlPageState extends State<PlayerControlPage> {
         //   ],
         // ),
         backgroundColor: ColorPalette.backgroundColor,
-        body: SafeArea(
-          child: Stack(
-            children: [
-              _buildApplePlayerWidget(),
-            ],
-          ),
-        ),
+        body: SafeArea(child: Stack(children: [_buildApplePlayerWidget()])),
       );
     } else if (widget.selectedApp == MusicApp.YouTube) {
       return Scaffold(
@@ -508,13 +502,7 @@ class _PlayerControlPageState extends State<PlayerControlPage> {
         //   ],
         // ),
         backgroundColor: ColorPalette.backgroundColor,
-        body: SafeArea(
-          child: Stack(
-            children: [
-              _buildYoutubePlayerWidget(),
-            ],
-          ),
-        ),
+        body: SafeArea(child: Stack(children: [_buildYoutubePlayerWidget()])),
       );
     } else {
       // Spotify branch.

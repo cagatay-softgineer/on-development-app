@@ -7,10 +7,10 @@ import 'package:ssdk_rsrc/styles/button_styles.dart';
 import 'dart:async';
 import 'package:ssdk_rsrc/services/main_api.dart';
 import 'package:ssdk_rsrc/models/playlist.dart';
-import 'package:ssdk_rsrc/utils/timer_funcs.dart';       // Timer utilities (player state functions)
-import 'package:ssdk_rsrc/utils/pomodoro_funcs.dart';    // Pomodoro mixin
-import 'package:ssdk_rsrc/widgets/player_widget.dart';   // Custom player widget
-import 'package:ssdk_rsrc/widgets/music_player.dart';   // Custom player widget
+import 'package:ssdk_rsrc/utils/timer_funcs.dart'; // Timer utilities (player state functions)
+import 'package:ssdk_rsrc/utils/pomodoro_funcs.dart'; // Pomodoro mixin
+import 'package:ssdk_rsrc/widgets/player_widget.dart'; // Custom player widget
+import 'package:ssdk_rsrc/widgets/music_player.dart'; // Custom player widget
 import 'package:ssdk_rsrc/widgets/pie_time_selector.dart'; // New PieTimeSelector widget
 
 class CustomTimerPage extends StatefulWidget {
@@ -45,7 +45,10 @@ class _CustomTimerPageState extends State<CustomTimerPage> with PomodoroMixin {
 
   String get formattedPomodoroTime {
     final minutes = pomodoroRemaining.inMinutes.remainder(60).toString();
-    final seconds = pomodoroRemaining.inSeconds.remainder(60).toString().padLeft(2, '0');
+    final seconds = pomodoroRemaining.inSeconds
+        .remainder(60)
+        .toString()
+        .padLeft(2, '0');
     return '$minutes:$seconds';
   }
 
@@ -78,7 +81,8 @@ class _CustomTimerPageState extends State<CustomTimerPage> with PomodoroMixin {
       initializeUserAndPlaylists(
         updateUserId: (id) => setState(() => userID = id),
         updatePlaylists: (list) => setState(() => _playlists = list),
-        updateIsLoading: (loading) => setState(() => _isLoadingPlaylists = loading),
+        updateIsLoading:
+            (loading) => setState(() => _isLoadingPlaylists = loading),
       );
     });
   }
@@ -101,9 +105,7 @@ class _CustomTimerPageState extends State<CustomTimerPage> with PomodoroMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Pomodoro Timer'),
-      ),
+      appBar: AppBar(title: const Text('Pomodoro Timer')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Center(
@@ -113,73 +115,91 @@ class _CustomTimerPageState extends State<CustomTimerPage> with PomodoroMixin {
               children: [
                 Text(
                   isWorkPhase ? 'Work Time' : 'Break Time',
-                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 Text(
                   formattedPomodoroTime,
-                  style: const TextStyle(fontSize: 48, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                    fontSize: 48,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 const SizedBox(height: 20),
                 _isLoadingPlaylists
                     ? const CircularProgressIndicator()
                     : DropdownButton<Playlist>(
-                        hint: const Text("Select Playlist"),
-                        value: _selectedPlaylist,
-                        isExpanded: true,
-                        items: _playlists.map((playlist) {
-                          return DropdownMenuItem<Playlist>(
-                            value: playlist,
-                            child: Row(
-                              children: [
-                                Container(
-                                  width: 40,
-                                  height: 40,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(4),
-                                    image: DecorationImage(
-                                      image: NetworkImage(playlist.playlistImage),
-                                      fit: BoxFit.cover,
+                      hint: const Text("Select Playlist"),
+                      value: _selectedPlaylist,
+                      isExpanded: true,
+                      items:
+                          _playlists.map((playlist) {
+                            return DropdownMenuItem<Playlist>(
+                              value: playlist,
+                              child: Row(
+                                children: [
+                                  Container(
+                                    width: 40,
+                                    height: 40,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(4),
+                                      image: DecorationImage(
+                                        image: NetworkImage(
+                                          playlist.playlistImage,
+                                        ),
+                                        fit: BoxFit.cover,
+                                      ),
                                     ),
                                   ),
-                                ),
-                                const SizedBox(width: 8),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        playlist.playlistName,
-                                        style: const TextStyle(fontWeight: FontWeight.bold),
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                      Text(
-                                        playlist.playlistOwner,
-                                        style: const TextStyle(fontSize: 12, color: Colors.grey),
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ],
+                                  const SizedBox(width: 8),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          playlist.playlistName,
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                        Text(
+                                          playlist.playlistOwner,
+                                          style: const TextStyle(
+                                            fontSize: 12,
+                                            color: Colors.grey,
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                ),
-                              ],
-                            ),
-                          );
-                        }).toList(),
-                        onChanged: (Playlist? newPlaylist) {
-                          setState(() {
-                            _selectedPlaylist = newPlaylist;
-                          });
-                        },
-                      ),
+                                ],
+                              ),
+                            );
+                          }).toList(),
+                      onChanged: (Playlist? newPlaylist) {
+                        setState(() {
+                          _selectedPlaylist = newPlaylist;
+                        });
+                      },
+                    ),
                 const SizedBox(height: 20),
                 Card(
                   elevation: 4,
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12)),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                   child: ExpansionTile(
                     title: const Text(
                       'Timer Settings',
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     initiallyExpanded: isTimeSelectorExpanded,
                     onExpansionChanged: (expanded) {
@@ -257,12 +277,20 @@ class _CustomTimerPageState extends State<CustomTimerPage> with PomodoroMixin {
                           longBreak: Duration(minutes: _longBreakMinutes),
                           sessionsBeforeLongBreak: _sessionsBeforeLongBreak,
                         );
-                        _musicPlayerKey.currentState!.switchLayout(PlayerLayoutType.focus);
+                        _musicPlayerKey.currentState!.switchLayout(
+                          PlayerLayoutType.focus,
+                        );
                         // If a playlist is selected, start playing it.
-                        if (_selectedPlaylist != null && userID != null && userID!.isNotEmpty) {
+                        if (_selectedPlaylist != null &&
+                            userID != null &&
+                            userID!.isNotEmpty) {
                           final response = await spotifyAPI.getDevices(userID);
                           final deviceId = extractFirstDeviceId(response);
-                          await spotifyAPI.playPlaylist(_selectedPlaylist!.playlistId, userID, deviceId);
+                          await spotifyAPI.playPlaylist(
+                            _selectedPlaylist!.playlistId,
+                            userID,
+                            deviceId,
+                          );
                         }
                       },
                       buttonParams: startSessionSmallButtonParams,
@@ -283,10 +311,14 @@ class _CustomTimerPageState extends State<CustomTimerPage> with PomodoroMixin {
                   onPressed: () {
                     if (_musicPlayerKey.currentState != null) {
                       if (focusMode) {
-                        _musicPlayerKey.currentState!.switchLayout(PlayerLayoutType.compact);
+                        _musicPlayerKey.currentState!.switchLayout(
+                          PlayerLayoutType.compact,
+                        );
                         focusMode = false;
                       } else {
-                        _musicPlayerKey.currentState!.switchLayout(PlayerLayoutType.focus);
+                        _musicPlayerKey.currentState!.switchLayout(
+                          PlayerLayoutType.focus,
+                        );
                         focusMode = true;
                       }
                     }
@@ -361,7 +393,9 @@ class _CustomTimerPageState extends State<CustomTimerPage> with PomodoroMixin {
             } else {
               return Container(
                 height: 210,
-                child: const Center(child: Text('No track is currently playing.')),
+                child: const Center(
+                  child: Text('No track is currently playing.'),
+                ),
               );
             }
           } else {

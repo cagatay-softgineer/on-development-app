@@ -9,7 +9,8 @@ class PlaylistConstants {
   static const String defaultPlaylistId = 'default_playlist_id';
 
   /// Default image URL for a playlist.
-  static const String defaultPlaylistImage = 'https://raw.githubusercontent.com/Yggbranch/assets/refs/heads/main/Tablet/WebP/Asset%202%401.5x.webp';
+  static const String defaultPlaylistImage =
+      'https://raw.githubusercontent.com/Yggbranch/assets/refs/heads/main/Tablet/WebP/Asset%202%401.5x.webp';
 
   /// Default owner name for a playlist.
   static const String defaultPlaylistOwner = 'default_owner';

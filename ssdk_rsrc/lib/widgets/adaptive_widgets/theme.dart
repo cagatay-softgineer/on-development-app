@@ -17,8 +17,9 @@ class AdaptiveTheme {
     if (Platform.isWindows) {
       final fluentTheme = fluent_ui.FluentTheme.of(context);
       adaptiveThemeData = AdaptiveThemeData(
-          primaryColor: fluentTheme.accentColor,
-          inactiveBackgroundColor: fluentTheme.inactiveBackgroundColor);
+        primaryColor: fluentTheme.accentColor,
+        inactiveBackgroundColor: fluentTheme.inactiveBackgroundColor,
+      );
     } else {
       final materialTheme = Theme.of(context);
       adaptiveThemeData = AdaptiveThemeData(
@@ -33,6 +34,8 @@ class AdaptiveTheme {
 class AdaptiveThemeData {
   Color primaryColor;
   Color inactiveBackgroundColor;
-  AdaptiveThemeData(
-      {required this.primaryColor, required this.inactiveBackgroundColor});
+  AdaptiveThemeData({
+    required this.primaryColor,
+    required this.inactiveBackgroundColor,
+  });
 }

@@ -13,7 +13,6 @@ class LoginPage extends StatefulWidget {
   _LoginPageState createState() => _LoginPageState();
 }
 
-
 class _LoginPageState extends State<LoginPage> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
@@ -41,11 +40,8 @@ class _LoginPageState extends State<LoginPage> {
       // Otomatik giriş yap
       final isLoggedIn = await login(context);
       if (isLoggedIn && mounted) {
-                        Navigator.pushNamed(
-                          context,
-                         '/main',
-                        );
-                      }
+        Navigator.pushNamed(context, '/main');
+      }
     }
   }
 
@@ -82,14 +78,18 @@ class _LoginPageState extends State<LoginPage> {
           await _secureStorage.write(key: 'jwt_token', value: token);
           await _secureStorage.write(key: 'user_id', value: userId);
           if (_rememberMe) {
-          await _secureStorage.write(
-              key: 'username', value: emailController.text);
-          await _secureStorage.write(
-              key: 'password', value: passwordController.text);
-        } else {
-          await _secureStorage.delete(key: 'username');
-          await _secureStorage.delete(key: 'password');
-        }
+            await _secureStorage.write(
+              key: 'username',
+              value: emailController.text,
+            );
+            await _secureStorage.write(
+              key: 'password',
+              value: passwordController.text,
+            );
+          } else {
+            await _secureStorage.delete(key: 'username');
+            await _secureStorage.delete(key: 'password');
+          }
         }
         return true;
       }
@@ -119,25 +119,30 @@ class _LoginPageState extends State<LoginPage> {
                 children: [
                   const SizedBox(height: 100),
                   const Text(
-                        'Welcome Back ',
-                        style: TextStyle(
-                            fontFamily: 'Montserrat',
-                            fontSize: 28,
-                            fontWeight: FontWeight.bold,
-                            color: Color.fromARGB(255, 0, 0, 0)),
-                      ),
+                    'Welcome Back ',
+                    style: TextStyle(
+                      fontFamily: 'Montserrat',
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                      color: Color.fromARGB(255, 0, 0, 0),
+                    ),
+                  ),
                   const SizedBox(height: 100),
-                  // Email Input
 
+                  // Email Input
                   const SizedBox(height: 5),
                   TextField(
                     controller: emailController,
                     decoration: InputDecoration(
-                      prefixIcon:
-                          const Icon(Icons.person, color: Color(0x89FFFFFF)),
+                      prefixIcon: const Icon(
+                        Icons.person,
+                        color: Color(0x89FFFFFF),
+                      ),
                       hintText: 'Enter your email',
                       hintStyle: const TextStyle(
-                          fontFamily: 'Montserrat', color: Color(0x89FFFFFF)),
+                        fontFamily: 'Montserrat',
+                        color: Color(0x89FFFFFF),
+                      ),
                       filled: true,
                       fillColor: const Color(0xFF292929),
                       border: OutlineInputBorder(
@@ -145,11 +150,13 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
                     style: const TextStyle(
-                        fontFamily: 'Montserrat', color: Color(0xFFF6F6F6)),
+                      fontFamily: 'Montserrat',
+                      color: Color(0xFFF6F6F6),
+                    ),
                   ),
                   const SizedBox(height: 30),
-                  // Password Input
 
+                  // Password Input
                   const SizedBox(height: 5),
                   TextField(
                     controller: passwordController,
@@ -158,7 +165,9 @@ class _LoginPageState extends State<LoginPage> {
                       prefixIcon: const Icon(Icons.lock, color: Colors.white54),
                       hintText: 'Enter your password',
                       hintStyle: const TextStyle(
-                          fontFamily: 'Montserrat', color: Colors.white54),
+                        fontFamily: 'Montserrat',
+                        color: Colors.white54,
+                      ),
                       filled: true,
                       fillColor: const Color(0xFF292929),
                       border: OutlineInputBorder(
@@ -166,7 +175,9 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
                     style: const TextStyle(
-                        fontFamily: 'Montserrat', color: Colors.white),
+                      fontFamily: 'Montserrat',
+                      color: Colors.white,
+                    ),
                   ),
                   const SizedBox(height: 20),
 
@@ -177,13 +188,15 @@ class _LoginPageState extends State<LoginPage> {
                       const Text(
                         'Remember Me',
                         style: TextStyle(
-                            fontFamily: 'Montserrat',
-                            fontWeight: FontWeight.w600,
-                            color: Color.fromARGB(255, 0, 0, 0),
-                            fontSize: 14),
+                          fontFamily: 'Montserrat',
+                          fontWeight: FontWeight.w600,
+                          color: Color.fromARGB(255, 0, 0, 0),
+                          fontSize: 14,
+                        ),
                       ),
                       const SizedBox(
-                          width: 10), // Yazı ve buton arasında boşluk
+                        width: 10,
+                      ), // Yazı ve buton arasında boşluk
                       GestureDetector(
                         onTap: () {
                           setState(() {
@@ -194,9 +207,10 @@ class _LoginPageState extends State<LoginPage> {
                           width: 60,
                           height: 30,
                           decoration: BoxDecoration(
-                            color: _rememberMe
-                                ? Colors.green
-                                : Colors.grey.shade800, // Renk değişimi
+                            color:
+                                _rememberMe
+                                    ? Colors.green
+                                    : Colors.grey.shade800, // Renk değişimi
                             borderRadius: BorderRadius.circular(15),
                           ),
                           child: Stack(
@@ -224,17 +238,17 @@ class _LoginPageState extends State<LoginPage> {
 
                   // Log In Button
                   CustomButton(
-                text: "Login", // Corrected typo
-                onPressed: () async {
-                  mainButtonParams.isLoading = true;
-                  final isLoggedIn = await login(context);
-                  mainButtonParams.isLoading = false;
+                    text: "Login", // Corrected typo
+                    onPressed: () async {
+                      mainButtonParams.isLoading = true;
+                      final isLoggedIn = await login(context);
+                      mainButtonParams.isLoading = false;
                       if (isLoggedIn && mounted) {
-                  Navigator.pushNamed(context, '/main');
+                        Navigator.pushNamed(context, '/main');
                       }
-                },
-                buttonParams: mainButtonParams,
-              ),
+                    },
+                    buttonParams: mainButtonParams,
+                  ),
                   const SizedBox(height: 10),
                   // Forgot Password (Login butonunun altında)
                   Center(
@@ -245,9 +259,10 @@ class _LoginPageState extends State<LoginPage> {
                       child: const Text(
                         'Forgot Password?',
                         style: TextStyle(
-                            fontFamily: 'Montserrat',
-                            fontWeight: FontWeight.w800,
-                            color: Color.fromARGB(255, 0, 0, 0)),
+                          fontFamily: 'Montserrat',
+                          fontWeight: FontWeight.w800,
+                          color: Color.fromARGB(255, 0, 0, 0),
+                        ),
                       ),
                     ),
                   ),
@@ -260,9 +275,10 @@ class _LoginPageState extends State<LoginPage> {
                       child: const Text(
                         'Sign Up',
                         style: TextStyle(
-                            fontFamily: 'Montserrat',
-                            fontWeight: FontWeight.w800,
-                            color: Color.fromARGB(255, 0, 0, 0)),
+                          fontFamily: 'Montserrat',
+                          fontWeight: FontWeight.w800,
+                          color: Color.fromARGB(255, 0, 0, 0),
+                        ),
                       ),
                     ),
                   ),

@@ -56,26 +56,24 @@ class AdaptiveTextField extends StatelessWidget {
         keyboardType: keyboardType,
         padding: contentPadding ?? const EdgeInsets.symmetric(),
         placeholder: hintText,
-        prefix: prefix != null
-            ? Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: prefix,
-              )
-            : null,
-        suffix: suffix != null
-            ? Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: suffix,
-              )
-            : null,
+        prefix:
+            prefix != null
+                ? Padding(padding: const EdgeInsets.all(8.0), child: prefix)
+                : null,
+        suffix:
+            suffix != null
+                ? Padding(padding: const EdgeInsets.all(8.0), child: suffix)
+                : null,
         autofocus: autofocus,
         maxLines: maxLines,
         textInputAction: textInputAction,
-        decoration: WidgetStatePropertyAll(BoxDecoration(
-          color: fillColor,
-          borderRadius: borderRadius,
-          border: borderWidth > 0 ? Border.all(width: borderWidth) : null,
-        )),
+        decoration: WidgetStatePropertyAll(
+          BoxDecoration(
+            color: fillColor,
+            borderRadius: borderRadius,
+            border: borderWidth > 0 ? Border.all(width: borderWidth) : null,
+          ),
+        ),
       );
     }
     return TextField(
@@ -98,9 +96,10 @@ class AdaptiveTextField extends StatelessWidget {
         prefixIcon: prefix,
         suffixIcon: suffix,
         border: OutlineInputBorder(
-          borderSide: borderWidth > 0
-              ? BorderSide(width: borderWidth)
-              : BorderSide.none,
+          borderSide:
+              borderWidth > 0
+                  ? BorderSide(width: borderWidth)
+                  : BorderSide.none,
           borderRadius: borderRadius,
         ),
       ),

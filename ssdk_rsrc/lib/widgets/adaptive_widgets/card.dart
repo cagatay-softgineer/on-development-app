@@ -38,8 +38,9 @@ class Adaptivecard extends StatelessWidget {
       color: backgroundColor,
       elevation: elevation,
       shape: RoundedRectangleBorder(
-          borderRadius:
-              borderRadius ?? const BorderRadius.all(Radius.circular(8.0))),
+        borderRadius:
+            borderRadius ?? const BorderRadius.all(Radius.circular(8.0)),
+      ),
       child: Padding(
         padding: padding ?? const EdgeInsets.all(12.0),
         child: child,

@@ -16,9 +16,7 @@ class GlowingOverlappingCircles extends StatelessWidget {
         SizedBox(
           height: 38,
           width: 48,
-          child: CustomPaint(
-            painter: _CirclesOverlapPainter(glowColor),
-          ),
+          child: CustomPaint(painter: _CirclesOverlapPainter(glowColor)),
         ),
         SizedBox(height: 2),
         Text(
@@ -45,26 +43,44 @@ class _CirclesOverlapPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final paintGlow = Paint()
-      ..color = glowColor.withOpacity(0.85)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 4
-      ..maskFilter = MaskFilter.blur(BlurStyle.normal, 7);
+    final paintGlow =
+        Paint()
+          ..color = glowColor.withOpacity(0.85)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 4
+          ..maskFilter = MaskFilter.blur(BlurStyle.normal, 7);
 
-    final paintWhite = Paint()
-      ..color = Colors.white
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 2;
+    final paintWhite =
+        Paint()
+          ..color = Colors.white
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 2;
 
     // Draw left circle (glow)
-    canvas.drawCircle(Offset(size.width * 0.38, size.height * 0.55), 13, paintGlow);
+    canvas.drawCircle(
+      Offset(size.width * 0.38, size.height * 0.55),
+      13,
+      paintGlow,
+    );
     // Draw right circle (glow)
-    canvas.drawCircle(Offset(size.width * 0.62, size.height * 0.55), 13, paintGlow);
+    canvas.drawCircle(
+      Offset(size.width * 0.62, size.height * 0.55),
+      13,
+      paintGlow,
+    );
 
     // Draw left circle (white)
-    canvas.drawCircle(Offset(size.width * 0.38, size.height * 0.55), 13, paintWhite);
+    canvas.drawCircle(
+      Offset(size.width * 0.38, size.height * 0.55),
+      13,
+      paintWhite,
+    );
     // Draw right circle (white)
-    canvas.drawCircle(Offset(size.width * 0.62, size.height * 0.55), 13, paintWhite);
+    canvas.drawCircle(
+      Offset(size.width * 0.62, size.height * 0.55),
+      13,
+      paintWhite,
+    );
   }
 
   @override
@@ -75,11 +91,7 @@ class SingleChainIcon extends StatelessWidget {
   final bool active;
   final double size;
 
-  const SingleChainIcon({
-    super.key,
-    this.active = true,
-    this.size = 38,
-  });
+  const SingleChainIcon({super.key, this.active = true, this.size = 38});
 
   @override
   Widget build(BuildContext context) {
@@ -88,10 +100,7 @@ class SingleChainIcon extends StatelessWidget {
       height: size,
       width: size * 1.25, // controls width of the pair
       child: CustomPaint(
-        painter: _CircleOverlapPainter(
-          glowColor: glowColor,
-          active: active,
-        ),
+        painter: _CircleOverlapPainter(glowColor: glowColor, active: active),
       ),
     );
   }
@@ -108,16 +117,18 @@ class _CircleOverlapPainter extends CustomPainter {
     final double radius = size.height * 0.42;
     final Offset center = Offset(size.width * 0.5, size.height * 0.5);
 
-    final paintGlow = Paint()
-      ..color = glowColor.withOpacity(active ? 0.85 : 0.34)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = active ? 4 : 3
-      ..maskFilter = MaskFilter.blur(BlurStyle.normal, 7);
+    final paintGlow =
+        Paint()
+          ..color = glowColor.withOpacity(active ? 0.85 : 0.34)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = active ? 4 : 3
+          ..maskFilter = MaskFilter.blur(BlurStyle.normal, 7);
 
-    final paintStroke = Paint()
-      ..color = active ? Colors.white : glowColor.withOpacity(0.34)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = active ? 2 : 1.2;
+    final paintStroke =
+        Paint()
+          ..color = active ? Colors.white : glowColor.withOpacity(0.34)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = active ? 2 : 1.2;
 
     // Glow
     canvas.drawCircle(center, radius, paintGlow);

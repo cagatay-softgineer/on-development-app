@@ -33,12 +33,16 @@ class _PieTimeSelectorState extends State<PieTimeSelector> {
       onPanUpdate: (details) {
         final RenderBox renderBox = context.findRenderObject() as RenderBox;
         final Offset center = renderBox.size.center(Offset.zero);
-        final Offset localPosition = renderBox.globalToLocal(details.globalPosition);
+        final Offset localPosition = renderBox.globalToLocal(
+          details.globalPosition,
+        );
         final double dx = localPosition.dx - center.dx;
         final double dy = localPosition.dy - center.dy;
         double theta = atan2(dy, dx);
         if (theta < 0) theta += 2 * pi;
-        int newValue = (widget.min + (theta / (2 * pi)) * (widget.max - widget.min)).round();
+        int newValue =
+            (widget.min + (theta / (2 * pi)) * (widget.max - widget.min))
+                .round();
         newValue = newValue.clamp(widget.min, widget.max);
         widget.onChanged(newValue);
       },
@@ -58,7 +62,10 @@ class _PieTimeSelectorState extends State<PieTimeSelector> {
               child: Center(
                 child: Text(
                   '${widget.value}',
-                  style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ),
@@ -78,18 +85,26 @@ class _PieTimePainter extends CustomPainter {
     const double strokeWidth = 10;
     final Offset center = size.center(Offset.zero);
     final double radius = (size.width / 2) - strokeWidth;
-    final Paint basePaint = Paint()
-      ..color = Colors.grey.withOpacity(0.3)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = strokeWidth;
+    final Paint basePaint =
+        Paint()
+          ..color = Colors.grey.withOpacity(0.3)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = strokeWidth;
     canvas.drawCircle(center, radius, basePaint);
 
-    final Paint progressPaint = Paint()
-      ..color = Colors.blue
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = strokeWidth
-      ..strokeCap = StrokeCap.round;
-    canvas.drawArc(Rect.fromCircle(center: center, radius: radius), -pi / 2, angle, false, progressPaint);
+    final Paint progressPaint =
+        Paint()
+          ..color = Colors.blue
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = strokeWidth
+          ..strokeCap = StrokeCap.round;
+    canvas.drawArc(
+      Rect.fromCircle(center: center, radius: radius),
+      -pi / 2,
+      angle,
+      false,
+      progressPaint,
+    );
   }
 
   @override

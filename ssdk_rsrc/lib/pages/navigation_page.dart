@@ -15,7 +15,8 @@ class NavigationPage extends StatefulWidget {
 
   static NavigationPageState of(BuildContext context) {
     final state = context.findAncestorStateOfType<NavigationPageState>();
-    if (state == null) throw Exception('No NavigationPage ancestor found in context!');
+    if (state == null)
+      throw Exception('No NavigationPage ancestor found in context!');
     return state;
   }
 }

@@ -22,10 +22,6 @@ class AdaptiveScaffold extends StatelessWidget {
         content: body ?? const SizedBox.shrink(),
       );
     }
-    return Scaffold(
-      key: key,
-      appBar: appBar,
-      body: body,
-    );
+    return Scaffold(key: key, appBar: appBar, body: body);
   }
 }

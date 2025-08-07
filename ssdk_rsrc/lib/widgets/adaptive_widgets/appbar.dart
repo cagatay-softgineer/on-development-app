@@ -46,7 +46,8 @@ class AdaptiveAppBar extends StatelessWidget implements PreferredSizeWidget {
         child: fluent_ui.Column(
           children: [
             fluent_ui.PageHeader(
-              leading: leading ??
+              leading:
+                  leading ??
                   (automaticallyImplyLeading && context.canPop()
                       ? const AdaptiveBackButton()
                       : null),
@@ -54,11 +55,13 @@ class AdaptiveAppBar extends StatelessWidget implements PreferredSizeWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: title,
               ),
-              commandBar: actions != null || actions?.isNotEmpty == false
-                  ? Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: actions ?? [])
-                  : null,
+              commandBar:
+                  actions != null || actions?.isNotEmpty == false
+                      ? Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: actions ?? [],
+                      )
+                      : null,
             ),
             if (bottom != null) bottom!,
           ],
@@ -81,7 +84,8 @@ class AdaptiveAppBar extends StatelessWidget implements PreferredSizeWidget {
       return Size.fromHeight(50.0 + (bottom == null ? 0 : kTextTabBarHeight));
     } else {
       return Size.fromHeight(
-          kToolbarHeight + (bottom == null ? 0 : kTextTabBarHeight));
+        kToolbarHeight + (bottom == null ? 0 : kTextTabBarHeight),
+      );
     }
   }
 }

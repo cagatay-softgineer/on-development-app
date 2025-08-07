@@ -42,20 +42,19 @@ Widget createCustomButton({
     width: params.buttonWidth,
     height: params.buttonHeight,
     decoration: BoxDecoration(
-      gradient: params.useGradient
-          ? LinearGradient(
-              colors: [
-                params.gradientStartColor,
-                params.gradientEndColor,
-              ],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            )
-          : null,
+      gradient:
+          params.useGradient
+              ? LinearGradient(
+                colors: [params.gradientStartColor, params.gradientEndColor],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              )
+              : null,
       color: !params.useGradient ? params.backgroundColor : null,
-      borderRadius: params.shape == BoxShape.rectangle
-          ? BorderRadius.circular(params.borderRadius)
-          : null,
+      borderRadius:
+          params.shape == BoxShape.rectangle
+              ? BorderRadius.circular(params.borderRadius)
+              : null,
       boxShadow: [
         BoxShadow(
           color: params.shadowColor,
@@ -70,47 +69,41 @@ Widget createCustomButton({
       style: ElevatedButton.styleFrom(
         elevation: 0, // Avoid double shadows when using BoxShadow
         padding: params.padding,
-        shape: params.shape == BoxShape.circle
-            ? const CircleBorder()
-            : RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(params.borderRadius),
-              ),
+        shape:
+            params.shape == BoxShape.circle
+                ? const CircleBorder()
+                : RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(params.borderRadius),
+                ),
         side: BorderSide(
           color: params.borderColor,
           width: params.letterSpacing,
         ),
         backgroundColor: Colors.transparent,
       ),
-      child: params.isLoading
-          ? CircularProgressIndicator(
-              color: params.textColor,
-            )
-          : Row(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                if (params.leadingIcon != null)
-                  Icon(
-                    params.leadingIcon,
-                    color: params.textColor,
+      child:
+          params.isLoading
+              ? CircularProgressIndicator(color: params.textColor)
+              : Row(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  if (params.leadingIcon != null)
+                    Icon(params.leadingIcon, color: params.textColor),
+                  if (params.leadingIcon != null) const SizedBox(width: 8),
+                  Text(
+                    text,
+                    textAlign: params.textAlign,
+                    style: params.textStyle.copyWith(
+                      color: params.textColor,
+                      fontFamily: params.fontFamily,
+                    ),
                   ),
-                if (params.leadingIcon != null) const SizedBox(width: 8),
-                Text(
-                  text,
-                  textAlign: params.textAlign,
-                  style: params.textStyle.copyWith(
-                    color: params.textColor,
-                    fontFamily: params.fontFamily,
-                  ),
-                ),
-                if (params.trailingIcon != null) const SizedBox(width: 8),
-                if (params.trailingIcon != null)
-                  Icon(
-                    params.trailingIcon,
-                    color: params.textColor,
-                  ),
-              ],
-            ),
+                  if (params.trailingIcon != null) const SizedBox(width: 8),
+                  if (params.trailingIcon != null)
+                    Icon(params.trailingIcon, color: params.textColor),
+                ],
+              ),
     ),
   );
 }
@@ -194,10 +187,7 @@ void showParamsDialog({
       return AlertDialog(
         title: const Text("Current Button Parameters"),
         content: SingleChildScrollView(
-          child: Text(
-            paramsJson,
-            style: const TextStyle(fontSize: 14),
-          ),
+          child: Text(paramsJson, style: const TextStyle(fontSize: 14)),
         ),
         actions: [
           TextButton(

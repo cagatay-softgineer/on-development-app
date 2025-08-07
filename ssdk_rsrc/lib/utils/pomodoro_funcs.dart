@@ -107,7 +107,6 @@ mixin PomodoroMixin<T extends StatefulWidget> on State<T> {
   }
 }
 
-
 Future<bool> showMLPredictionDialog(
   BuildContext context,
   Map<String, dynamic> mlResult,
@@ -123,44 +122,45 @@ Future<bool> showMLPredictionDialog(
   final totalTrackCount = durationData['total_track_count'];
 
   return await showDialog<bool>(
-    context: context,
-    builder: (context) {
-      return AlertDialog(
-        title: const Text('AI Pomodoro Prediction'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              "Playlist Duration Info:",
-              style: TextStyle(fontWeight: FontWeight.bold),
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text('AI Pomodoro Prediction'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  "Playlist Duration Info:",
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                Text("Duration: $formattedDuration"),
+                Text("Duration (ms): $totalDurationMs"),
+                Text("Tracks: $totalTrackCount"),
+                const SizedBox(height: 16),
+                const Text(
+                  "AI Prediction:",
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                Text("Pattern: $pattern"),
+                Text("Short Break: $shortBreak min"),
+                Text("Long Break: $longBreak min"),
+                Text("Work Sessions:"),
+                ...workSessions.map<Widget>((ws) => Text("- $ws min")).toList(),
+              ],
             ),
-            Text("Duration: $formattedDuration"),
-            Text("Duration (ms): $totalDurationMs"),
-            Text("Tracks: $totalTrackCount"),
-            const SizedBox(height: 16),
-            const Text(
-              "AI Prediction:",
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            Text("Pattern: $pattern"),
-            Text("Short Break: $shortBreak min"),
-            Text("Long Break: $longBreak min"),
-            Text("Work Sessions:"),
-            ...workSessions.map<Widget>((ws) => Text("- $ws min")).toList(),
-          ],
-        ),
-        actions: [
-          TextButton(
-            child: const Text("Cancel"),
-            onPressed: () => Navigator.of(context).pop(false),
-          ),
-          ElevatedButton(
-            child: const Text("Start"),
-            onPressed: () => Navigator.of(context).pop(true),
-          ),
-        ],
-      );
-    },
-  ) ?? false;
+            actions: [
+              TextButton(
+                child: const Text("Cancel"),
+                onPressed: () => Navigator.of(context).pop(false),
+              ),
+              ElevatedButton(
+                child: const Text("Start"),
+                onPressed: () => Navigator.of(context).pop(true),
+              ),
+            ],
+          );
+        },
+      ) ??
+      false;
 }

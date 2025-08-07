@@ -21,16 +21,17 @@ class AdaptiveDropdownButton<T> extends StatelessWidget {
     if (Platform.isWindows) {
       return fluent_ui.ComboBox<T>(
         value: value,
-        items: items
-            ?.map(
-              (item) => fluent_ui.ComboBoxItem<T>(
-                value: item.value,
-                enabled: item.enabled,
-                onTap: item.onTap,
-                child: item.child,
-              ),
-            )
-            .toList(),
+        items:
+            items
+                ?.map(
+                  (item) => fluent_ui.ComboBoxItem<T>(
+                    value: item.value,
+                    enabled: item.enabled,
+                    onTap: item.onTap,
+                    child: item.child,
+                  ),
+                )
+                .toList(),
         onChanged: onChanged,
       );
     }
@@ -41,16 +42,17 @@ class AdaptiveDropdownButton<T> extends StatelessWidget {
       isDense: true,
       borderRadius: BorderRadius.circular(8),
       alignment: AlignmentDirectional.centerEnd,
-      items: items
-          ?.map(
-            (item) => DropdownMenuItem(
-              value: item.value,
-              enabled: item.enabled,
-              onTap: item.onTap,
-              child: item.child,
-            ),
-          )
-          .toList(),
+      items:
+          items
+              ?.map(
+                (item) => DropdownMenuItem(
+                  value: item.value,
+                  enabled: item.enabled,
+                  onTap: item.onTap,
+                  child: item.child,
+                ),
+              )
+              .toList(),
       onChanged: onChanged,
     );
   }
@@ -61,6 +63,10 @@ class AdaptiveDropdownMenuItem<T> {
   final T? value;
   final bool enabled;
   final void Function()? onTap;
-  AdaptiveDropdownMenuItem(
-      {required this.child, this.value, this.enabled = true, this.onTap});
+  AdaptiveDropdownMenuItem({
+    required this.child,
+    this.value,
+    this.enabled = true,
+    this.onTap,
+  });
 }
