@@ -4,7 +4,7 @@ from util.utils import get_email_username, obfuscate
 from util.google import get_google_profile
 from util.spotify import get_current_user_profile
 from flask import Response
-from typing import Tuple
+from typing import Tuple, Optional
 
 logger = get_logger("logs", "Bind Apps")
 
@@ -15,7 +15,7 @@ def _fetch_binding_state(
     app_id: int,
     user_id: str,
     user_email: str,
-) -> Tuple[bool, dict | None]:
+) -> Tuple[bool, dict | Optional[dict]]:
     """
     Return (user_linked, user_profile) for a single app.
 
